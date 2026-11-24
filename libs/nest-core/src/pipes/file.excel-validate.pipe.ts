@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/co
 import { PipeTransform } from '@nestjs/common/interfaces'
 import { ClassConstructor, plainToInstance } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
-import { AppException } from 'lib/nest-core'
+import { AppException } from '../exceptions'
 import { IFileRows } from '../interfaces'
 
 // only for excel

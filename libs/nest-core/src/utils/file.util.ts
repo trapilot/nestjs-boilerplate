@@ -36,9 +36,13 @@ import { ArrUtil } from './array.util'
 
 export class FileUtil {
   static format(fileName: string, options?: IFileFormatOptions): string {
-    const [name, ext] = fileName
+    // fileName is client-controlled (multer originalname): drop any directory part and every
+    // character outside the safe set, and strip leading dots, so it can never escape the
+    // destination directory or create hidden files
+    const [name = '', ext = ''] = basename(fileName.replace(/\\/g, '/'))
       .replace(/ /g, '_')
-      .replace(/^0-9a-zA-Z_.-/g, '')
+      .replace(/[^0-9a-zA-Z_.-]/g, '')
+      .replace(/^\.+/, '')
       .split(/(\.[^.]+)$/)
 
     const parts = [name]

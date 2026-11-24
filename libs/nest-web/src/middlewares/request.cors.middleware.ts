@@ -13,7 +13,7 @@ export class RequestCorsMiddleware implements NestMiddleware {
   constructor(private readonly config: ConfigService) {
     this.allowedOrigin = this.config.get<string | boolean | string[]>('request.cors.allowedOrigin')
     this.allowedMethods = this.config.get<string[]>('request.cors.allowedMethods')
-    this.exposedHeaders = this.config.get<string[]>('request.cors.allowedHeaders')
+    this.allowedHeaders = this.config.get<string[]>('request.cors.allowedHeaders')
     this.exposedHeaders = this.config.get<string[]>('request.cors.exposedHeaders')
   }
 

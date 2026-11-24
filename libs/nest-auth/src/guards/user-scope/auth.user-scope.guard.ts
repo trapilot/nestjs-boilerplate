@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  HttpException,
   HttpStatus,
   Injectable,
 } from '@nestjs/common'
@@ -46,12 +47,12 @@ export class AuthUserScopeGuard implements CanActivate {
 
       const { user: payload } = request
 
-      const scopes = this.reflector.get<EnumAuthScopeType>(
+      const scopes = this.reflector.get<EnumAuthScopeType[]>(
         AUTH_SCOPE_META_KEY,
         context.getHandler(),
       )
 
-      if (scopes.length === 0) {
+      if (!scopes?.length) {
         throw new ForbiddenException({
           statusCode: HttpStatus.FORBIDDEN,
           message: 'auth.error.scopePredefinedNotFound',
@@ -119,7 +120,11 @@ export class AuthUserScopeGuard implements CanActivate {
 
         // override payload data
         payload.user = userPayload
-      } catch {
+      } catch (err: unknown) {
+        // Keep specific errors (inactive, uniqueLoggedIn, ...) instead of masking them
+        if (err instanceof HttpException) {
+          throw err
+        }
         throw new ForbiddenException({
           statusCode: HttpStatus.FORBIDDEN,
           message: 'auth.error.typePredefinedNotFound',

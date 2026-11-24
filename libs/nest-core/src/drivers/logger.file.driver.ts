@@ -8,7 +8,7 @@ import {
   unlinkSync,
   WriteStream,
 } from 'fs'
-import { ArrUtil, FileUtil, StrUtil } from 'lib/nest-core'
+import { ArrUtil, FileUtil, StrUtil } from '../utils'
 import { Writable } from 'stream'
 import { ILoggerFileConfig, ILoggerFileOptions } from '../interfaces'
 

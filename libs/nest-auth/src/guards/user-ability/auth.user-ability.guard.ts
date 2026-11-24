@@ -47,7 +47,7 @@ export class AuthUserAbilityGuard implements CanActivate {
         context.getHandler(),
       )
 
-      if (abilities.length === 0) {
+      if (!abilities?.length) {
         throw new ForbiddenException({
           statusCode: HttpStatus.FORBIDDEN,
           message: 'auth.error.abilityPredefinedNotFound',

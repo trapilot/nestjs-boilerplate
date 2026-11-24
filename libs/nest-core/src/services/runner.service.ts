@@ -333,14 +333,6 @@ export class RunnerService implements OnModuleDestroy {
     name: string,
     override?: IRunnerRetryOptions,
   ): Required<IRunnerRetryOptions> {
-    const base = this.queueOptions.get(name)?.retry ?? {}
-
-    const merged = {
-      ...this.defaultRetry,
-      ...base,
-      ...override,
-    }
-
     return {
       ...this.defaultRetry,
       ...this.queueOptions.get(name)?.retry,
@@ -405,6 +397,24 @@ export class RunnerService implements OnModuleDestroy {
     }) as T
   }
 
+  private async withDeadline(promise: Promise<void>, timeoutMs?: number): Promise<void> {
+    if (!timeoutMs) {
+      return promise
+    }
+
+    let timer: NodeJS.Timeout | undefined
+    try {
+      await Promise.race([
+        promise,
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error('waitForIdle timeout')), timeoutMs)
+        }),
+      ])
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+
   private withTimeout<T>(task: () => Promise<T>, timeoutMs?: number): Promise<T> {
     if (!timeoutMs) return task()
 
@@ -465,13 +475,21 @@ export class RunnerService implements OnModuleDestroy {
   // =========================
 
   async shutdown(timeoutMs = 30_000) {
-    // Stop accepting new tasks
+    // Stop starting new tasks and drop the ones not started yet: a paused queue with queued
+    // items never becomes idle, so waiting on onIdle() here would always hit the timeout
     for (const q of this.queues.values()) {
       q.pause()
+      q.clear()
     }
 
-    // Wait running tasks finish
-    await this.waitForIdle(undefined, timeoutMs)
+    // Wait for running tasks to finish
+    try {
+      await Promise.all(
+        [...this.queues.values()].map(q => this.withDeadline(q.onPendingZero(), timeoutMs)),
+      )
+    } catch (err: unknown) {
+      console.error('Runner shutdown:', err)
+    }
 
     // Destroy worker pools
     for (const pool of this.workerPools.values()) {
@@ -480,19 +498,7 @@ export class RunnerService implements OnModuleDestroy {
   }
 
   async waitForIdle(name?: string, timeoutMs?: number): Promise<void> {
-    const wait = async (q: PQueue) => {
-      if (!timeoutMs) {
-        await q.onIdle()
-        return
-      }
-
-      await Promise.race([
-        q.onIdle(),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('waitForIdle timeout')), timeoutMs),
-        ),
-      ])
-    }
+    const wait = (q: PQueue) => this.withDeadline(q.onIdle(), timeoutMs)
 
     if (name) {
       const q = this.queues.get(name)

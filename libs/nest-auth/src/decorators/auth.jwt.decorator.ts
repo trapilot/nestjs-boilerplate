@@ -52,7 +52,7 @@ export const AuthJwtType = createParamDecorator(
   (_data: string, context: ExecutionContext): string => {
     const { headers } = context.switchToHttp().getRequest<IRequestApp>()
     const { authorization } = headers
-    const authorizations: string[] = authorization.split(' ')
+    const authorizations: string[] = authorization?.split(' ') ?? []
 
     return authorizations.length >= 2 ? authorizations[0] : undefined
   },
@@ -62,7 +62,7 @@ export const AuthJwtToken = createParamDecorator(
   (_data: string, context: ExecutionContext): string => {
     const { headers } = context.switchToHttp().getRequest<IRequestApp>()
     const { authorization } = headers
-    const authorizations: string[] = authorization.split(' ')
+    const authorizations: string[] = authorization?.split(' ') ?? []
 
     return authorizations.length >= 2 ? authorizations[1] : undefined
   },

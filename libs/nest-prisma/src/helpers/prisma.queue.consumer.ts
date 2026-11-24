@@ -1,6 +1,8 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common'
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
-import { EnumJobStatus, QueueJob } from '@runtime/prisma-client'
+import { EnumJobStatus, Prisma, QueueJob } from '@runtime/prisma-client'
+import { randomUUID } from 'crypto'
+import { hostname } from 'os'
 import {
   AppUtil,
   HelperService,
@@ -10,10 +12,11 @@ import {
   WORKER_CONFIG,
   WorkerConsumer,
 } from 'lib/nest-core'
-import { PrismaService } from 'lib/nest-prisma'
+import { PrismaService } from '../services'
 
 @Injectable()
 export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit {
+  private readonly logger = new Logger(PrismaWorkerConsumer.name)
   private prisma!: PrismaService
   private handlers = new Map<string, IWorkerHandler>()
   private runningJobIds = new Set<number>()
@@ -25,7 +28,8 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
   private readonly recoveryIntervalMs: number
   private readonly heartbeatIntervalMs: number
   private readonly heartbeatTimeoutMs: number
-  private readonly workerId = `worker-${process.pid}`
+  // Unique per process start: pid alone collides across containers (often pid 1) and restarts
+  private readonly workerId = `worker-${hostname()}-${process.pid}-${randomUUID().slice(0, 8)}`
   private readonly workerQueue = 'queue:consumer-polling'
 
   // ===== Runtime state =====
@@ -76,12 +80,15 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
   async stop(): Promise<void> {
     if (!this.isPolling) return
 
+    // Stop polling first so no new jobs are picked up while draining
+    this.isPolling = false
+
     this.stopJobRecoveryLoop()
     this.stopJobArchiveLoop()
-    this.stopHeartbeatLoop()
-    this.stopPollingLoop()
 
-    this.isPolling = false
+    // Keep heartbeats running until in-flight jobs finish, otherwise other workers reclaim them
+    await this.stopPollingLoop()
+    this.stopHeartbeatLoop()
   }
 
   // =========================
@@ -94,7 +101,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       try {
         await this.pollAndRunJobs()
       } catch (err: unknown) {
-        console.log({ startPollingLoop: err })
+        this.logger.error(`Polling failed: ${AppUtil.catchMessage(err)}`)
       }
 
       const elapsed = Date.now() - start
@@ -109,16 +116,31 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
   }
 
   private async pollAndRunJobs(skipLocked: boolean = false) {
-    const jobIds = skipLocked ? await this.safePollAndLockBatch() : await this.pollAndLockBatch()
+    // Only claim as many jobs as there are free slots; locked-but-queued jobs would otherwise
+    // pile up locally and hit their threshold before they ever start
+    const freeSlots = this.concurrency - this.runningJobIds.size
+    if (freeSlots <= 0) return
+
+    const jobIds = skipLocked
+      ? await this.safePollAndLockBatch(freeSlots)
+      : await this.pollAndLockBatch(freeSlots)
 
     for (const jobId of jobIds) {
-      this.runner.run(this.workerQueue, () => this.processJob(jobId), {
-        concurrency: this.concurrency,
-      })
+      // Track from lock time so the heartbeat covers the job immediately
+      this.runningJobIds.add(jobId)
+
+      this.runner
+        .run(this.workerQueue, () => this.processJob(jobId), {
+          concurrency: this.concurrency,
+        })
+        .catch((err: unknown) => {
+          this.runningJobIds.delete(jobId)
+          this.logger.error(`Job ${jobId} failed to settle: ${AppUtil.catchMessage(err)}`)
+        })
     }
   }
 
-  private async pollAndLockBatch() {
+  private async pollAndLockBatch(limit: number): Promise<number[]> {
     const nowDate = this.helperService.dateNow()
 
     return this.prisma.$transaction(async tx => {
@@ -130,7 +152,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
           lockedAt: null,
         },
         orderBy: [{ priority: 'asc' }, { startAt: 'asc' }],
-        take: this.concurrency,
+        take: limit,
         select: { id: true },
       })
 
@@ -151,42 +173,55 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
         },
       })
 
-      if (result.count !== jobIds.length) {
-        return []
+      if (result.count === jobIds.length) {
+        return jobIds
       }
 
-      return jobIds
+      // Another worker won some rows: return only the ones this worker actually locked,
+      // otherwise they stay RUNNING under our id and are never processed or recovered
+      const locked = await tx.queueJob.findMany({
+        where: { id: { in: jobIds }, lockedBy: this.workerId },
+        select: { id: true },
+      })
+      return locked.map(j => j.id)
     })
   }
 
-  async safePollAndLockBatch() {
+  /**
+   * MySQL 8+ variant using row locks (FOR UPDATE SKIP LOCKED) so concurrent workers never block
+   * on or double-claim the same rows. Must run inside a transaction for the locks to hold.
+   */
+  async safePollAndLockBatch(limit: number = this.concurrency): Promise<number[]> {
     const nowDate = this.helperService.dateNow()
 
-    const jobs = await this.prisma.$queryRaw<{ id: number }[]>`
-      SELECT id
-      FROM queue_jobs
-      WHERE status = "${EnumJobStatus.PENDING}"
-        AND "startAt" <= ${nowDate}
-        AND "retryCount" < "maxRetries"
-        AND "lockedAt" IS NULL
-      ORDER BY priority ASC, "startAt" ASC
-      FOR UPDATE SKIP LOCKED
-      LIMIT ${this.concurrency}`
+    return this.prisma.$transaction(async tx => {
+      const jobs = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`
+        SELECT id
+        FROM queue_jobs
+        WHERE status = ${EnumJobStatus.PENDING}
+          AND startAt <= ${nowDate}
+          AND retryCount < maxRetries
+          AND lockedAt IS NULL
+        ORDER BY priority ASC, startAt ASC
+        LIMIT ${limit}
+        FOR UPDATE SKIP LOCKED`)
 
-    if (!jobs.length) return []
+      if (!jobs.length) return []
 
-    const jobIds = jobs.map(j => j.id)
+      const jobIds = jobs.map(j => Number(j.id))
 
-    await this.prisma.queueJob.updateMany({
-      where: { id: { in: jobIds } },
-      data: {
-        status: EnumJobStatus.RUNNING,
-        lockedAt: nowDate,
-        lockedBy: this.workerId,
-      },
+      await tx.queueJob.updateMany({
+        where: { id: { in: jobIds } },
+        data: {
+          status: EnumJobStatus.RUNNING,
+          heartbeatAt: nowDate,
+          lockedAt: nowDate,
+          lockedBy: this.workerId,
+        },
+      })
+
+      return jobIds
     })
-
-    return jobIds
   }
 
   // =========================
@@ -205,6 +240,9 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       try {
         await this.failTimedOutRunningJobs()
         await this.recoverStaleRunningJobs()
+      } catch (err: unknown) {
+        // Never let a DB hiccup become an unhandled rejection (it would crash the process)
+        this.logger.error(`Recovery failed: ${AppUtil.catchMessage(err)}`)
       } finally {
         this.isRecoveryInProgress = false
       }
@@ -228,16 +266,20 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     this.heartbeatInterval = setInterval(async () => {
       if (!this.runningJobIds.size) return
 
-      await this.prisma.queueJob.updateMany({
-        where: {
-          id: { in: [...this.runningJobIds] },
-          lockedBy: this.workerId,
-          status: EnumJobStatus.RUNNING,
-        },
-        data: {
-          heartbeatAt: this.helperService.dateNow(),
-        },
-      })
+      try {
+        await this.prisma.queueJob.updateMany({
+          where: {
+            id: { in: [...this.runningJobIds] },
+            lockedBy: this.workerId,
+            status: EnumJobStatus.RUNNING,
+          },
+          data: {
+            heartbeatAt: this.helperService.dateNow(),
+          },
+        })
+      } catch (err: unknown) {
+        this.logger.error(`Heartbeat failed: ${AppUtil.catchMessage(err)}`)
+      }
     }, this.heartbeatIntervalMs)
   }
 
@@ -263,6 +305,8 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       this.isArchiveInProgress = true
       try {
         await this.archiveFailedJobs()
+      } catch (err: unknown) {
+        this.logger.error(`Archive failed: ${AppUtil.catchMessage(err)}`)
       } finally {
         this.isArchiveInProgress = false
       }

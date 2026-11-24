@@ -1,7 +1,7 @@
 import { ExecutionContext, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { AUTH_ACCESS_REQUIRE_METADATA } from 'lib/nest-auth/constants'
+import { AUTH_ACCESS_REQUIRE_METADATA } from '../../constants'
 
 @Injectable()
 export class AuthJwtAccessGuard extends AuthGuard('jwt') {

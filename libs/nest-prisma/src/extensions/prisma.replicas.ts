@@ -79,7 +79,11 @@ class PrismaReplicaManager {
     }
   }
 
-  pick(): PrismaClient {
+  pick(): PrismaClient | undefined {
+    if (!this.clients.length) {
+      return undefined
+    }
+
     const client = this.clients[this.cursor]
     this.cursor = (this.cursor + 1) % this.clients.length
 

@@ -100,9 +100,11 @@ export class UploadDiskDriver implements StorageEngine {
       .replace(/{(.*?)}/g, (match, key) => req?.fileInfo[key] || match)
 
     // Call the async directory creation method
-    this.createUploadDirectory(destination).then(() => {
-      cb(null, destination)
-    })
+    // Report mkdir failures to multer; otherwise the request hangs and the rejection is unhandled
+    this.createUploadDirectory(destination).then(
+      () => cb(null, destination),
+      (err: unknown) => cb(err, undefined),
+    )
   }
 
   /**

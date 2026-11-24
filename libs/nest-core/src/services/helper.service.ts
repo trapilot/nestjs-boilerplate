@@ -9,7 +9,9 @@ import {
   createSign,
   createVerify,
   randomBytes,
+  randomInt,
   randomUUID,
+  timingSafeEqual,
 } from 'crypto'
 import { DateObjectUnits, DateTime, Duration, DurationLikeObject } from 'luxon'
 import RandExp from 'randexp'
@@ -205,11 +207,17 @@ export class HelperService {
   }
 
   randomString(length: number, options?: IStringRandomOptions): string {
-    const rString = options?.safe
+    const pattern = options?.safe
       ? options?.numeric
-        ? new RandExp(`[A-Z0-9]{${length},${length}}`).gen()
-        : new RandExp(`[A-Z]{${length},${length}}`).gen()
-      : new RandExp(`\\w{${length},${length}}`).gen()
+        ? `[A-Z0-9]{${length},${length}}`
+        : `[A-Z]{${length},${length}}`
+      : `\\w{${length},${length}}`
+
+    // RandExp defaults to Math.random; these strings are used for JWT ids, API keys and
+    // generated passwords, so draw from the CSPRNG instead
+    const generator = new RandExp(pattern)
+    generator.randInt = (from: number, to: number): number => randomInt(from, to + 1)
+    const rString = generator.gen()
 
     return ArrUtil.join(
       [options?.prefix, options?.upperCase ? rString.toUpperCase() : rString, options?.suffix],
@@ -562,7 +570,7 @@ export class HelperService {
   }
 
   hashCompare(data: string, hashed: string, options: IEncryptionHashOptions): boolean {
-    return hashed === this.hashCreate(data, options)
+    return this.safeEqual(hashed, this.hashCreate(data, options))
   }
 
   hmacCreate(data: string, options: IEncryptionHmacOptions): string {
@@ -587,7 +595,20 @@ export class HelperService {
   }
 
   hmacCompare(data: string, hmac: string, options: IEncryptionHmacOptions): boolean {
-    return hmac === this.hmacCreate(data, options)
+    return this.safeEqual(hmac, this.hmacCreate(data, options))
+  }
+
+  /**
+   * Constant-time string comparison, so signature checks do not leak how many leading
+   * characters matched
+   */
+  private safeEqual(received: string | undefined | null, expected: string): boolean {
+    if (typeof received !== 'string') {
+      return false
+    }
+    const a = Buffer.from(received, 'utf8')
+    const b = Buffer.from(expected, 'utf8')
+    return a.length === b.length && timingSafeEqual(a, b)
   }
 
   signatureCreate(data: string, options: IEncryptionSignOptions): string {

@@ -1,7 +1,8 @@
 import { ValidationError } from '@nestjs/common'
 import { ClassConstructor, plainToInstance } from 'class-transformer'
 import { validate, ValidatorOptions } from 'class-validator'
-import { EnumAuthLoginFrom } from 'lib/nest-auth'
+// Import the enum file directly: the lib/nest-auth barrel imports lib/nest-core and creates a load cycle
+import { EnumAuthLoginFrom } from 'lib/nest-auth/enums/auth.enum'
 import ms from 'ms'
 import { hostname } from 'os'
 import { APP_ENV, APP_LANGUAGE_LIST, APP_URL } from '../constants'

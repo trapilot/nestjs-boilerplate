@@ -20,7 +20,12 @@ export function ToObject(transform: {
 }): (target: any, key: string) => void {
   return Transform(({ value }: any) => {
     if (value && typeof value === 'string') {
-      return plainToInstance(transform.type, JSON.parse(value), transform?.options)
+      try {
+        return plainToInstance(transform.type, JSON.parse(value), transform?.options)
+      } catch {
+        // Invalid JSON: leave the raw value so validation answers 422 instead of a 500
+        return value
+      }
     }
     return value
   })

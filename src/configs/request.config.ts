@@ -60,6 +60,7 @@ export default registerAs(
         'x-signature',
         'x-body-hash',
         'x-repo-version',
+        'x-tenant-id',
       ],
     },
     cachePrefix: 'API_CACHE',

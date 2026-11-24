@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose, Transform, Type } from 'class-transformer'
-import { AppUtil } from 'lib/nest-core'
+import { AppUtil } from '../utils'
 
 export class FileResponseDto {
   @ApiProperty({ type: 'number', example: 2 })

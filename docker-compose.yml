@@ -17,27 +17,37 @@ services:
       - ./.env
     restart: always
     depends_on:
-      - mysql
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     deploy:
       resources:
         limits:
           cpus: "0.5"
           memory: 512M
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
+  postgres:
+    image: pgvector/pgvector:pg18
+    container_name: postgres
     restart: unless-stopped
-    tty: true
     networks:
       - app-network
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: root_pwd
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_pwd}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
     volumes:
-      - ./.data/mysql8:/var/lib/mysql/
+      # Postgres 18 images keep data in /var/lib/postgresql/18/docker; mount the parent
+      - ./.data/postgres18:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
-    image: redis:7
+    image: valkey/valkey:8
     container_name: redis
     restart: unless-stopped
     networks:
@@ -45,8 +55,8 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./.data/redis7:/data
-    command: ["redis-server", "--appendonly", "yes"]
+      - ./.data/valkey8:/data
+    command: ["valkey-server", "--appendonly", "yes"]
 networks:
   app-network:
     external: true

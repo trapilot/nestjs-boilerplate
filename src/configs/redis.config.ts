@@ -9,6 +9,11 @@ export default registerAs(
       namespace: 'Cache',
       ttl: 5 * 60 * 1000,
     },
+    // Atomic shared state (request nonces, rate-limit counters); defaults to the cache server
+    store: {
+      url: process.env.STORE_REDIS_URL || process.env.CACHE_REDIS_URL,
+      namespace: 'Store',
+    },
     queue: {
       url: process.env.QUEUE_REDIS_URL,
       namespace: 'Queue',

@@ -38,12 +38,12 @@ export function RequestFilterSearchPipe(availableSearch: string[] = []): Type<Pi
       }
 
       if (availableSearch.length == 1) {
-        return { [availableSearch[0]]: { contains: searchValue } }
+        return { [availableSearch[0]]: { contains: searchValue, mode: 'insensitive' } }
       }
 
       return {
         OR: availableSearch.map(field => {
-          return { [field]: { contains: searchValue } }
+          return { [field]: { contains: searchValue, mode: 'insensitive' } }
         }),
       }
     }

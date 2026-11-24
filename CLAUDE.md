@@ -27,7 +27,7 @@ npx jest -t "test name"             # single test by name
 
 There are currently no `*.spec.ts` files; tests pass via `--passWithNoTests`.
 
-### Database (Prisma 7, MySQL)
+### Database (Prisma 7, PostgreSQL 18 + pgvector)
 
 ```sh
 pnpm db:generate     # generate the client into prisma/runtime (gitignored); run after every schema change
@@ -38,6 +38,9 @@ pnpm db:studio
 pnpm app:reset       # clear logs/uploads/temporary, reset DB, seed role + policy + user
 ```
 
+- Migrations live in `prisma/migrations` (first one is `0_init`, with `migration_lock.toml` pinned to `postgresql`). `db:migrate` creates a new migration (does not apply it), `db:deploy` applies pending ones, and `db:clear` runs `prisma migrate reset --force` (wipes the DB and re-applies migrations).
+- Search filters (`contains`) use `mode: 'insensitive'` because PostgreSQL is case-sensitive by default. Emails are lower-cased on input (`@ToString({ format: 'lowercase' })` on DTOs, social-login payloads, seeds), so lookups and unique constraints on email are case-consistent.
+- Raw SQL must use PostgreSQL syntax (quoted camelCase columns, `$n` placeholders, `ON CONFLICT`); see the queue consumer's `FOR UPDATE SKIP LOCKED` query.
 - Schema: `prisma/schema.prisma`; config: `prisma.config.ts` (reads `DATABASE_URL`).
 - Import the generated client from `@runtime/prisma-client`, never from `@prisma/client`.
 
@@ -119,4 +122,4 @@ i18n strings: `src/resources/languages/{en,vi}`; email templates (hbs): `src/res
 
 - Commits follow commitlint with allowed types: `ci, doc, feat, fix, hotfix, refactor, revert, style, test` (note `doc`, not `docs`). The Husky + lint-staged pre-commit runs eslint and `stop-only` (no `.only` in tests).
 - Prettier and ESLint config: `.prettierrc`, `eslint.config.mjs`. TypeScript runs with `strictNullChecks: false` and `noImplicitAny: false`.
-- CI (`.github/workflows/ci.yml`) runs `pnpm db:deploy` against MySQL 8, then `pnpm test`. Deployment uses `ci/Dockerfile` and `docker-compose.yml` (see `Makefile`).
+- CI (`.github/workflows/ci.yml`) runs `pnpm db:deploy` against PostgreSQL 18 (`pgvector/pgvector:pg18`), then `pnpm test`, with Postgres 18 and Valkey 8 as CI services. Deployment uses `ci/Dockerfile` and `docker-compose.yml` (see `Makefile`).

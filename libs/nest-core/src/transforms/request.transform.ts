@@ -84,10 +84,21 @@ export function ToPhone(): (target: any, key: string) => void {
   })
 }
 
-export function ToString(): (target: any, key: string) => void {
+export function ToString(options?: {
+  format?: 'uppercase' | 'lowercase' | 'capitalize'
+}): (target: any, key: string) => void {
   return Transform(({ value }: any) => {
     if (typeof value === 'string') {
-      return value
+      switch (options?.format) {
+        case 'uppercase':
+          return value.trim().toUpperCase()
+        case 'lowercase':
+          return value.trim().toLowerCase()
+        case 'capitalize':
+          return value.trim().replace(/\b\w/g, c => c.toUpperCase())
+        default:
+          return value.trim()
+      }
     }
     return value ? `${value}` : value
   })

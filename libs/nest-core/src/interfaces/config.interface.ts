@@ -121,6 +121,7 @@ export interface IConfigRedis {
     ttl: number
   }
   queue: IConfigRedisOptions
+  store: IConfigRedisOptions
   pubsub: IConfigRedisOptions
   realtime: IConfigRedisOptions
   stream: IConfigRedisOptions

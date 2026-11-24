@@ -19,6 +19,7 @@ import {
   LoggerService,
   MailerService,
   MessageService,
+  RedisStoreService,
   RunnerService,
 } from './services'
 import { FileUtil } from './utils'
@@ -37,6 +38,10 @@ export class NestCoreModule {
     }
     this.initialized = true
 
+    // The Redis store backs nonce replay protection and rate limiting for HTTP apps;
+    // the CLI (cache: false) does not need it and must not require a reachable Redis
+    const redisStore = options.cache ? [RedisStoreService] : []
+
     return {
       global: true,
       module: NestCoreModule,
@@ -50,8 +55,10 @@ export class NestCoreModule {
         LoggerFactory,
         SmsDispatcher,
         PushDispatcher,
+        ...redisStore,
       ],
       providers: [
+        ...redisStore,
         MessageService,
         LoggerService,
         MailerService,

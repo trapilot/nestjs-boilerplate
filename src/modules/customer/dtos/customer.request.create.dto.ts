@@ -26,7 +26,7 @@ export class CustomerRequestCreateDto {
 
   @IsOptional()
   @IsEmail()
-  @ToString()
+  @ToString({ format: 'lowercase' })
   @ApiProperty({ required: false, example: process.env.MOCK_CUSTOMER_EMAIL })
   email: string
 

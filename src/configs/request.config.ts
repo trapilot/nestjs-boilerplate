@@ -1,5 +1,8 @@
 import { registerAs } from '@nestjs/config'
-import { AppUtil, FileUtil, IConfigRequest } from 'lib/nest-core'
+import { AppUtil, FileUtil, IConfigRequest, StrUtil } from 'lib/nest-core'
+
+// Format is checked by AppEnvDto at boot
+type TDuration = Parameters<typeof AppUtil.ms>[0]
 
 export default registerAs(
   'request',
@@ -65,14 +68,16 @@ export default registerAs(
     },
     cachePrefix: 'API_CACHE',
     timeoutInMs: AppUtil.ms('10s'), // 10s based on ms module
+    // x-nonce / x-timestamp / x-signature checks; nonces are stored in the Redis store
     security: {
-      enable: false,
-      key: process.env.MIDDLEWARE_SECURITY_KEY ?? 'SECURITY=PdmXqYqRe5E/Q==',
-      ttl: AppUtil.ms('5m'), // 5 minutes
+      enable: StrUtil.isTrue(process.env.REQUEST_SECURITY_ENABLED),
+      key: process.env.MIDDLEWARE_SECURITY_KEY, // required when enabled (validated at boot)
+      ttl: AppUtil.ms((process.env.REQUEST_SECURITY_TTL || '5m') as TDuration),
     },
+    // Global rate limit; counters are shared across instances via the Redis store
     throttle: {
-      ttl: AppUtil.ms('500Ms'), // 0.5 secs
-      limit: 5, // max request per reset time
+      ttl: AppUtil.ms((process.env.REQUEST_THROTTLE_TTL || '500ms') as TDuration),
+      limit: Number(process.env.REQUEST_THROTTLE_LIMIT || 5), // max requests per window
     },
   }),
 )

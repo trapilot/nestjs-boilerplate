@@ -5,7 +5,7 @@ export default registerAs(
   'database',
   (): IConfigDatabase => ({
     replication: {
-      provider: 'mysql',
+      provider: 'postgres',
       master: process.env.DATABASE_URL,
       slaves: StrUtil.split(process.env.REPLICA_URL, {
         delimiter: ',',

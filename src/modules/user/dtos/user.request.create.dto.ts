@@ -15,7 +15,7 @@ import { IsPassword, IsPhone } from 'lib/nest-web'
 export class UserRequestCreateDto {
   @IsNotEmpty()
   @IsEmail()
-  @ToString()
+  @ToString({ format: 'lowercase' })
   @MaxLength(100)
   @ApiProperty({ required: true, example: process.env.MOCK_ADMIN_EMAIL })
   email: string

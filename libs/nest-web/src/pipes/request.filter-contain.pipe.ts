@@ -20,7 +20,7 @@ export function RequestFilterContainPipe(
       if (options?.raw) {
         this.addToRequestInstance(value)
         return {
-          [field]: { contains: value },
+          [field]: { contains: value, mode: 'insensitive' },
         }
       }
 
@@ -28,7 +28,7 @@ export function RequestFilterContainPipe(
 
       this.addToRequestInstance(value)
       return {
-        [field]: { contains: value },
+        [field]: { contains: value, mode: 'insensitive' },
       }
     }
 

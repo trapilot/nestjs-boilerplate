@@ -22,6 +22,7 @@ export class UserSeed extends CommandMigrateBase {
         continue
       }
 
+      const email = user.email.trim().toLowerCase()
       const { passwordHash } = this.authUtil.passwordCreate(user.password)
       const role = await this.prisma.role.findFirst({
         where: { type: user.roleType },
@@ -29,9 +30,9 @@ export class UserSeed extends CommandMigrateBase {
       })
 
       await this.prisma.user.upsert({
-        where: { email: user.email },
+        where: { email },
         create: {
-          email: user.email,
+          email,
           roleId: role?.id,
           password: passwordHash,
           isActive: true,

@@ -28,6 +28,7 @@ import {
   IModuleImport,
   IModuleProvider,
   LoggerFactory,
+  RedisStoreService,
   WORKER_CONFIG,
   WorkerConsumer,
   WorkerProducer,
@@ -46,7 +47,7 @@ import {
   RequestPerformanceMiddleware,
   RequestSecurityMiddleware,
 } from './middlewares'
-import { MetricsService, ReporterService } from './services'
+import { MetricsService, ReporterService, ThrottlerRedisStorage } from './services'
 import {
   AgeGreaterThanEqualConstraint,
   DateGreaterThanConstraint,
@@ -157,15 +158,17 @@ export class NestWebModule
       )
     }
 
-    if (options.worker && options.worker.enabled) {
-      if (options.worker?.producer) {
-        providers.push({
-          provide: WorkerProducer,
-          useClass: options.worker.producer,
-        })
-        exports.push(WorkerProducer)
-      }
+    // Every instance must be able to enqueue jobs (web-only instances run with the worker
+    // disabled), so the producer is registered regardless of `enabled`
+    if (options.worker?.producer) {
+      providers.push({
+        provide: WorkerProducer,
+        useClass: options.worker.producer,
+      })
+      exports.push(WorkerProducer)
+    }
 
+    if (options.worker && options.worker.enabled) {
       if (options.worker?.consumer) {
         providers.push({
           provide: WorkerConsumer,
@@ -219,13 +222,20 @@ export class NestWebModule
       imports: [
         ...imports,
         ThrottlerModule.forRootAsync({
-          inject: [ConfigService],
-          useFactory: (config: ConfigService): ThrottlerModuleOptions => [
-            {
-              ttl: config.get<number>('request.throttle.ttl'),
-              limit: config.get<number>('request.throttle.limit'),
-            },
-          ],
+          inject: [ConfigService, RedisStoreService],
+          useFactory: (
+            config: ConfigService,
+            store: RedisStoreService,
+          ): ThrottlerModuleOptions => ({
+            throttlers: [
+              {
+                ttl: config.get<number>('request.throttle.ttl'),
+                limit: config.get<number>('request.throttle.limit'),
+              },
+            ],
+            // Shared counters across instances (the default storage is per-process memory)
+            storage: new ThrottlerRedisStorage(store),
+          }),
         }),
       ],
       exports,

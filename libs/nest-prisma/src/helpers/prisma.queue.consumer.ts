@@ -188,7 +188,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
   }
 
   /**
-   * MySQL 8+ variant using row locks (FOR UPDATE SKIP LOCKED) so concurrent workers never block
+   * PostgreSQL variant using row locks (FOR UPDATE SKIP LOCKED) so concurrent workers never block
    * on or double-claim the same rows. Must run inside a transaction for the locks to hold.
    */
   async safePollAndLockBatch(limit: number = this.concurrency): Promise<number[]> {
@@ -198,11 +198,11 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       const jobs = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`
         SELECT id
         FROM queue_jobs
-        WHERE status = ${EnumJobStatus.PENDING}
-          AND startAt <= ${nowDate}
-          AND retryCount < maxRetries
-          AND lockedAt IS NULL
-        ORDER BY priority ASC, startAt ASC
+        WHERE status = ${EnumJobStatus.PENDING}::"EnumJobStatus"
+          AND "startAt" <= ${nowDate}
+          AND "retryCount" < "maxRetries"
+          AND "lockedAt" IS NULL
+        ORDER BY priority ASC, "startAt" ASC
         LIMIT ${limit}
         FOR UPDATE SKIP LOCKED`)
 

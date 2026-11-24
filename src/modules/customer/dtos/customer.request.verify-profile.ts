@@ -14,7 +14,7 @@ export class CustomerRequestOTPDto {
 export class CustomerRequestTokenDto {
   @IsNotEmpty()
   @IsEmail()
-  @ToString()
+  @ToString({ format: 'lowercase' })
   @ApiProperty({ required: false, example: process.env.MOCK_CUSTOMER_EMAIL })
   email: string
 }

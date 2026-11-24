@@ -6,15 +6,7 @@ import { AppModule } from 'app/app.module'
 import { AppEnvDto } from 'app/dtos/app.env.dto'
 import { useContainer } from 'class-validator'
 import compression from 'compression'
-import {
-  AppUtil,
-  FileUtil,
-  INextFunction,
-  IRequestApp,
-  IResponseApp,
-  MessageService,
-  StrUtil,
-} from 'lib/nest-core'
+import { AppUtil, FileUtil, INextFunction, IRequestApp, IResponseApp, StrUtil } from 'lib/nest-core'
 import docSetup from 'tools/swagger'
 
 async function bootstrap(): Promise<void> {
@@ -84,12 +76,13 @@ async function bootstrap(): Promise<void> {
     },
   })
   if (errors.length > 0) {
-    const messageService = app.get(MessageService)
-    const messageErrors = messageService.setValidationMessage(errors)
+    // List the offending variables directly; the i18n validation formatter assumes request
+    // payload errors and crashes on missing values, hiding which variable is wrong
+    const details = errors.map(
+      error => `${error.property}: ${Object.values(error.constraints ?? {}).join(', ')}`,
+    )
 
-    throw new Error('Env Variable Invalid', {
-      cause: messageErrors,
-    })
+    throw new Error(`Env Variable Invalid\n  - ${details.join('\n  - ')}`)
   }
 
   // WebSocket Server

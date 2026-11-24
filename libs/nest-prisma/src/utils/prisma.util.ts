@@ -18,30 +18,41 @@ export class PrismaUtil {
     return structuredClone(data) as N[]
   }
 
+  /**
+   * Inline `$1, $2, ...` placeholders with their values. For debug logging only: the output is
+   * NOT escaped for execution and must never be sent to the database.
+   */
   static buildQuery(rawQuery: string, options: { params: string }): string {
-    let index = 0
-    let query = rawQuery
-      .split('?')
-      .map(s => `$${index++}${s}`)
-      .join('')
-      .substring(index ? 2 : 0)
+    let params: unknown[] = []
+    try {
+      params = JSON.parse(options.params)
+    } catch {
+      return rawQuery
+    }
 
-    JSON.parse(options.params).forEach((value: unknown, i: number) => {
-      const re = new RegExp(`\\$${i + 1}(?!\\d)`, 'g')
-      const escaped = typeof value === 'string' ? `'${value.replace(/'/g, "\\'")}'` : value
-      query = query.replace(re, String(escaped))
+    return rawQuery.replace(/\$(\d+)(?!\d)/g, (match: string, num: string) => {
+      const index = Number(num) - 1
+      if (index < 0 || index >= params.length) return match
+
+      const value = params[index]
+      if (value === null || value === undefined) return 'NULL'
+      if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`
+      if (typeof value === 'object') return `'${JSON.stringify(value).replace(/'/g, "''")}'`
+      return String(value)
     })
-    return query
   }
 
   static buildBulkInsert(datas: any[], table: string, pk: string = 'id'): Prisma.Sql {
     if (datas.length) {
-      return Prisma.sql`INSERT INTO ${Prisma.raw(table)} (${Prisma.raw(Object.keys(datas[0]).join(','))}) VALUES ${Prisma.join(datas.map(i => Prisma.sql`(${Prisma.join(Object.values(i))})`))} ON DUPLICATE KEY UPDATE ${Prisma.raw(
-        Object.keys(datas[0])
-          .filter(key => key !== pk)
-          .map(key => `${key} = VALUES(${key})`)
-          .join(','),
-      )}`
+      const quote = (name: string): string => `"${name.replace(/"/g, '""')}"`
+      const columns = Object.keys(datas[0])
+      const updates = columns.filter(key => key !== pk)
+
+      return Prisma.sql`INSERT INTO ${Prisma.raw(quote(table))} (${Prisma.raw(columns.map(quote).join(','))}) VALUES ${Prisma.join(datas.map(i => Prisma.sql`(${Prisma.join(Object.values(i))})`))} ON CONFLICT (${Prisma.raw(quote(pk))}) DO ${
+        updates.length
+          ? Prisma.sql`UPDATE SET ${Prisma.raw(updates.map(key => `${quote(key)} = EXCLUDED.${quote(key)}`).join(','))}`
+          : Prisma.sql`NOTHING`
+      }`
     }
     return Prisma.sql`SELECT 1`
   }
@@ -66,7 +77,8 @@ export class PrismaUtil {
     options: IPrismaAdapterCreateOptions,
   ): runtime.SqlDriverAdapterFactory {
     if (provider === 'postgres') {
-      return new PrismaPg(options.url)
+      // PrismaPg takes a pg PoolConfig, not a bare connection string
+      return new PrismaPg({ connectionString: options.url })
     }
 
     if (provider === 'mysql' || provider === 'mariadb') {

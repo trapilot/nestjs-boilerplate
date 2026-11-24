@@ -25,6 +25,7 @@ export enum EnumAuthAbilitySubject {
   CUSTOMER = 'CUSTOMER',
   CUSTOMER_PUSH = 'CUSTOMER_PUSH',
   CUSTOMER_NOTIFICATION = 'CUSTOMER_NOTIFICATION',
+  ACTIVITY_LOG = 'ACTIVITY_LOG',
 }
 
 export enum EnumAuthAbilityContext {

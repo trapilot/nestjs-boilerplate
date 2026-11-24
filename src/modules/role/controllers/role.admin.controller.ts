@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { EnumRoleType, Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import {
@@ -17,6 +18,8 @@ import {
   RequestQueryFilterInBoolean,
   RequestQueryList,
 } from 'lib/nest-web'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { ROLE_DOC_ADMIN_QUERY_LIST, ROLE_DOC_OPERATION } from '../constants/role.doc.constant'
 import { RequestRoleType } from '../decorators/role.type.decorator'
 import { RoleRequestCreateDto } from '../dtos/role.request.create.dto'
@@ -24,12 +27,24 @@ import { RoleRequestUpdateDto } from '../dtos/role.request.update.dto'
 import { RoleResponseDetailDto, RoleResponseListDto } from '../dtos/role.response.detail.dto'
 import { RoleLimitedTypePipe } from '../pipes/role.limited-type.pipe'
 import { RoleNotSelfPipe } from '../pipes/role.not-self.pipe'
+import { TRole } from '../interfaces/role.interface'
 import { RoleService } from '../services/role.service'
 
 @ApiTags(ROLE_DOC_OPERATION)
 @Controller({ path: '/roles' })
 export class RoleAdminController {
-  constructor(protected readonly roleService: RoleService) {}
+  constructor(
+    protected readonly roleService: RoleService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin role event from the role row (prepare validates the contract). */
+  private prepareActivityLog(action: EnumActivityLogAction, role: TRole): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: role.id, name: role.name, type: role.type, isActive: role.isActive ?? false },
+    })
+  }
 
   @ApiRequestPaging({
     summary: ROLE_DOC_OPERATION,
@@ -226,6 +241,9 @@ export class RoleAdminController {
     const updated = await this.roleService.update(id, data, {
       policies,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminRoleUpdate, updated),
+    ])
 
     return { data: updated }
   }
@@ -261,6 +279,10 @@ export class RoleAdminController {
     const { policies, ...data } = body
     this.roleService.assertCanManageType(requesterType, data.type ?? EnumRoleType.USER)
     const created = await this.roleService.create({ ...data, createdBy }, { policies })
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminRoleCreate, created),
+    ])
     return { data: created }
   }
 
@@ -285,7 +307,10 @@ export class RoleAdminController {
   })
   @Delete('/:id')
   async delete(@RequestParam('id', RoleLimitedTypePipe) id: number): Promise<IResponseData> {
+    const role = await this.roleService.findOrFail(id)
+    const events = [this.prepareActivityLog(EnumActivityLogAction.adminRoleDelete, role)]
     await this.roleService.delete(id)
+    this.activityLogService.stagePrepared(events)
 
     return { data: { status: true } }
   }
@@ -321,6 +346,9 @@ export class RoleAdminController {
       isActive: true,
       updatedBy,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminRoleUpdateStatus, updated),
+    ])
 
     return { data: updated }
   }
@@ -356,6 +384,9 @@ export class RoleAdminController {
       isActive: false,
       updatedBy,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminRoleUpdateStatus, updated),
+    ])
 
     return { data: updated }
   }

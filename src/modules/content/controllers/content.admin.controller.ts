@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -21,6 +22,8 @@ import {
   CONTENT_DOC_ADMIN_QUERY_LIST,
   CONTENT_DOC_OPERATION,
 } from '../constants/content.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { ContentRequestCreateDto } from '../dtos/content.request.create.dto'
 import { ContentRequestUpdateDto } from '../dtos/content.request.update.dto'
 import {
@@ -32,7 +35,22 @@ import { ContentService } from '../services/content.service'
 @ApiTags(CONTENT_DOC_OPERATION)
 @Controller({ path: '/contents' })
 export class ContentAdminController {
-  constructor(protected readonly contentService: ContentService) {}
+  constructor(
+    protected readonly contentService: ContentService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin content event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number; isActive?: boolean | null },
+    withStatus = false,
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: row.id, ...(withStatus ? { isActive: row.isActive ?? false } : {}) },
+    })
+  }
 
   @ApiRequestPaging({
     summary: CONTENT_DOC_OPERATION,
@@ -152,6 +170,10 @@ export class ContentAdminController {
       ...body,
       createdBy,
     })
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminContentCreate, created),
+    ])
     return { data: created }
   }
 
@@ -187,6 +209,9 @@ export class ContentAdminController {
       ...body,
       updatedBy,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminContentUpdate, updated),
+    ])
 
     return { data: updated }
   }
@@ -213,7 +238,10 @@ export class ContentAdminController {
   })
   @Delete('/:id')
   async delete(@RequestParam('id') id: number): Promise<IResponseData> {
+    const content = await this.contentService.findOrFail(id)
+    const events = [this.prepareActivityLog(EnumActivityLogAction.adminContentDelete, content)]
     await this.contentService.delete(id)
+    this.activityLogService.stagePrepared(events)
     return { data: { id } }
   }
 
@@ -248,6 +276,9 @@ export class ContentAdminController {
       isActive: true,
       updatedBy,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminContentUpdateStatus, updated, true),
+    ])
 
     return { data: updated }
   }
@@ -283,6 +314,9 @@ export class ContentAdminController {
       isActive: false,
       updatedBy,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminContentUpdateStatus, updated, true),
+    ])
 
     return { data: updated }
   }

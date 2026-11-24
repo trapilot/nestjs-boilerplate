@@ -27,6 +27,7 @@ import { NotificationModule } from 'modules/notification/notification.module'
 import { SettingCheckMaintenanceMiddleware } from 'modules/setting/middleware/setting.check-maintenance.middleware'
 import { SettingModule } from 'modules/setting/setting.module'
 import configs from '../configs'
+import { ActivityLogModule } from 'modules/activity-log/activity-log.module'
 import { DataMockModule } from './data/data.mock.module'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from './enums/user.enum'
 import { UserAbilityFactory } from './helpers/user.ability.factory'
@@ -136,6 +137,7 @@ import { RoutesWebModule } from './routes/routes.web.module'
       },
     }),
 
+    ActivityLogModule, // global: activity log service + flush interceptor
     DataMockModule, // NOTE: remove before make a new build, it's used to fake user's behavior
   ],
 })

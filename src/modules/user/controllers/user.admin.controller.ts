@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { EnumRoleType, Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, AuthUtil, EnumAuthScopeType } from 'lib/nest-auth'
 import {
@@ -21,33 +22,28 @@ import {
 } from 'lib/nest-core'
 import {
   ApiRequestData,
-  ApiRequestList,
   ApiRequestPaging,
   IResponseData,
-  IResponseList,
   IResponsePaging,
   RequestBody,
   RequestBookType,
   RequestFilterDto,
   RequestListDto,
   RequestParam,
-  RequestQuery,
   RequestQueryFilterContain,
   RequestQueryFilterEqual,
   RequestQueryFilterInBoolean,
   RequestQueryList,
-  RequestRequiredMonthPipe,
   RequestRequiredPipe,
-  RequestRequiredYearPipe,
 } from 'lib/nest-web'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { USER_UPLOAD_IMAGE_PATH } from '../constants/users.constant'
 import { USER_DOC_ADMIN_QUERY_LIST, USER_DOC_OPERATION } from '../constants/users.doc.constant'
 import { UserRequestChangeAvatarDto } from '../dtos/user.request.change-avatar.dto'
 import { UserRequestCreateDto } from '../dtos/user.request.create.dto'
 import { UserRequestUpdateDto } from '../dtos/user.request.update.dto'
 import { UserResponseDetailDto, UserResponseListDto } from '../dtos/user.response.detail.dto'
-import { UserResponseLoginHistoryDto } from '../dtos/user.response.login-history.dto'
-import { EnumUserActivityAction } from '../enums/user.enum'
 import { RoleService } from 'modules/role/services/role.service'
 import { UserService } from '../services/user.service'
 
@@ -59,7 +55,39 @@ export class UserAdminController {
     protected readonly userService: UserService,
     protected readonly helperService: HelperService,
     protected readonly roleService: RoleService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
+
+  /**
+   * Prepares the rows of an admin acting on a staff user: the actor row (owner = JWT admin) and,
+   * unless the admin acts on their own account, the target row on the affected user.
+   */
+  private prepareActivityLogs(
+    actorAction: EnumActivityLogAction,
+    targetAction: EnumActivityLogAction,
+    userId: number,
+    actorUserId: number,
+    isActive?: boolean,
+  ): IActivityLogStagedEvent[] {
+    const status = isActive === undefined ? {} : { isActive }
+    const events = [
+      this.activityLogService.prepare({
+        action: actorAction,
+        metadata: { userId, ...status },
+      }),
+    ]
+    if (userId !== actorUserId) {
+      events.push(
+        this.activityLogService.prepare({
+          action: targetAction,
+          userId,
+          createdBy: actorUserId,
+          metadata: { actorUserId, ...status },
+        }),
+      )
+    }
+    return events
+  }
 
   @ApiRequestPaging({
     summary: USER_DOC_OPERATION,
@@ -154,64 +182,6 @@ export class UserAdminController {
     return { data: user }
   }
 
-  @ApiRequestList({
-    summary: USER_DOC_OPERATION,
-    sortable: false,
-    searchable: false,
-    exportable: false,
-    docExclude: false,
-    docExpansion: false,
-    jwtAccessToken: {
-      scope: EnumAuthScopeType.USER,
-      user: {
-        synchronize: false,
-        require: true,
-        abilities: [
-          {
-            subject: EnumAuthAbilitySubject.USER,
-            actions: [EnumAuthAbilityAction.READ],
-          },
-        ],
-      },
-    },
-    response: {
-      dto: UserResponseLoginHistoryDto,
-    },
-  })
-  @Get('/:id/login-histories')
-  async getLoginHistories(
-    @RequestQueryList({
-      defaultOrderBy: 'id:desc',
-      availableOrderBy: ['id'],
-    })
-    { _search, _kwargs }: RequestListDto,
-    @RequestBookType() bookType: EnumFileExtensionDocument,
-    @RequestParam('id') id: number,
-    @RequestQuery('month', { pipes: [RequestRequiredMonthPipe] }) month: number,
-    @RequestQuery('year', { pipes: [RequestRequiredYearPipe] }) year: number,
-  ): Promise<IResponseList> {
-    const nowDate = this.helperService.dateNow()
-    const reqDate = this.helperService.dateSet(nowDate, { year, month })
-    const dateRange = this.helperService.dateRange(reqDate)
-
-    const kwargs: Prisma.UserActivityFindManyArgs = {
-      ..._kwargs,
-      where: {
-        ..._search,
-        userId: id,
-        action: EnumUserActivityAction.LOGIN_CREDENTIAL,
-        createdAt: {
-          gte: dateRange.startOfMonth,
-          lte: dateRange.endOfMonth,
-        },
-      },
-    }
-
-    return await this.userService.getActivities(kwargs, {
-      document: bookType,
-    })
-  }
-
   @ApiRequestData({
     summary: USER_DOC_OPERATION,
     docExclude: false,
@@ -252,6 +222,7 @@ export class UserAdminController {
       ]),
     )
     file: IFile,
+    @AuthJwtPayload('user.id') createdBy: number,
     @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
   ): Promise<IResponseData> {
     const { roleId, password, ...data } = body
@@ -264,6 +235,15 @@ export class UserAdminController {
         avatar: file?.path ?? undefined,
       },
       { roleId },
+    )
+    // Autoincrement id: the events can only be prepared once the row exists
+    this.activityLogService.stagePrepared(
+      this.prepareActivityLogs(
+        EnumActivityLogAction.adminUserCreate,
+        EnumActivityLogAction.userCreatedByAdmin,
+        created.id,
+        createdBy,
+      ),
     )
 
     return {
@@ -329,7 +309,15 @@ export class UserAdminController {
       data.password = authPassword.passwordHash
     }
 
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminUserUpdate,
+      EnumActivityLogAction.userUpdatedByAdmin,
+      id,
+      userId,
+      data.isActive,
+    )
     const updated = await this.userService.update(id, data, { roleId })
+    this.activityLogService.stagePrepared(events)
     return {
       data: updated,
     }
@@ -379,11 +367,18 @@ export class UserAdminController {
     )
     file: IFile,
   ): Promise<IResponseData> {
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminUserUpdatePhotoProfile,
+      EnumActivityLogAction.userUpdatePhotoProfileByAdmin,
+      id,
+      updatedBy,
+    )
     const user = await this.userService.findOrFail(id)
     const updated = await this.userService.changeAvatar(user, {
       avatar: file?.path ?? undefined,
       updatedBy,
     })
+    this.activityLogService.stagePrepared(events)
 
     return {
       data: updated,

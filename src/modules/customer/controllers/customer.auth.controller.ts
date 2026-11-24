@@ -1,6 +1,7 @@
 import { Controller, HttpStatus, Inject, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { EnumVerificationChannel, EnumVerificationMethod } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import {
   AuthJwtPayload,
   AuthJwtToken,
@@ -24,6 +25,7 @@ import {
   RequestUserOTT,
   RequestUserToken,
 } from 'lib/nest-web'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { IResult } from 'ua-parser-js'
 import { CUSTOMER_AUTH_VALIDATOR } from '../constants/customer.constant'
 import { CUSTOMER_DOC_AUTH_OPERATION } from '../constants/customer.doc.constant'
@@ -44,6 +46,7 @@ export class CustomerAuthController {
   constructor(
     @Inject(CUSTOMER_AUTH_VALIDATOR) protected readonly customerAuth: CustomerAuth,
     protected readonly customerService: CustomerService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   @ApiRequestData({
@@ -78,6 +81,13 @@ export class CustomerAuthController {
       },
       this.customerAuth.createPassword(password),
     )
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.activityLogService.prepare({
+        action: EnumActivityLogAction.customerSignedUp,
+        customerId: customer.id,
+      }),
+    ])
 
     return { data: customer }
   }
@@ -254,6 +264,12 @@ export class CustomerAuthController {
     })
 
     const updated = await this.customerAuth.resetPassword(body)
+    this.activityLogService.stagePrepared([
+      this.activityLogService.prepare({
+        action: EnumActivityLogAction.customerResetPassword,
+        customerId: updated.id,
+      }),
+    ])
     return { data: updated }
   }
 
@@ -359,7 +375,7 @@ export class CustomerAuthController {
   async requestResetPasswordPotp(
     @RequestBody() body: CustomerRequestOTPDto,
   ): Promise<IResponseData> {
-    const { locale } = await this.customerAuth.verifyCustomer({ phone: body.phone })
+    const { id, locale } = await this.customerAuth.verifyCustomer({ phone: body.phone })
     const code = await this.customerAuth.sendPOPT(body.phone, {
       method: EnumVerificationMethod.RESET_PASSWORD,
       language: locale,
@@ -369,6 +385,12 @@ export class CustomerAuthController {
       },
       drivers: [],
     })
+    this.activityLogService.stagePrepared([
+      this.activityLogService.prepare({
+        action: EnumActivityLogAction.customerForgotPassword,
+        customerId: id,
+      }),
+    ])
     return { data: { code } }
   }
 

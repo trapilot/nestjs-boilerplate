@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -21,6 +22,8 @@ import {
   DISTRICT_DOC_ADMIN_QUERY_LIST,
   DISTRICT_DOC_OPERATION,
 } from '../constants/district.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { DistrictRequestCreateDto } from '../dtos/district.request.create.dto'
 import { DistrictRequestUpdateDto } from '../dtos/district.request.update.dto'
 import {
@@ -32,7 +35,21 @@ import { DistrictService } from '../services/district.service'
 @ApiTags(DISTRICT_DOC_OPERATION)
 @Controller({ path: '/districts' })
 export class DistrictAdminController {
-  constructor(protected readonly districtService: DistrictService) {}
+  constructor(
+    protected readonly districtService: DistrictService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin district event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number },
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: row.id },
+    })
+  }
 
   @ApiRequestPaging({
     summary: DISTRICT_DOC_OPERATION,
@@ -171,6 +188,10 @@ export class DistrictAdminController {
   @Post('/')
   async create(@RequestBody() body: DistrictRequestCreateDto): Promise<IResponseData> {
     const district = await this.districtService.create(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminDistrictCreate, district),
+    ])
 
     return {
       data: district,
@@ -205,6 +226,9 @@ export class DistrictAdminController {
     @RequestParam('id') id: number,
   ): Promise<IResponseData> {
     const district = await this.districtService.update(id, body)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminDistrictUpdate, district),
+    ])
 
     return {
       data: district,
@@ -235,7 +259,12 @@ export class DistrictAdminController {
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') deletedBy: number,
   ): Promise<IResponseData> {
-    await this.districtService.delete(id, deletedBy)
+    const district = await this.districtService.findOrFail(id)
+    const events = [this.prepareActivityLog(EnumActivityLogAction.adminDistrictDelete, district)]
+    // The service swallows errors and reports failure as false: only log a real delete
+    if (await this.districtService.delete(id, deletedBy)) {
+      this.activityLogService.stagePrepared(events)
+    }
 
     return {
       data: { status: true },

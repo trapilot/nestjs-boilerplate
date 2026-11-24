@@ -24,7 +24,7 @@ export class UserAbilityUtil {
           [EnumAppLanguage.EN]: 'User Management',
           [EnumAppLanguage.VI]: 'Quản lý người dùng',
         },
-        subjects: [EnumAuthAbilitySubject.USER],
+        subjects: [EnumAuthAbilitySubject.USER, EnumAuthAbilitySubject.ACTIVITY_LOG],
       },
 
       [EnumAuthAbilityContext.CUSTOMER_MANAGEMENT]: {
@@ -136,6 +136,10 @@ export class UserAbilityUtil {
         [EnumAppLanguage.EN]: 'Customer Pushes',
         [EnumAppLanguage.VI]: 'Lịch sử gửi tin',
       },
+      [EnumAuthAbilitySubject.ACTIVITY_LOG]: {
+        [EnumAppLanguage.EN]: 'Activity Logs',
+        [EnumAppLanguage.VI]: 'Nhật ký hoạt động',
+      },
     }
   }
 
@@ -177,6 +181,8 @@ export class UserAbilityUtil {
         EnumAuthAbilityAction.UPDATE,
       ],
       [EnumAuthAbilitySubject.PUSH]: [EnumAuthAbilityAction.READ],
+      // Audit trail is append-only: read access only
+      [EnumAuthAbilitySubject.ACTIVITY_LOG]: [EnumAuthAbilityAction.READ],
       [EnumAuthAbilitySubject.PUSH_GROUP]: [
         EnumAuthAbilityAction.READ,
         EnumAuthAbilityAction.CREATE,

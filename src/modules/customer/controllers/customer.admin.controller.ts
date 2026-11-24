@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, UploadedFile } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, AuthUtil, EnumAuthScopeType } from 'lib/nest-auth'
 import {
@@ -26,6 +27,8 @@ import {
   RequestQueryList,
   RequestRequiredPipe,
 } from 'lib/nest-web'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { CUSTOMER_UPLOAD_IMAGE_PATH } from '../constants/customer.constant'
 import {
   CUSTOMER_DOC_ADMIN_QUERY_LIST,
@@ -46,7 +49,34 @@ export class CustomerAdminController {
   constructor(
     protected readonly authUtil: AuthUtil,
     protected readonly customerService: CustomerService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
+
+  /**
+   * Prepares the two rows of an admin acting on a customer: the actor row (owner = JWT admin)
+   * and the target row on the affected customer (createdBy = the admin).
+   */
+  private prepareActivityLogs(
+    actorAction: EnumActivityLogAction,
+    targetAction: EnumActivityLogAction,
+    customerId: number,
+    actorUserId: number,
+    isActive?: boolean,
+  ): IActivityLogStagedEvent[] {
+    const status = isActive === undefined ? {} : { isActive }
+    return [
+      this.activityLogService.prepare({
+        action: actorAction,
+        metadata: { customerId, ...status },
+      }),
+      this.activityLogService.prepare({
+        action: targetAction,
+        customerId,
+        createdBy: actorUserId,
+        metadata: { actorUserId, ...status },
+      }),
+    ]
+  }
 
   @ApiRequestPaging({
     summary: CUSTOMER_DOC_OPERATION,
@@ -225,6 +255,15 @@ export class CustomerAdminController {
       { ...body, avatar: file?.path ?? undefined, createdBy },
       passwordHash,
     )
+    // Autoincrement id: the events can only be prepared once the row exists
+    this.activityLogService.stagePrepared(
+      this.prepareActivityLogs(
+        EnumActivityLogAction.adminCustomerCreate,
+        EnumActivityLogAction.customerCreatedByAdmin,
+        customer.id,
+        createdBy,
+      ),
+    )
 
     return {
       data: customer,
@@ -259,6 +298,12 @@ export class CustomerAdminController {
     @RequestParam('id') customerId: number,
     @AuthJwtPayload('user.id') updatedBy: number,
   ): Promise<IResponseData> {
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminCustomerUpdate,
+      EnumActivityLogAction.customerUpdatedByAdmin,
+      customerId,
+      updatedBy,
+    )
     let password = undefined
     if (body?.password) {
       const { passwordHash } = this.authUtil.passwordCreate(body.password)
@@ -270,6 +315,7 @@ export class CustomerAdminController {
       password,
       updatedBy,
     })
+    this.activityLogService.stagePrepared(events)
 
     return {
       data: customer,
@@ -299,8 +345,19 @@ export class CustomerAdminController {
     },
   })
   @Put('/:id/inactive')
-  async inactive(@RequestParam('id') id: number): Promise<IResponseData> {
+  async inactive(
+    @RequestParam('id') id: number,
+    @AuthJwtPayload('user.id') updatedBy: number,
+  ): Promise<IResponseData> {
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminCustomerUpdateStatus,
+      EnumActivityLogAction.customerBlocked,
+      id,
+      updatedBy,
+      false,
+    )
     const customer = await this.customerService.inactive(id)
+    this.activityLogService.stagePrepared(events)
     return { data: customer }
   }
 
@@ -327,8 +384,19 @@ export class CustomerAdminController {
     },
   })
   @Put('/:id/active')
-  async active(@RequestParam('id') id: number): Promise<IResponseData> {
+  async active(
+    @RequestParam('id') id: number,
+    @AuthJwtPayload('user.id') updatedBy: number,
+  ): Promise<IResponseData> {
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminCustomerUpdateStatus,
+      EnumActivityLogAction.customerUpdateStatus,
+      id,
+      updatedBy,
+      true,
+    )
     const customer = await this.customerService.active(id)
+    this.activityLogService.stagePrepared(events)
     return { data: customer }
   }
 
@@ -375,11 +443,18 @@ export class CustomerAdminController {
     )
     file: IFile,
   ): Promise<IResponseData> {
+    const events = this.prepareActivityLogs(
+      EnumActivityLogAction.adminCustomerUpdatePhotoProfile,
+      EnumActivityLogAction.customerUpdatePhotoProfileByAdmin,
+      customerId,
+      updatedBy,
+    )
     const customer = await this.customerService.findOrFail(customerId)
     const updated = await this.customerService.changeAvatar(customer, {
       avatar: file?.path ?? undefined,
       updatedBy,
     })
+    this.activityLogService.stagePrepared(events)
 
     return {
       data: updated,

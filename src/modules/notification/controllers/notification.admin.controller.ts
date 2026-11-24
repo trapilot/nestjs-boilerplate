@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -21,6 +22,8 @@ import {
   NOTIFICATION_DOC_ADMIN_QUERY_LIST,
   NOTIFICATION_DOC_OPERATION,
 } from '../constants/notification.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { NotificationRequestCreateDto } from '../dtos/notification.request.create.dto'
 import { NotificationRequestUpdateDto } from '../dtos/notification.request.update.dto'
 import {
@@ -33,7 +36,22 @@ import { NotificationService } from '../services/notification.service'
 @ApiTags(NOTIFICATION_DOC_OPERATION)
 @Controller({ path: '/notifications' })
 export class NotificationAdminController {
-  constructor(protected readonly notificationService: NotificationService) {}
+  constructor(
+    protected readonly notificationService: NotificationService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin notification event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number; isActive?: boolean | null },
+    withStatus = false,
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: row.id, ...(withStatus ? { isActive: row.isActive ?? false } : {}) },
+    })
+  }
 
   @ApiRequestPaging({
     summary: NOTIFICATION_DOC_OPERATION,
@@ -178,6 +196,13 @@ export class NotificationAdminController {
   @Put('/:id/inactive')
   async inactive(@RequestParam('id') id: number): Promise<IResponseData> {
     const notification = await this.notificationService.inactive(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(
+        EnumActivityLogAction.adminNotificationUpdateStatus,
+        notification,
+        true,
+      ),
+    ])
     return { data: notification }
   }
 
@@ -206,6 +231,13 @@ export class NotificationAdminController {
   @Put('/:id/active')
   async active(@RequestParam('id') id: number): Promise<IResponseData> {
     const notification = await this.notificationService.active(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(
+        EnumActivityLogAction.adminNotificationUpdateStatus,
+        notification,
+        true,
+      ),
+    ])
     return { data: notification }
   }
 
@@ -242,6 +274,10 @@ export class NotificationAdminController {
         },
       },
     })
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminNotificationCreate, notification),
+    ])
 
     return {
       data: notification,
@@ -284,6 +320,9 @@ export class NotificationAdminController {
         },
       },
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminNotificationUpdate, notification),
+    ])
 
     return {
       data: notification,
@@ -314,7 +353,14 @@ export class NotificationAdminController {
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') deletedBy: number,
   ): Promise<IResponseData> {
-    await this.notificationService.delete(id, deletedBy)
+    const notification = await this.notificationService.findOrFail(id)
+    const events = [
+      this.prepareActivityLog(EnumActivityLogAction.adminNotificationDelete, notification),
+    ]
+    // The service swallows errors and reports failure as false: only log a real delete
+    if (await this.notificationService.delete(id, deletedBy)) {
+      this.activityLogService.stagePrepared(events)
+    }
 
     return {
       data: { status: true },

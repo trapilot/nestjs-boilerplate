@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EnumVerificationChannel, Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { plainToInstance } from 'class-transformer'
 import {
   AuthResponseLoginDto,
@@ -31,12 +32,12 @@ import {
   ScopeContext,
   SmsDispatcher,
 } from 'lib/nest-core'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { PrismaService, PrismaUtil } from 'lib/nest-prisma'
 import { CustomerChangePasswordRequestDto } from '../dtos/customer.request.change-password.dto'
 import { CustomerResetPasswordRequestDto } from '../dtos/customer.request.reset-password.dto'
 import { CustomerSignInRequestDto } from '../dtos/customer.request.sign-in.dto'
 import { CustomerResponsePayloadDto } from '../dtos/customer.response.payload.dto'
-import { EnumCustomerActivityAction } from '../enums/customer.enum'
 import {
   ICustomerVerifyApproveOptions,
   ICustomerVerifyCheckOptions,
@@ -62,6 +63,7 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
     private readonly authUtil: AuthUtil,
     private readonly authTwoFactorUtil: AuthTwoFactorUtil,
     private readonly customerUtil: CustomerUtil,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   async validatePayload(
@@ -124,6 +126,14 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
 
     const validate = await this.authUtil.passwordVerify(dto.password, customer.password)
     if (!validate) {
+      // Recorded even though the request fails (onError)
+      this.activityLogService.stagePrepared([
+        this.activityLogService.prepare({
+          action: EnumActivityLogAction.customerLoginFailed,
+          customerId: customer.id,
+          onError: true,
+        }),
+      ])
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'auth.error.passwordNotMatch',
@@ -165,6 +175,13 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
         seconds: session.tokens.refreshIn,
       })
 
+      const events = [
+        this.activityLogService.prepare({
+          action: CustomerUtil.getActivityLogin(options.userSession.loginType),
+          customerId: customer.id,
+        }),
+      ]
+
       await Promise.all([
         this.authUtil.setLogin(options.userSession.scopeType, {
           userId: customer.id.toString(),
@@ -188,13 +205,6 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
                 userAgent: PrismaUtil.toPlainObject(options.userAgent),
               },
             },
-            activities: {
-              create: {
-                action: CustomerUtil.getActivityLogin(options.userSession.loginType),
-                ipAddress: options.userIp,
-                userAgent: PrismaUtil.toPlainObject(options.userAgent),
-              },
-            },
             devices: {
               create: {
                 type: options.userAgent?.device?.type ?? null,
@@ -209,6 +219,7 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
           },
         }),
       ])
+      this.activityLogService.stagePrepared(events)
 
       return {
         isTwoFactorEnable: false,
@@ -235,7 +246,7 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
   async refresh(
     customer: TCustomer,
     refreshToken: string,
-    options: Omit<IAuthLoginOptions, 'userSession'>,
+    _options: Omit<IAuthLoginOptions, 'userSession'>,
   ): Promise<AuthResponseTokenDto> {
     const refreshPayload = this.authUtil.payloadToken<CustomerResponsePayloadDto>(refreshToken)
 
@@ -260,6 +271,13 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
     try {
       const payload = this.serializeUserData(customer)
       const session = this.authUtil.createSession(payload, refreshPayload)
+
+      const events = [
+        this.activityLogService.prepare({
+          action: EnumActivityLogAction.customerRefreshToken,
+          customerId: customer.id,
+        }),
+      ]
 
       await Promise.all([
         this.authUtil.updateLogin(
@@ -286,16 +304,10 @@ export class CustomerAuth implements IAuthValidator<TCustomer> {
                 },
               },
             },
-            activities: {
-              create: {
-                action: EnumCustomerActivityAction.REFRESH_TOKEN,
-                ipAddress: options.userIp,
-                userAgent: PrismaUtil.toPlainObject(options.userAgent),
-              },
-            },
           },
         }),
       ])
+      this.activityLogService.stagePrepared(events)
 
       return session.tokens
     } catch (err: unknown) {

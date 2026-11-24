@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { UserAbilityUtil } from 'app/helpers/user.ability.util'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
@@ -16,6 +17,8 @@ import {
   RequestQueryFilterInBoolean,
   RequestQueryList,
 } from 'lib/nest-web'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { POLICY_DOC_ADMIN_QUERY_LIST, POLICY_DOC_OPERATION } from '../constants/policy.doc.constant'
 import { PolicyRequestCreateDto } from '../dtos/policy.request.create.dto'
 import { PolicyRequestUpdateDto } from '../dtos/policy.request.update.dto'
@@ -25,7 +28,21 @@ import { PolicyService } from '../services/policy.service'
 @ApiTags(POLICY_DOC_OPERATION)
 @Controller({ path: '/policies' })
 export class PolicyAdminController {
-  constructor(protected readonly policyService: PolicyService) {}
+  constructor(
+    protected readonly policyService: PolicyService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin policy event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number },
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: row.id },
+    })
+  }
 
   @ApiRequestList({
     summary: POLICY_DOC_OPERATION,
@@ -138,6 +155,9 @@ export class PolicyAdminController {
     }
 
     const updated = await this.policyService.update(id, data)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminPolicyUpdate, updated),
+    ])
 
     return { data: updated }
   }
@@ -177,6 +197,10 @@ export class PolicyAdminController {
     }
 
     const created = await this.policyService.create(data)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminPolicyCreate, created),
+    ])
     return { data: created }
   }
 }

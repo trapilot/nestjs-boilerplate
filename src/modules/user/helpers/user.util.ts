@@ -1,5 +1,5 @@
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthLoginType } from 'lib/nest-auth'
-import { EnumUserActivityAction } from '../enums/user.enum'
 import { IUserDataRole, IUserTransformData } from '../interfaces/user.auth.interface'
 
 export class UserUtil {
@@ -9,13 +9,14 @@ export class UserUtil {
     return role?.isActive ? role : undefined
   }
 
-  static getActivityLogin(loginType: EnumAuthLoginType): EnumUserActivityAction {
-    let action: EnumUserActivityAction = undefined
+  static getActivityLogin(loginType: EnumAuthLoginType): EnumActivityLogAction {
     switch (loginType) {
-      case EnumAuthLoginType.CREDENTIAL:
-        action = EnumUserActivityAction.LOGIN_CREDENTIAL
-        break
+      case EnumAuthLoginType.SOCIAL_GOOGLE:
+        return EnumActivityLogAction.userLoginGoogle
+      case EnumAuthLoginType.SOCIAL_APPLE:
+        return EnumActivityLogAction.userLoginApple
+      default:
+        return EnumActivityLogAction.userLoginCredential
     }
-    return action
   }
 }

@@ -1,10 +1,10 @@
 import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EnumVerificationChannel } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthLoginType } from 'lib/nest-auth'
 import { HelperService } from 'lib/nest-core'
 import { PrismaService } from 'lib/nest-prisma'
-import { EnumCustomerActivityAction } from '../enums/customer.enum'
 import {
   ICustomerVerifyApproveOptions,
   ICustomerVerifyCheckOptions,
@@ -179,19 +179,14 @@ export class CustomerUtil {
     return { expired: untilDate, code }
   }
 
-  static getActivityLogin(loginType: EnumAuthLoginType): EnumCustomerActivityAction {
-    let action: EnumCustomerActivityAction = undefined
+  static getActivityLogin(loginType: EnumAuthLoginType): EnumActivityLogAction {
     switch (loginType) {
-      case EnumAuthLoginType.CREDENTIAL:
-        action = EnumCustomerActivityAction.LOGIN_CREDENTIAL
-        break
       case EnumAuthLoginType.SOCIAL_GOOGLE:
-        action = EnumCustomerActivityAction.LOGIN_GOOGLE
-        break
+        return EnumActivityLogAction.customerLoginGoogle
       case EnumAuthLoginType.SOCIAL_APPLE:
-        action = EnumCustomerActivityAction.LOGIN_APPLE
-        break
+        return EnumActivityLogAction.customerLoginApple
+      default:
+        return EnumActivityLogAction.customerLoginCredential
     }
-    return action
   }
 }

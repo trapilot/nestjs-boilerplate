@@ -31,6 +31,8 @@ export interface IScopeContextData {
   readonly logger?: {
     readonly context: string
   }
+  // Mutable per-request carrier (e.g. staged activity-log events); absent outside HTTP requests
+  readonly store?: Map<string, unknown>
 }
 
 export interface IAppRule<T> {

@@ -1,8 +1,10 @@
 import { Controller, Delete, Get, Put, UploadedFile } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionImage, FileExtensionPipe, IFile } from 'lib/nest-core'
 import { ApiRequestData, IResponseData, RequestBody, RequestRequiredPipe } from 'lib/nest-web'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { CUSTOMER_UPLOAD_IMAGE_PATH } from '../constants/customer.constant'
 import { CUSTOMER_DOC_OPERATION } from '../constants/customer.doc.constant'
 import { CustomerCloseProfileRequestDto } from '../dtos/customer.request.close-profile.dto'
@@ -13,7 +15,10 @@ import { CustomerService } from '../services/customer.service'
 @ApiTags(CUSTOMER_DOC_OPERATION)
 @Controller({ version: '1', path: '/customer' })
 export class CustomerAppController {
-  constructor(protected readonly customerService: CustomerService) {}
+  constructor(
+    protected readonly customerService: CustomerService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
 
   @ApiRequestData({
     summary: CUSTOMER_DOC_OPERATION,
@@ -60,7 +65,11 @@ export class CustomerAppController {
     @RequestBody() body: CustomerEditProfileRequestDto,
     @AuthJwtPayload('user.id') customerId: number,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.customerUpdateProfile,
+    })
     const profile = await this.customerService.editProfile(customerId, body)
+    this.activityLogService.stagePrepared([event])
 
     return { data: profile }
   }
@@ -84,7 +93,11 @@ export class CustomerAppController {
     @RequestBody() body: CustomerCloseProfileRequestDto,
     @AuthJwtPayload('user.id') customerId: number,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.customerDeleteSelf,
+    })
     await this.customerService.closeProfile(customerId, body.reasons)
+    this.activityLogService.stagePrepared([event])
 
     return { data: { id: customerId } }
   }
@@ -125,9 +138,13 @@ export class CustomerAppController {
     )
     file: IFile,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.customerUpdatePhotoProfile,
+    })
     await this.customerService.update(customerId, {
       avatar: file?.path,
     })
+    this.activityLogService.stagePrepared([event])
     const profile = await this.customerService.getProfile(customerId)
     return { data: profile }
   }

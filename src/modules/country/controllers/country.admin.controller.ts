@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -21,6 +22,8 @@ import {
   COUNTRY_DOC_ADMIN_QUERY_LIST,
   COUNTRY_DOC_OPERATION,
 } from '../constants/country.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { CountryRequestCreateDto } from '../dtos/country.request.create.dto'
 import { CountryRequestUpdateDto } from '../dtos/country.request.update.dto'
 import {
@@ -32,7 +35,21 @@ import { CountryService } from '../services/country.service'
 @ApiTags(COUNTRY_DOC_OPERATION)
 @Controller({ path: '/countries' })
 export class CountryAdminController {
-  constructor(protected readonly countryService: CountryService) {}
+  constructor(
+    protected readonly countryService: CountryService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin country event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number; name?: string | null },
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: row.id, name: row.name ?? undefined },
+    })
+  }
 
   @ApiRequestPaging({
     summary: COUNTRY_DOC_OPERATION,
@@ -171,6 +188,10 @@ export class CountryAdminController {
   @Post('/')
   async create(@RequestBody() body: CountryRequestCreateDto): Promise<IResponseData> {
     const country = await this.countryService.create(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminCountryCreate, country),
+    ])
 
     return {
       data: country,
@@ -205,6 +226,9 @@ export class CountryAdminController {
     @RequestParam('id') id: number,
   ): Promise<IResponseData> {
     const country = await this.countryService.update(id, body)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminCountryUpdate, country),
+    ])
 
     return {
       data: country,
@@ -235,7 +259,12 @@ export class CountryAdminController {
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') deletedBy: number,
   ): Promise<IResponseData> {
-    await this.countryService.delete(id, deletedBy)
+    const country = await this.countryService.findOrFail(id)
+    const events = [this.prepareActivityLog(EnumActivityLogAction.adminCountryDelete, country)]
+    // The service swallows errors and reports failure as false: only log a real delete
+    if (await this.countryService.delete(id, deletedBy)) {
+      this.activityLogService.stagePrepared(events)
+    }
 
     return {
       data: { status: true },

@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -21,6 +22,8 @@ import {
   APP_VERSION_DOC_ADMIN_QUERY_LIST,
   APP_VERSION_DOC_OPERATION,
 } from '../constants/app-version.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { AppVersionRequestCreateDto } from '../dtos/app-version.request.create.dto'
 import { AppVersionRequestUpdateDto } from '../dtos/app-version.request.update.dto'
 import {
@@ -32,7 +35,26 @@ import { AppVersionService } from '../services/app-version.service'
 @ApiTags(APP_VERSION_DOC_OPERATION)
 @Controller({ path: '/app-versions' })
 export class AppVersionAdminController {
-  constructor(protected readonly appVersionService: AppVersionService) {}
+  constructor(
+    protected readonly appVersionService: AppVersionService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin app version event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number; name?: string | null; isActive?: boolean | null },
+    withStatus = false,
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: {
+        id: row.id,
+        name: row.name ?? undefined,
+        ...(withStatus ? { isActive: row.isActive ?? false } : {}),
+      },
+    })
+  }
 
   @ApiRequestPaging({
     summary: APP_VERSION_DOC_OPERATION,
@@ -170,6 +192,10 @@ export class AppVersionAdminController {
   @Post('/')
   async create(@RequestBody() body: AppVersionRequestCreateDto): Promise<IResponseData> {
     const appVersion = await this.appVersionService.create(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminAppVersionCreate, appVersion),
+    ])
 
     return {
       data: appVersion,
@@ -204,6 +230,9 @@ export class AppVersionAdminController {
     @RequestParam('id') id: number,
   ): Promise<IResponseData> {
     const appVersion = await this.appVersionService.update(id, body)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminAppVersionUpdate, appVersion),
+    ])
 
     return {
       data: appVersion,
@@ -235,6 +264,9 @@ export class AppVersionAdminController {
   @Put('/:id/inactive')
   async inactive(@RequestParam('id') id: number): Promise<IResponseData> {
     const appVersion = await this.appVersionService.inactive(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminAppVersionUpdateStatus, appVersion, true),
+    ])
 
     return {
       data: appVersion,
@@ -266,6 +298,9 @@ export class AppVersionAdminController {
   @Put('/:id/active')
   async active(@RequestParam('id') id: number): Promise<IResponseData> {
     const appVersion = await this.appVersionService.active(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminAppVersionUpdateStatus, appVersion, true),
+    ])
 
     return {
       data: appVersion,
@@ -296,7 +331,14 @@ export class AppVersionAdminController {
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') deletedBy: number,
   ): Promise<IResponseData> {
-    await this.appVersionService.delete(id, deletedBy)
+    const appVersion = await this.appVersionService.findOrFail(id)
+    const events = [
+      this.prepareActivityLog(EnumActivityLogAction.adminAppVersionDelete, appVersion),
+    ]
+    // The service swallows errors and reports failure as false: only log a real delete
+    if (await this.appVersionService.delete(id, deletedBy)) {
+      this.activityLogService.stagePrepared(events)
+    }
 
     return {
       data: { status: true },

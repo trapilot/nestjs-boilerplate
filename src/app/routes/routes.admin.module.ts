@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ActivityLogAdminController } from 'modules/activity-log/controllers/activity-log.admin.controller'
 import { ApiKeyModule } from 'modules/api-key/api-key.module'
 import { ApiKeyAdminController } from 'modules/api-key/controllers/api-key.admin.controller'
 import { AppVersionModule } from 'modules/app-version/app-version.module'
@@ -25,6 +26,7 @@ import { UserModule } from 'modules/user/user.module'
   controllers: [
     UserAuthController,
     UserAdminController,
+    ActivityLogAdminController,
     SettingAdminController,
     DashboardAdminController,
     ApiKeyAdminController,

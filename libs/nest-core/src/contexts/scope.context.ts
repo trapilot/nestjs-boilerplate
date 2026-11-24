@@ -35,9 +35,36 @@ export class ScopeContext {
     return ctx?.[key] ?? def
   }
 
-  static getReqData(): IScopeContextData['http'] | undefined {
-    const ctx = this.current()
-    return ctx?.http
+  /** Value from the per-request store; undefined outside an HTTP request. */
+  static getStoreValue<T>(key: string): T | undefined {
+    return this.current()?.store?.get(key) as T | undefined
+  }
+
+  /** Sets a per-request store value; returns false when there is no request store. */
+  static setStoreValue<T>(key: string, value: T): boolean {
+    const store = this.current()?.store
+    if (!store) {
+      return false
+    }
+    store.set(key, value)
+    return true
+  }
+
+  /**
+   * Request data of the current HTTP context. Falls back to app defaults when there is none
+   * (e.g. a request that never passed the context middleware), so error paths that build
+   * response metadata can never throw and crash the process.
+   */
+  static getReqData(): IScopeContextData['http'] {
+    return (
+      this.current()?.http ?? {
+        route: '',
+        version: '',
+        language: APP_LANGUAGE,
+        timezone: APP_TIMEZONE,
+        tenantId: '',
+      }
+    )
   }
 
   static getReqZone(defValue: string = APP_TIMEZONE): string {

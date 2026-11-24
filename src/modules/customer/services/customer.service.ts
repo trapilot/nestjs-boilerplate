@@ -83,10 +83,11 @@ export class CustomerService {
           phoneNumber: phone,
           isEmailVerified: false,
           isPhoneVerified: false,
-          password: authPassword.passwordHash,
           createdAt: nowDate,
           updatedAt: nowDate,
           ...data,
+          // Always last: the hash must win over any raw `password` a caller passed in `data`
+          password: authPassword.passwordHash,
         },
       })
       .catch((err: unknown) => {

@@ -328,9 +328,10 @@ model User {
   createdCustomers         Customer[]          @relation("createdByUser")
   updatedCustomers         Customer[]          @relation("updatedByUser")
   deletedCustomers         Customer[]          @relation("deletedByUser")
+  createdActivityLogs      ActivityLog[]       @relation("ActivityLogCreatedBy")
 
   twoFactor     UserTwoFactor?
-  activities    UserActivity[]
+  activityLogs  ActivityLog[]      @relation("UserActivityLogs")
   sessions      UserSession[]
   verifications UserVerification[]
   role          Role?              @relation("UserRole", fields: [roleId], references: [id])
@@ -361,23 +362,6 @@ model UserTwoFactor {
   user User @relation(fields: [userId], references: [id])
 
   @@map("user_two_factors")
-}
-
-model UserActivity {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  action    String
-  ipAddress String
-  userAgent Json?
-  metadata  Json?
-  createdAt DateTime? @default(now())
-  createdBy Int?
-
-  user User? @relation(fields: [userId], references: [id])
-
-  @@index(fields: [userId])
-  @@index(fields: [createdAt])
-  @@map("user_activities")
 }
 
 model UserSession {
@@ -478,7 +462,7 @@ model Customer {
 
   deletions     CustomerDeletion[]
   sessions      CustomerSession[]
-  activities    CustomerActivity[]
+  activityLogs  ActivityLog[]
   devices       CustomerDevice[]
   verifications CustomerVerification[]
   notifications CustomerNotification[]
@@ -511,23 +495,6 @@ model CustomerTwoFactor {
   customer Customer @relation(fields: [customerId], references: [id])
 
   @@map("customer_two_factors")
-}
-
-model CustomerActivity {
-  id         Int       @id @default(autoincrement())
-  customerId Int
-  action     String
-  ipAddress  String
-  userAgent  Json?
-  metadata   Json?
-  createdAt  DateTime? @default(now())
-  createdBy  Int?
-
-  customer Customer? @relation(fields: [customerId], references: [id])
-
-  @@index(fields: [customerId])
-  @@index(fields: [createdAt])
-  @@map("customer_activities")
 }
 
 model CustomerDeletion {
@@ -670,36 +637,32 @@ model Content {
   @@map("contents")
 }
 
-model HttpLog {
-  id              Int      @id @default(autoincrement())
-  pid             Int?
-  correlationId   String?
-  type            String?
-  level           String?
-  ip              String?
-  protocol        String?
-  hostname        String?
-  method          String?
-  url             String?
-  referrer        String?
-  message         String?
-  language        String?
-  headers         Json?
-  params          Json?
-  query           Json?
-  body            Json?
-  userAgent       String?
-  statusCode      Int?
-  responseHeaders Json?
-  responseTime    Float?
-  rawMetadata     Json?
-  rawRequest      Json?
-  rawResponse     Json?
-  createdAt       DateTime @default(now())
+// Audit trail of user behaviour (see modules/activity-log and CLAUDE.md).
+// A row belongs to exactly one owner: an admin staff User (userId) or a Customer (customerId);
+// the migration adds a CHECK constraint for that. createdBy is the admin User who performed
+// the action, or the owner itself for a staff User acting on itself, or null when a customer
+// acted on itself or the system did.
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  customerId  Int?
+  action      String // EnumActivityLogAction (TS enum in modules/activity-log)
+  description String
+  ipAddress   String?
+  userAgent   Json?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  createdBy   Int?
 
-  @@index([createdAt])
-  @@index([correlationId])
-  @@map("http_logs")
+  user          User?     @relation("UserActivityLogs", fields: [userId], references: [id], onDelete: Restrict)
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  createdByUser User?     @relation("ActivityLogCreatedBy", fields: [createdBy], references: [id])
+
+  @@index([userId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([customerId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([createdBy, createdAt(sort: Desc)])
+  @@map("activity_logs")
 }
 
 enum EnumJobStatus {

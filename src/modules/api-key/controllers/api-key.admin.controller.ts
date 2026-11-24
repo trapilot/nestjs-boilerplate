@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Patch, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { EnumApiKeyType, Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import { EnumFileExtensionDocument } from 'lib/nest-core'
@@ -24,6 +25,8 @@ import {
   API_KEY_DOC_ADMIN_QUERY_LIST,
   API_KEY_DOC_OPERATION,
 } from '../constants/api-key.doc.constant'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { ApiKeyRequestCreateDto } from '../dtos/api-key.request.create.dto'
 import { ApiKeyRequestRenewDto } from '../dtos/api-key.request.renew.dto'
 import { ApiKeyRequestUpdateDto } from '../dtos/api-key.request.update.dto'
@@ -33,7 +36,26 @@ import { ApiKeyService } from '../services/api-key.service'
 @ApiTags(API_KEY_DOC_OPERATION)
 @Controller({ path: '/api-keys' })
 export class ApiKeyAdminController {
-  constructor(protected readonly apiKeyService: ApiKeyService) {}
+  constructor(
+    protected readonly apiKeyService: ApiKeyService,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
+
+  /** Prepares an admin api key event from the row (prepare validates the contract). */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    row: { id: number; name?: string | null; isActive?: boolean | null },
+    withStatus = false,
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: {
+        id: row.id,
+        name: row.name ?? undefined,
+        ...(withStatus ? { isActive: row.isActive ?? false } : {}),
+      },
+    })
+  }
 
   @ApiRequestPaging({
     summary: API_KEY_DOC_OPERATION,
@@ -175,6 +197,10 @@ export class ApiKeyAdminController {
   @Post('/')
   async create(@RequestBody() body: ApiKeyRequestCreateDto): Promise<IResponseData> {
     const apiKey = await this.apiKeyService.create(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyCreate, apiKey),
+    ])
 
     return {
       data: apiKey,
@@ -209,6 +235,9 @@ export class ApiKeyAdminController {
     @RequestParam('id') id: number,
   ): Promise<IResponseData> {
     const apiKey = await this.apiKeyService.update(id, body)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyUpdate, apiKey),
+    ])
 
     return {
       data: apiKey,
@@ -240,6 +269,9 @@ export class ApiKeyAdminController {
   @Patch('/:id/reset')
   async reset(@RequestParam('id') id: number): Promise<IResponseData> {
     const apiKey = await this.apiKeyService.reset(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyReset, apiKey),
+    ])
 
     return {
       data: apiKey,
@@ -278,6 +310,9 @@ export class ApiKeyAdminController {
       startDate: body?.startDate || _apiKey.startDate,
       untilDate: body.untilDate,
     })
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyRenew, apiKey),
+    ])
 
     return {
       data: apiKey,
@@ -309,6 +344,9 @@ export class ApiKeyAdminController {
   @Put('/:id/inactive')
   async inactive(@RequestParam('id') id: number): Promise<IResponseData> {
     const apiKey = await this.apiKeyService.inactive(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyUpdateStatus, apiKey, true),
+    ])
 
     return {
       data: apiKey,
@@ -340,6 +378,9 @@ export class ApiKeyAdminController {
   @Put('/:id/active')
   async active(@RequestParam('id') id: number): Promise<IResponseData> {
     const apiKey = await this.apiKeyService.active(id)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminApiKeyUpdateStatus, apiKey, true),
+    ])
 
     return {
       data: apiKey,
@@ -370,7 +411,12 @@ export class ApiKeyAdminController {
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') deletedBy: number,
   ): Promise<IResponseData> {
-    await this.apiKeyService.delete(id, deletedBy)
+    const apiKey = await this.apiKeyService.findOrFail(id)
+    const events = [this.prepareActivityLog(EnumActivityLogAction.adminApiKeyDelete, apiKey)]
+    // The service swallows errors and reports failure as false: only log a real delete
+    if (await this.apiKeyService.delete(id, deletedBy)) {
+      this.activityLogService.stagePrepared(events)
+    }
 
     return {
       data: { status: true },

@@ -1,5 +1,6 @@
 import { Controller, Get, HttpStatus, Inject, Post, Put, UploadedFile } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import {
   AuthJwtPayload,
   AuthJwtToken,
@@ -23,6 +24,7 @@ import {
   RequestUserIp,
   RequestUserToken,
 } from 'lib/nest-web'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { IResult } from 'ua-parser-js'
 import { USER_UPLOAD_IMAGE_PATH } from '../constants/users.constant'
 import { USER_DOC_AUTH_OPERATION } from '../constants/users.doc.constant'
@@ -40,7 +42,10 @@ import { UserAuth } from '../helpers/user.auth'
 @ApiTags(USER_DOC_AUTH_OPERATION)
 @Controller({ path: '/auth' })
 export class UserAuthController {
-  constructor(@Inject(EnumAuthScopeType.USER) protected readonly userAuth: UserAuth) {}
+  constructor(
+    @Inject(EnumAuthScopeType.USER) protected readonly userAuth: UserAuth,
+    private readonly activityLogService: ActivityLogService,
+  ) {}
 
   @ApiRequestData({
     summary: USER_DOC_AUTH_OPERATION,
@@ -57,6 +62,13 @@ export class UserAuthController {
   @Post('/sign-up')
   async signUp(@RequestBody() body: UserRequestSignUpDto): Promise<IResponseData> {
     const user = await this.userAuth.signUp(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.activityLogService.prepare({
+        action: EnumActivityLogAction.userSignedUp,
+        userId: user.id,
+      }),
+    ])
     return { data: user }
   }
 
@@ -237,7 +249,11 @@ export class UserAuthController {
     @AuthJwtPayload('user.id') userId: number,
   ): Promise<IResponseData> {
     // The role is never editable from the profile endpoint (no self privilege escalation)
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.userUpdateProfile,
+    })
     const profile = await this.userAuth.editProfile(userId, body)
+    this.activityLogService.stagePrepared([event])
     return { data: profile }
   }
 
@@ -296,8 +312,12 @@ export class UserAuthController {
     @RequestBody() body: UserRequestChangePasswordDto,
     @AuthJwtPayload('user.id') userId: number,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.userChangePassword,
+    })
     const user = await this.userAuth.findOrFail(userId)
     const updated = await this.userAuth.changePassword(user, body)
+    this.activityLogService.stagePrepared([event])
     return { data: updated }
   }
 
@@ -342,10 +362,14 @@ export class UserAuthController {
     )
     file: IFile,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.userUpdatePhotoProfile,
+    })
     const user = await this.userAuth.findOrFail(userId)
     const updated = await this.userAuth.changeAvatar(user, {
       avatar: file.path,
     })
+    this.activityLogService.stagePrepared([event])
     return { data: updated }
   }
 
@@ -395,7 +419,11 @@ export class UserAuthController {
   async changeConfirmPassword(
     @RequestBody() body: UserRequestChangeConfirmPasswordDto,
   ): Promise<IResponseData> {
+    const event = this.activityLogService.prepare({
+      action: EnumActivityLogAction.userChangeConfirmPassword,
+    })
     await this.userAuth.changeConfirmPassword(body.password)
+    this.activityLogService.stagePrepared([event])
 
     return {
       data: { success: true },

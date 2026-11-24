@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { Prisma } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { plainToInstance } from 'class-transformer'
 import {
   AuthResponseLoginDto,
@@ -23,12 +24,12 @@ import {
   IAuthValidatorOptions,
 } from 'lib/nest-auth'
 import { FileUtil, HelperService, IRequestApp } from 'lib/nest-core'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import { PrismaService, PrismaUtil } from 'lib/nest-prisma'
 import { UserRequestChangePasswordDto } from '../dtos/user.request.change-password.dto'
 import { UserRequestSignInDto } from '../dtos/user.request.sign-in.dto'
 import { UserRequestSignUpDto } from '../dtos/user.request.sign-up.dto'
 import { UserResponsePayloadDto } from '../dtos/user.response.payload.dto'
-import { EnumUserActivityAction } from '../enums/user.enum'
 import { TUser } from '../interfaces/user.interface'
 import { UserUtil } from './user.util'
 
@@ -50,6 +51,7 @@ export class UserAuth implements IAuthValidator<TUser> {
     private readonly helperService: HelperService,
     private readonly authUtil: AuthUtil,
     private readonly authTwoFactorUtil: AuthTwoFactorUtil,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   @Cron(CronExpression.EVERY_2_HOURS)
@@ -142,6 +144,14 @@ export class UserAuth implements IAuthValidator<TUser> {
 
     const validate = await this.authUtil.passwordVerify(dto.password, user.password)
     if (!validate) {
+      // Recorded even though the request fails (onError)
+      this.activityLogService.stagePrepared([
+        this.activityLogService.prepare({
+          action: EnumActivityLogAction.userLoginFailed,
+          userId: user.id,
+          onError: true,
+        }),
+      ])
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'auth.error.passwordNotMatch',
@@ -184,6 +194,13 @@ export class UserAuth implements IAuthValidator<TUser> {
         seconds: session.tokens.refreshIn,
       })
 
+      const events = [
+        this.activityLogService.prepare({
+          action: UserUtil.getActivityLogin(options.userSession.loginType),
+          userId: user.id,
+        }),
+      ]
+
       await Promise.all([
         this.authUtil.setLogin(options.userSession.scopeType, {
           userId: user.id.toString(),
@@ -206,16 +223,10 @@ export class UserAuth implements IAuthValidator<TUser> {
                 userAgent: PrismaUtil.toPlainObject(options.userAgent),
               },
             },
-            activities: {
-              create: {
-                action: UserUtil.getActivityLogin(options.userSession.loginType),
-                ipAddress: options.userIp,
-                userAgent: PrismaUtil.toPlainObject(options.userAgent),
-              },
-            },
           },
         }),
       ])
+      this.activityLogService.stagePrepared(events)
 
       return {
         isTwoFactorEnable: false,
@@ -242,7 +253,7 @@ export class UserAuth implements IAuthValidator<TUser> {
   async refresh(
     user: TUser,
     refreshToken: string,
-    options: Omit<IAuthLoginOptions, 'userSession'>,
+    _options: Omit<IAuthLoginOptions, 'userSession'>,
   ): Promise<AuthResponseTokenDto> {
     const refreshPayload = this.authUtil.payloadToken<UserResponsePayloadDto>(refreshToken)
 
@@ -267,6 +278,13 @@ export class UserAuth implements IAuthValidator<TUser> {
     try {
       const payload = this.serializeUserData(user)
       const session = this.authUtil.createSession(payload, refreshPayload)
+
+      const events = [
+        this.activityLogService.prepare({
+          action: EnumActivityLogAction.userRefreshToken,
+          userId: user.id,
+        }),
+      ]
 
       await Promise.all([
         this.authUtil.updateLogin(
@@ -293,16 +311,10 @@ export class UserAuth implements IAuthValidator<TUser> {
                 },
               },
             },
-            activities: {
-              create: {
-                action: EnumUserActivityAction.REFRESH_TOKEN,
-                ipAddress: options.userIp,
-                userAgent: PrismaUtil.toPlainObject(options.userAgent),
-              },
-            },
           },
         }),
       ])
+      this.activityLogService.stagePrepared(events)
 
       return session.tokens
     } catch (err: unknown) {

@@ -33,6 +33,7 @@ export class RequestContextMiddleware implements NestMiddleware {
       logger: {
         context: `http.${this.parseReqRoute(req)}`,
       },
+      store: new Map<string, unknown>(),
     }
 
     req.__version = ctxData.http.version

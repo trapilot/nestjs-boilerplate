@@ -117,11 +117,4 @@ export class UserService {
       where: { id: user.id },
     })
   }
-
-  async getActivities(
-    kwargs?: Prisma.UserActivityFindManyArgs,
-    options?: IPrismaExportOptions,
-  ): Promise<IPrismaReturnList> {
-    return await this.prisma.userActivity.list(kwargs, options)
-  }
 }

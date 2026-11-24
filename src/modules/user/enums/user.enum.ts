@@ -1,4 +1,0 @@
-export enum EnumUserActivityAction {
-  LOGIN_CREDENTIAL = 'LOGIN_CREDENTIAL',
-  REFRESH_TOKEN = 'REFRESH_TOKEN',
-}

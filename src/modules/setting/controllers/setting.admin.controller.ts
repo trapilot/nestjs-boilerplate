@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Get, HttpStatus, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Prisma, Setting } from '@runtime/prisma-client'
+import { EnumActivityLogAction } from 'modules/activity-log/enums/activity-log.enum'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { EnumAuthScopeType } from 'lib/nest-auth'
 import { FILE_SIZE_IN_BYTES, HelperService, MessageService } from 'lib/nest-core'
@@ -19,6 +20,8 @@ import {
   RequestUserIp,
 } from 'lib/nest-web'
 import { IResult } from 'ua-parser-js'
+import { IActivityLogStagedEvent } from 'modules/activity-log/interfaces/activity-log.interface'
+import { ActivityLogService } from 'modules/activity-log/services/activity-log.service'
 import {
   SETTING_DOC_OPERATION,
   SETTING_DOC_REQUEST_LIST,
@@ -44,7 +47,19 @@ export class SettingAdminController {
     protected readonly message: MessageService,
     protected readonly helperService: HelperService,
     protected readonly settingService: SettingService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
+
+  /** Prepares an admin setting event; metadata carries the code only, never the value. */
+  private prepareActivityLog(
+    action: EnumActivityLogAction,
+    setting: Pick<Setting, 'id' | 'code'>,
+  ): IActivityLogStagedEvent {
+    return this.activityLogService.prepare({
+      action,
+      metadata: { id: setting.id, name: setting.code },
+    })
+  }
 
   @ApiRequestData({
     summary: SETTING_DOC_OPERATION,
@@ -188,7 +203,7 @@ export class SettingAdminController {
   })
   @Post('/')
   async create(@RequestBody() body: SettingRequestCreateDto): Promise<IResponseData> {
-    const check = this.settingService.checkValue(body.value, body.type)
+    const check = await this.settingService.checkValue(body.value, body.type)
     if (!check) {
       throw new BadRequestException({
         statusCode: HttpStatus.NOT_ACCEPTABLE,
@@ -197,6 +212,10 @@ export class SettingAdminController {
     }
 
     const setting = await this.settingService.create(body)
+    // Autoincrement id: the event can only be prepared once the row exists
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminSettingCreate, setting),
+    ])
 
     return { data: setting }
   }
@@ -231,7 +250,7 @@ export class SettingAdminController {
     @RequestBody() body: SettingRequestUpdateDto,
     @GetSetting() setting: Setting,
   ): Promise<IResponseData> {
-    const check = this.settingService.checkValue(body.value, setting.type)
+    const check = await this.settingService.checkValue(body.value, setting.type)
     if (!check) {
       throw new BadRequestException({
         statusCode: HttpStatus.NOT_ACCEPTABLE,
@@ -240,6 +259,9 @@ export class SettingAdminController {
     }
 
     setting = await this.settingService.update(setting.id, body)
+    this.activityLogService.stagePrepared([
+      this.prepareActivityLog(EnumActivityLogAction.adminSettingUpdate, setting),
+    ])
 
     return { data: setting }
   }

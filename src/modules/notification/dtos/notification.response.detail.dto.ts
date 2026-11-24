@@ -6,7 +6,7 @@ import {
   EnumPushType,
 } from '@runtime/prisma-client'
 import { Expose, Type } from 'class-transformer'
-import { EnumDateFormat, ToDate, ToNestedArray } from 'lib/nest-core'
+import { EnumDateFormat, ToDate } from 'lib/nest-core'
 import { ResponseLocaleDto, ResponseUserBelongDto } from 'lib/nest-web'
 import { EnumNotificationRefType } from '../enums/notification.enum'
 
@@ -139,57 +139,11 @@ class ResponseDataDetailDto {
   updatedAt: Date
 }
 
-class ResponseGroupRelationDto {
-  @ApiProperty({ example: 1 })
-  @Type(() => Number)
-  @Expose()
-  id: number
-
-  @ApiProperty({ type: ResponseLocaleDto })
-  @Type(() => ResponseLocaleDto)
-  @Expose()
-  title: ResponseLocaleDto
-
-  @ApiProperty({ example: [] })
-  @Type(() => Number)
-  @Expose()
-  tierIds: number[]
-
-  @ApiProperty({ example: [] })
-  @Type(() => String)
-  @Expose()
-  emails: string[]
-
-  @ApiProperty({ example: [] })
-  @Type(() => String)
-  @Expose()
-  phones: string[]
-
-  @ApiProperty({ example: new Date(Date.now() - 30000 * 3600) })
-  @Type(() => Date)
-  @Expose()
-  joinSinceDate: Date[]
-
-  @ApiProperty({ example: new Date(Date.now() + 30000 * 3600) })
-  @Type(() => Date)
-  @Expose()
-  joinUntilDate: Date[]
-}
-
 class ResponseDataRelationDto extends ResponseUserBelongDto {
   @ApiProperty({ type: () => ResponsePushDetailDto })
   @Type(() => ResponsePushDetailDto)
   @Expose()
   pushes: ResponsePushDetailDto[]
-
-  @ApiProperty({ type: () => ResponseGroupRelationDto })
-  @ToNestedArray<ResponseGroupRelationDto>({
-    path: 'pivotGroups.group',
-    type: ResponseGroupRelationDto,
-    default: [],
-  })
-  @Expose()
-  groups: ResponseGroupRelationDto[]
 }
 
 export class NotificationResponseDetailDto extends IntersectionType(

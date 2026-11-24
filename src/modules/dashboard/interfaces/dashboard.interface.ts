@@ -1,9 +1,9 @@
 export interface TDashboard {
-  totalMembers: number
-  totalUnpaidInvoices: number
-  totalPartialInvoices: number
-  totalPaidInvoices: number
-  totalCancelInvoices: number
+  totalCustomers: number
+  totalActiveCustomers: number
+  totalNewCustomers: number
+  totalNotificationsSent: number
+  totalPushesSent: number
 }
 
 export interface IDashboardDateRange {

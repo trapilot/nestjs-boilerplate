@@ -1,0 +1,27 @@
+export const POLICY_DOC_OPERATION = 'Policy'
+
+export const POLICY_DOC_APP_QUERY_LIST = []
+export const POLICY_DOC_APP_PARAM_LIST = []
+
+export const POLICY_DOC_ADMIN_QUERY_LIST = [
+  {
+    name: 'isActive',
+    allowEmptyValue: true,
+    required: false,
+    type: 'boolean',
+  },
+  {
+    name: 'isVisible',
+    allowEmptyValue: true,
+    required: false,
+    type: 'boolean',
+  },
+]
+export const POLICY_DOC_ADMIN_PARAM_DETAIL = [
+  {
+    name: 'id',
+    allowEmptyValue: false,
+    required: true,
+    type: 'number',
+  },
+]

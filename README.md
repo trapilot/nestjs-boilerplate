@@ -162,7 +162,7 @@ pnpm start:cli seed:api-key
 pnpm start:cli seed:app-version
 
 # Apply new settings for roles & permissions
-pnpm start:cli seed:permission
+pnpm start:cli seed:policy
 pnpm start:cli seed:role
 
 # Run the project

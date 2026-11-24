@@ -1,6 +1,6 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { Prisma } from '@runtime/prisma-client'
+import { EnumRoleType, Prisma } from '@runtime/prisma-client'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, EnumAuthScopeType } from 'lib/nest-auth'
 import {
@@ -18,11 +18,11 @@ import {
   RequestQueryList,
 } from 'lib/nest-web'
 import { ROLE_DOC_ADMIN_QUERY_LIST, ROLE_DOC_OPERATION } from '../constants/role.doc.constant'
-import { RequestRoleLevel } from '../decorators/role.level.decorator'
+import { RequestRoleType } from '../decorators/role.type.decorator'
 import { RoleRequestCreateDto } from '../dtos/role.request.create.dto'
 import { RoleRequestUpdateDto } from '../dtos/role.request.update.dto'
 import { RoleResponseDetailDto, RoleResponseListDto } from '../dtos/role.response.detail.dto'
-import { RoleLimitedLevelPipe } from '../pipes/role.limited-level.pipe'
+import { RoleLimitedTypePipe } from '../pipes/role.limited-type.pipe'
 import { RoleNotSelfPipe } from '../pipes/role.not-self.pipe'
 import { RoleService } from '../services/role.service'
 
@@ -65,14 +65,14 @@ export class RoleAdminController {
     })
     { _search, _kwargs }: RequestListDto,
     @RequestQueryFilterInBoolean('isActive') _enabled: RequestFilterDto,
-    @RequestRoleLevel() _level: RequestFilterDto,
+    @RequestRoleType() _type: RequestFilterDto,
   ): Promise<IResponsePaging> {
     const kwargs: Prisma.RoleFindManyArgs = {
       ..._kwargs,
       where: {
         ..._search,
         ..._enabled,
-        ..._level,
+        ..._type,
       },
     }
 
@@ -100,27 +100,28 @@ export class RoleAdminController {
   @Get('/map-shorted')
   async mapShorted(
     @RequestQueryList({
-      defaultOrderBy: 'title:asc',
-      availableOrderBy: ['title'],
+      defaultOrderBy: 'name:asc',
+      availableOrderBy: ['name'],
     })
     { _search, _kwargs }: RequestListDto,
     @RequestQueryFilterInBoolean('isActive', true) _enabled: RequestFilterDto,
-    @RequestRoleLevel() _level: RequestFilterDto,
+    @RequestRoleType() _type: RequestFilterDto,
   ): Promise<IResponseList> {
-    const _where: Prisma.RoleFindManyArgs = {
+    const where: Prisma.RoleWhereInput = {
       ..._search,
       ..._enabled,
-      ..._level,
+      ..._type,
     }
-    const _select: Prisma.RoleSelect = {
+    const select: Prisma.RoleSelect = {
       id: true,
-      title: true,
+      name: true,
+      type: true,
     }
 
     return await this.roleService.getList({
       ..._kwargs,
-      where: { ..._search },
-      select: { id: true },
+      where,
+      select,
     })
   }
 
@@ -147,11 +148,11 @@ export class RoleAdminController {
   })
   @Get('/new')
   async new(): Promise<IResponseData> {
-    const [role, permissions] = await this.roleService.getWithAllPerms()
+    const [role, policies] = await this.roleService.getWithAllPolicies()
     return {
       data: {
         role,
-        fullPermissions: permissions,
+        fullPolicies: policies,
       },
     }
   }
@@ -178,12 +179,12 @@ export class RoleAdminController {
     },
   })
   @Get('/:id')
-  async get(@RequestParam('id', RoleLimitedLevelPipe) id: number): Promise<IResponseData> {
-    const [role, permissions] = await this.roleService.getWithAllPerms(id)
+  async get(@RequestParam('id', RoleLimitedTypePipe) id: number): Promise<IResponseData> {
+    const [role, policies] = await this.roleService.getWithAllPolicies(id)
     return {
       data: {
         role,
-        fullPermissions: permissions,
+        fullPolicies: policies,
       },
     }
   }
@@ -213,13 +214,17 @@ export class RoleAdminController {
   @Put('/:id')
   async update(
     @RequestBody() body: RoleRequestUpdateDto,
-    @RequestParam('id', RoleNotSelfPipe, RoleLimitedLevelPipe) id: number,
+    @RequestParam('id', RoleNotSelfPipe, RoleLimitedTypePipe) id: number,
     @AuthJwtPayload('user.id') updatedBy: number,
+    @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
   ): Promise<IResponseData> {
-    const { permissions, ...dto } = body
+    const { policies, ...dto } = body
+    if (dto.type) {
+      this.roleService.assertCanManageType(requesterType, dto.type)
+    }
     const data = { ...dto, updatedBy }
     const updated = await this.roleService.update(id, data, {
-      permissions,
+      policies,
     })
 
     return { data: updated }
@@ -251,9 +256,11 @@ export class RoleAdminController {
   async create(
     @RequestBody() body: RoleRequestCreateDto,
     @AuthJwtPayload('user.id') createdBy: number,
+    @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
   ): Promise<IResponseData> {
-    const { permissions, ...data } = body
-    const created = await this.roleService.create({ ...data, createdBy }, { permissions })
+    const { policies, ...data } = body
+    this.roleService.assertCanManageType(requesterType, data.type ?? EnumRoleType.USER)
+    const created = await this.roleService.create({ ...data, createdBy }, { policies })
     return { data: created }
   }
 
@@ -277,7 +284,7 @@ export class RoleAdminController {
     },
   })
   @Delete('/:id')
-  async delete(@RequestParam('id', RoleLimitedLevelPipe) id: number): Promise<IResponseData> {
+  async delete(@RequestParam('id', RoleLimitedTypePipe) id: number): Promise<IResponseData> {
     await this.roleService.delete(id)
 
     return { data: { status: true } }
@@ -307,7 +314,7 @@ export class RoleAdminController {
   })
   @Put('/:id/active')
   async active(
-    @RequestParam('id', RoleLimitedLevelPipe) id: number,
+    @RequestParam('id', RoleLimitedTypePipe) id: number,
     @AuthJwtPayload('user.id') updatedBy: number,
   ): Promise<IResponseData> {
     const updated = await this.roleService.change(id, {
@@ -342,7 +349,7 @@ export class RoleAdminController {
   })
   @Put('/:id/inactive')
   async inactive(
-    @RequestParam('id', RoleNotSelfPipe, RoleLimitedLevelPipe) id: number,
+    @RequestParam('id', RoleNotSelfPipe, RoleLimitedTypePipe) id: number,
     @AuthJwtPayload('user.id') updatedBy: number,
   ): Promise<IResponseData> {
     const updated = await this.roleService.change(id, {

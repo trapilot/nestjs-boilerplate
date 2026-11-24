@@ -1,0 +1,7 @@
+{
+  "subject": {
+    "signUp": "Chào mừng bạn đến với ứng dụng",
+    "resetPassword": "Đặt lại mật khẩu",
+    "welcome": "Chào mừng bạn đến với {appName}"
+  }
+}

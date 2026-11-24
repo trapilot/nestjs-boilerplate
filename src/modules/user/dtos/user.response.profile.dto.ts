@@ -1,11 +1,12 @@
 import { ApiProperty, IntersectionType } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import { ToUrl } from 'lib/nest-core'
-import { IUserProfilePermission } from '../interfaces/user.auth.interface'
-import { ToUserPermissions } from '../transforms/user.permissions.transform'
-import { ToUserRoles } from '../transforms/user.roles.transform'
+import { IUserProfilePolicy } from '../interfaces/user.auth.interface'
+import { ToUserPolicies } from '../transforms/user.policies.transform'
+import { EnumRoleType } from '@runtime/prisma-client'
+import { ToUserRole } from '../transforms/user.role.transform'
 
-class ResponseUserPermissionSubject {
+class ResponseUserPolicySubject {
   @ApiProperty({ example: '' })
   @Type(() => String)
   @Expose()
@@ -37,7 +38,7 @@ class ResponseUserPermissionSubject {
   actions: string[]
 }
 
-class ResponseUserPermission {
+class ResponseUserPolicy {
   @ApiProperty({ example: true })
   @Type(() => Boolean)
   @Expose()
@@ -58,10 +59,10 @@ class ResponseUserPermission {
   @Expose()
   context: string
 
-  @ApiProperty({ type: () => [ResponseUserPermissionSubject] })
-  @Type(() => ResponseUserPermissionSubject)
+  @ApiProperty({ type: () => [ResponseUserPolicySubject] })
+  @Type(() => ResponseUserPolicySubject)
   @Expose()
-  subjects: ResponseUserPermissionSubject[]
+  subjects: ResponseUserPolicySubject[]
 }
 
 export class ResponseUserProfileDto {
@@ -108,26 +109,21 @@ export class ResponseUserProfileDto {
 }
 
 class ResponseUserProfileRelationDto {
-  // @ToUserRoles({ level: true })
-  // @Expose()
-  // roleLevels: number[]
-
   @ApiProperty({ example: 1 })
-  @ToUserRoles({ flat: true, key: true })
+  @ToUserRole({ key: true })
   @Type(() => Number)
   @Expose()
   roleId: number
 
-  @ApiProperty({ example: 1 })
-  @ToUserRoles({ flat: true, level: true })
-  @Type(() => Number)
+  @ApiProperty({ enum: EnumRoleType })
+  @ToUserRole({ type: true })
   @Expose()
-  roleLv: number
+  roleType: EnumRoleType
 
-  @ApiProperty({ type: () => [ResponseUserPermission] })
-  @ToUserPermissions()
+  @ApiProperty({ type: () => [ResponseUserPolicy] })
+  @ToUserPolicies()
   @Expose()
-  permissions: IUserProfilePermission[]
+  policies: IUserProfilePolicy[]
 }
 
 export class UserProfileResponseDto extends IntersectionType(

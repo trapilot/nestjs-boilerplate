@@ -10,4 +10,4 @@ export const USER_DEFAULT_IS_ACTIVE = [true, false]
 export const USER_DEFAULT_BLOCKED = [true, false]
 export const USER_DEFAULT_INACTIVE_PERMANENT = [true, false]
 
-export const USER_AUTH_TOKEN = EnumAuthScopeType.USER
+export const USER_AUTH_VALIDATOR = EnumAuthScopeType.USER

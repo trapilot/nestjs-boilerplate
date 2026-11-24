@@ -47,24 +47,24 @@ export class NotificationDispatchPushHandler implements IWorkerHandler {
       },
 
       retrieve: async state => {
-        return await this.notificationService.getUnsentPushMembers(payload.pushId, {
+        return await this.notificationService.getUnsentPushCustomers(payload.pushId, {
           lastId: state.lastId,
           size: 500,
         })
       },
 
-      process: async memberIds => {
+      process: async customerIds => {
         await this.producer.publish<INotificationSendPushPayload>(EnumNotificationQueue.SEND_PUSH, {
           version: NOTIFICATION_QUEUE_PROC_VERSION[EnumNotificationQueue.SEND_PUSH],
           priority: EnumQueuePriority.MEDIUM,
           startDate: nowDate,
           message: {
             pushId: payload.pushId,
-            memberIds,
+            customerIds,
           },
         })
 
-        return memberIds[memberIds.length - 1]
+        return customerIds[customerIds.length - 1]
       },
 
       shouldRepublish: async () => {

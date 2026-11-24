@@ -1,35 +1,38 @@
+import { EnumRoleType } from '@runtime/prisma-client'
 import { Transform } from 'class-transformer'
-import { AuthContext, IAuthPayloadPermission } from 'lib/nest-auth'
+import { AuthContext, IAuthPayloadPolicy } from 'lib/nest-auth'
 import { UserUtil } from '../helpers/user.util'
 import { IUserTransformOptions } from '../interfaces/user.auth.interface'
 
-export function ToUserPayloadRoles(): (target: object, key: string) => void {
-  return Transform(({ obj: user }: IUserTransformOptions): number[] => {
-    // console.log({ ToAuthUserRoles: user })
-    return UserUtil.parseRoleIds(user)
+export function ToUserPayloadRoleId(): (target: object, key: string) => void {
+  return Transform(({ obj: user }: IUserTransformOptions): number | null => {
+    return UserUtil.parseRole(user)?.id ?? null
   })
 }
 
-export function ToUserPayloadPermissions(): (target: object, key: string) => void {
-  return Transform(({ obj: user }: IUserTransformOptions): IAuthPayloadPermission => {
-    // console.log({ ToAuthUserPermissions: user })
+/** Role type is always read from the database record, never from client input. */
+export function ToUserPayloadRoleType(): (target: object, key: string) => void {
+  return Transform(({ obj: user }: IUserTransformOptions): EnumRoleType | null => {
+    return UserUtil.parseRole(user)?.type ?? null
+  })
+}
+
+export function ToUserPayloadPolicies(): (target: object, key: string) => void {
+  return Transform(({ obj: user }: IUserTransformOptions): IAuthPayloadPolicy => {
     const { subjects } = AuthContext.getConfig()
-    const userRoles = UserUtil.parseRoles(user)
-    const userPermissions = {}
+    const userRole = UserUtil.parseRole(user)
+    const userPolicies = {}
 
-    for (const userRole of userRoles) {
-      const rolePermissions = userRole?.pivotPermissions ?? []
-      for (const rolePermission of rolePermissions) {
-        const rolePerm = rolePermission?.permission
-        const roleBit = rolePermission?.bitwise ?? 0
-        const permBit = rolePerm?.bitwise ?? 0
+    for (const rolePolicy of userRole?.pivotPolicies ?? []) {
+      const policy = rolePolicy?.policy
+      const roleBit = rolePolicy?.bitwise ?? 0
+      const policyBit = policy?.bitwise ?? 0
 
-        if (roleBit && permBit && rolePerm.isActive && subjects.includes(rolePerm.subject)) {
-          const subjectIndex = subjects.findIndex(subject => subject === rolePerm.subject)
-          userPermissions[subjectIndex] |= roleBit & permBit
-        }
+      if (roleBit && policyBit && policy.isActive && subjects.includes(policy.subject)) {
+        const subjectIndex = subjects.findIndex(subject => subject === policy.subject)
+        userPolicies[subjectIndex] |= roleBit & policyBit
       }
     }
-    return userPermissions
+    return userPolicies
   })
 }

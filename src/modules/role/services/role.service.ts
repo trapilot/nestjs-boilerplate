@@ -1,5 +1,11 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@runtime/prisma-client'
+import {
+  BadRequestException,
+  ConflictException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { EnumRoleType, Prisma } from '@runtime/prisma-client'
 import { UserAbilityUtil } from 'app/helpers/user.ability.util'
 import {
   IPrismaExportOptions,
@@ -7,7 +13,8 @@ import {
   IPrismaReturnPaging,
   PrismaService,
 } from 'lib/nest-prisma'
-import { TPermission } from 'modules/permission/interfaces/permission.interface'
+import { TPolicy } from 'modules/policy/interfaces/policy.interface'
+import { RoleUtil } from '../helpers/role.util'
 import { IRoleCreateOptions, IRoleUpdateOptions, TRole } from '../interfaces/role.interface'
 
 @Injectable()
@@ -58,22 +65,22 @@ export class RoleService {
     data: Prisma.RoleUncheckedCreateInput,
     options?: IRoleCreateOptions,
   ): Promise<TRole> {
-    const permissions = options?.permissions ?? []
-    const rolePermissions = []
-    for (const p of permissions) {
+    const policies = options?.policies ?? []
+    const rolePolicies = []
+    for (const p of policies) {
       const roleBit = UserAbilityUtil.map2Bitwise(p.actions)
-      const perm = await this.prisma.permission.findUnique({ where: { subject: p.subject } })
-      if (perm) {
-        rolePermissions.push({ permissionId: perm.id, bitwise: roleBit })
+      const policy = await this.prisma.policy.findUnique({ where: { subject: p.subject } })
+      if (policy) {
+        rolePolicies.push({ policyId: policy.id, bitwise: roleBit })
       }
     }
 
     const created = await this.prisma.role.create({
       data: {
         ...data,
-        pivotPermissions: {
+        pivotPolicies: {
           createMany: {
-            data: rolePermissions,
+            data: rolePolicies,
             skipDuplicates: true,
           },
         },
@@ -89,27 +96,27 @@ export class RoleService {
   ): Promise<TRole> {
     const role = await this.findOrFail(id, {
       include: {
-        pivotPermissions: { select: { permissionId: true } },
+        pivotPolicies: { select: { policyId: true } },
       },
     })
 
-    const newPermissions = options?.permissions ?? []
-    const rolePermissions = []
-    for (const p of newPermissions) {
+    const newPolicies = options?.policies ?? []
+    const rolePolicies = []
+    for (const p of newPolicies) {
       const roleBit = UserAbilityUtil.map2Bitwise(p.actions)
-      const perm = await this.prisma.permission.findUnique({ where: { subject: p.subject } })
-      if (perm) {
-        rolePermissions.push({ permissionId: perm.id, bitwise: roleBit })
+      const policy = await this.prisma.policy.findUnique({ where: { subject: p.subject } })
+      if (policy) {
+        rolePolicies.push({ policyId: policy.id, bitwise: roleBit })
       }
     }
 
     const updated = await this.prisma.$transaction(async tx => {
-      await tx.rolesPermissions.deleteMany({ where: { roleId: role.id } })
-      await tx.rolesPermissions.createMany({
-        data: rolePermissions.map(perm => {
+      await tx.rolesPolicies.deleteMany({ where: { roleId: role.id } })
+      await tx.rolesPolicies.createMany({
+        data: rolePolicies.map(policy => {
           return {
-            bitwise: perm.bitwise,
-            permissionId: perm.permissionId,
+            bitwise: policy.bitwise,
+            policyId: policy.policyId,
             roleId: role.id,
           }
         }),
@@ -118,8 +125,8 @@ export class RoleService {
         data: { updatedAt: options?.updatedAt, ...data },
         where: { id: role.id },
         include: {
-          pivotPermissions: {
-            include: { permission: true },
+          pivotPolicies: {
+            include: { policy: true },
           },
         },
       })
@@ -127,7 +134,35 @@ export class RoleService {
     return updated
   }
 
+  /** Throws when the requester is not allowed to manage or assign a role of the given type. */
+  assertCanManageType(requesterType: EnumRoleType | null | undefined, type: EnumRoleType): void {
+    if (!RoleUtil.canAccess(requesterType, type)) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'auth.error.scopePredefinedNotFound',
+      })
+    }
+  }
+
+  /** Throws when the requester is not allowed to assign the given role to a user. */
+  async assertCanAssign(
+    requesterType: EnumRoleType | null | undefined,
+    roleId: number,
+  ): Promise<TRole> {
+    const role = await this.findOrFail(roleId)
+    this.assertCanManageType(requesterType, role.type)
+    return role
+  }
+
   async delete(id: number): Promise<boolean> {
+    const assigned = await this.prisma.user.count({ where: { roleId: id } })
+    if (assigned > 0) {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'module.role.conflict',
+      })
+    }
+
     try {
       await this.prisma.role.delete({ where: { id } })
       return true
@@ -148,26 +183,26 @@ export class RoleService {
     return true
   }
 
-  async getWithAllPerms(id?: number): Promise<[TRole, TPermission[]]> {
-    const getFulLPermsFn = this.prisma.permission.findMany({
+  async getWithAllPolicies(id?: number): Promise<[TRole, TPolicy[]]> {
+    const getFulLPoliciesFn = this.prisma.policy.findMany({
       where: { isActive: true },
       orderBy: [{ sorting: 'asc' }],
     })
 
     if (id) {
       return await Promise.all([
-        this.findOrFail(id, { include: { pivotPermissions: true } }),
-        getFulLPermsFn,
+        this.findOrFail(id, { include: { pivotPolicies: true } }),
+        getFulLPoliciesFn,
       ])
     }
-    return await Promise.all([this.fakeNew(), getFulLPermsFn])
+    return await Promise.all([this.fakeNew(), getFulLPoliciesFn])
   }
 
   private fakeNew(): TRole {
     return {
       id: 0,
-      level: 0,
-      title: '',
+      name: '',
+      type: EnumRoleType.USER,
       description: '',
       isActive: true,
       deletedAt: null,

@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common'
+import { EnumRoleType } from '@runtime/prisma-client'
 import { IRequestFile } from 'lib/nest-core'
 import { UserService } from '../services/user.service'
 
@@ -18,17 +19,11 @@ export class UserIsSuperAdmin implements CanActivate {
     if (payload && payload?.user?.id) {
       const userId = payload.user.id
       const userData = await this.userService.findOrFail(userId, {
-        include: {
-          pivotRoles: {
-            select: { role: true },
-          },
-        },
+        include: { role: true },
       })
 
-      for (const userWithRoles of userData.pivotRoles) {
-        if (userWithRoles.role.level === 0) {
-          return true
-        }
+      if (userData.role?.isActive && userData.role.type === EnumRoleType.SUPER_ADMIN) {
+        return true
       }
     }
 

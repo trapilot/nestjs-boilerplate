@@ -176,10 +176,4 @@ export class NotificationRequestCreateDto {
   @ToArray({ type: NotificationPushDto })
   @ApiProperty({ required: false, isArray: true, type: NotificationPushDto })
   pushes: NotificationPushDto[]
-
-  @IsOptional()
-  @IsArray()
-  @ToArray({ type: Number })
-  @ApiProperty({ required: false, isArray: true, type: Number })
-  groupIds: number[]
 }

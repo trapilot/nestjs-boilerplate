@@ -66,13 +66,7 @@ export class UserService {
     try {
       if (options?.roleId) {
         const role = await this.roleService.findOrFail(options.roleId)
-        data.level = role.level
-        data.pivotRoles = {
-          createMany: {
-            data: [{ roleId: role.id }],
-            skipDuplicates: true,
-          },
-        }
+        data.roleId = role.id
       }
 
       const { region, phone } = this.helperService.parsePhone(data.phone)
@@ -101,27 +95,19 @@ export class UserService {
 
     if (options?.roleId) {
       const role = await this.roleService.findOrFail(options.roleId)
-      data.level = role.level
+      data.roleId = role.id
     }
 
     const { region, phone } = this.helperService.parsePhone(`${data.phone}`)
 
-    return await this.prisma.$transaction(async tx => {
-      if (options?.roleId) {
-        await tx.usersRoles.deleteMany({ where: { userId: user.id } })
-        await tx.usersRoles.create({ data: { userId: user.id, roleId: options.roleId } })
-      }
-
-      const updated = await tx.user.update({
-        where: { id: user.id },
-        data: {
-          ...data,
-          phoneRegion: region,
-          phoneNumber: phone,
-          updatedAt: options?.updatedAt,
-        },
-      })
-      return updated
+    return await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        ...data,
+        phoneRegion: region,
+        phoneNumber: phone,
+        updatedAt: options?.updatedAt,
+      },
     })
   }
 

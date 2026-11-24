@@ -27,9 +27,8 @@ export enum EnumAuthLoginType {
 
 export enum EnumAuthScopeType {
   USER = 'user',
-  MEMBER = 'member',
-  CLIENT = 'client',
   CUSTOMER = 'customer',
+  CLIENT = 'client',
 }
 
 export enum EnumAuthTwoFactorMethod {

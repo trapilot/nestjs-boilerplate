@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { EnumInvoiceStatus } from '@runtime/prisma-client'
+import { EnumPushResult } from '@runtime/prisma-client'
 import { HelperService } from 'lib/nest-core'
 import { PrismaService } from 'lib/nest-prisma'
 import { TDashboard } from '../interfaces/dashboard.interface'
@@ -16,46 +16,29 @@ export class DashboardService {
     const untilTime = this.helperService.dateCreate(untilDate, { endOfDay: true })
 
     const [
-      totalMembers,
-      totalUnpaidInvoices,
-      totalPartialInvoices,
-      totalPaidInvoices,
-      totalCancelInvoices,
+      totalCustomers,
+      totalActiveCustomers,
+      totalNewCustomers,
+      totalNotificationsSent,
+      totalPushesSent,
     ] = await Promise.all([
-      this.prisma.member.count({ where: { createdAt: { gte: startTime, lte: untilTime } } }),
-      this.prisma.invoice.count({
-        where: {
-          createdAt: { gte: startTime, lte: untilTime },
-          status: EnumInvoiceStatus.PENDING,
-        },
+      this.prisma.customer.count(),
+      this.prisma.customer.count({ where: { isActive: true } }),
+      this.prisma.customer.count({ where: { createdAt: { gte: startTime, lte: untilTime } } }),
+      this.prisma.customerNotification.count({
+        where: { pushedAt: { gte: startTime, lte: untilTime } },
       }),
-      this.prisma.invoice.count({
-        where: {
-          createdAt: { gte: startTime, lte: untilTime },
-          status: EnumInvoiceStatus.PARTIALLY_PAID,
-        },
-      }),
-      ,
-      this.prisma.invoice.count({
-        where: {
-          createdAt: { gte: startTime, lte: untilTime },
-          status: EnumInvoiceStatus.FULLY_PAID,
-        },
-      }),
-      this.prisma.invoice.count({
-        where: {
-          createdAt: { gte: startTime, lte: untilTime },
-          status: EnumInvoiceStatus.CANCELED,
-        },
+      this.prisma.customerPush.count({
+        where: { status: EnumPushResult.SENT, pushedAt: { gte: startTime, lte: untilTime } },
       }),
     ])
 
     return {
-      totalMembers,
-      totalUnpaidInvoices,
-      totalPartialInvoices,
-      totalPaidInvoices,
-      totalCancelInvoices,
+      totalCustomers,
+      totalActiveCustomers,
+      totalNewCustomers,
+      totalNotificationsSent,
+      totalPushesSent,
     }
   }
 

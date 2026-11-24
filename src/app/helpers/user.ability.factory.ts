@@ -1,12 +1,13 @@
 import { AbilityBuilder } from '@casl/ability'
 import { createPrismaAbility } from '@casl/prisma'
+import { EnumRoleType } from '@runtime/prisma-client'
 import {
   AuthContext,
   AuthFactory,
   IAuthAbility,
   IAuthAbilityRule,
   IAuthJwtPayload,
-  IAuthPayloadPermission,
+  IAuthPayloadPolicy,
 } from 'lib/nest-auth'
 
 export class UserAbilityFactory extends AuthFactory {
@@ -27,11 +28,17 @@ export class UserAbilityFactory extends AuthFactory {
   }
 
   defineFromRequest(payload: IAuthJwtPayload): IAuthAbilityRule {
-    const userPermissions = this.parseFromRequest(payload)
-
     const { can, build } = new AbilityBuilder<IAuthAbilityRule>(createPrismaAbility)
-    for (const permission of userPermissions) {
-      const abilities = this.mappingFromRequest(permission)
+
+    // Super admin bypasses policies; the role type comes from the DB-backed JWT payload
+    if (payload.user?.roleType === EnumRoleType.SUPER_ADMIN) {
+      can('manage', 'all')
+      return build()
+    }
+
+    const userPolicies = this.parseFromRequest(payload)
+    for (const policy of userPolicies) {
+      const abilities = this.mappingFromRequest(policy)
 
       for (const ability of abilities) {
         can(ability.action, ability.subject)
@@ -43,11 +50,11 @@ export class UserAbilityFactory extends AuthFactory {
 
   parseFromRequest(payload: IAuthJwtPayload): IAuthAbility[] {
     const abilities: IAuthAbility[] = []
-    const permissions: IAuthPayloadPermission[] = payload.user?.permissions || []
+    const policies: IAuthPayloadPolicy[] = payload.user?.policies || []
 
-    for (const subjectIndex of Object.keys(permissions)) {
+    for (const subjectIndex of Object.keys(policies)) {
       const subject = this.subjects[subjectIndex]
-      const bitwise = permissions[subjectIndex] ?? 0
+      const bitwise = policies[subjectIndex] ?? 0
 
       const actions = this.actions.filter((_, index) => (bitwise & (1 << index)) !== 0)
       if (actions.length > 0) {

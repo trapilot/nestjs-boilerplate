@@ -95,25 +95,6 @@ model QueueJobFailure {
   @@map("queue_job_failures")
 }
 
-model Media {
-  id        Int           @id @default(autoincrement())
-  type      EnumMediaType @default(BANNER)
-  url       String
-  mime      String?
-  title     Json?
-  brief     Json?
-  refType   String?
-  refValue  String?
-  startDate DateTime?     @default(now())
-  untilDate DateTime?
-  sorting   Int?          @default(0)
-  isActive  Boolean?      @default(true)
-  createdAt DateTime?     @default(now())
-  updatedAt DateTime      @updatedAt
-
-  @@map("medias")
-}
-
 model ApiKey {
   id           Int            @id @default(autoincrement())
   type         EnumApiKeyType @default(CLIENT)
@@ -141,7 +122,6 @@ model AppVersion {
   createdAt DateTime?        @default(now())
   updatedAt DateTime?        @updatedAt
 
-  @@unique([type, version])
   @@map("app_versions")
 }
 
@@ -160,7 +140,7 @@ model Country {
   createdBy  Int?
   updatedBy  Int?
 
-  members   Member[]
+  customers Customer[]
   districts District[]
 
   @@unique(fields: [alpha2Code])
@@ -181,7 +161,7 @@ model District {
 
   country Country? @relation(fields: [countryId], references: [id])
 
-  members Member[]
+  customers Customer[]
 
   @@map("districts")
 }
@@ -204,8 +184,8 @@ model Notification {
   createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
   updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
 
-  pushes              Push[]
-  memberNotifications MemberNotification[]
+  pushes                Push[]
+  customerNotifications CustomerNotification[]
 
   @@map("notifications")
 }
@@ -241,32 +221,34 @@ model Push {
 
   notification Notification @relation(fields: [notificationId], references: [id])
 
-  pushMembers       MemberPush[]
-  pushNotifications MemberNotification[]
+  pushCustomers     CustomerPush[]
+  pushNotifications CustomerNotification[]
 
   @@index([status, retryCount])
   @@map("pushes")
 }
 
 model Role {
-  id          Int       @id @default(autoincrement())
-  level       Int?      @default(1)
-  title       String?
+  id          Int          @id @default(autoincrement())
+  name        String
+  type        EnumRoleType @default(USER)
   description String?
-  isActive    Boolean?  @default(true)
+  isActive    Boolean?     @default(true)
   deletedAt   DateTime?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime?    @default(now())
+  updatedAt   DateTime?    @updatedAt
   createdBy   Int?
   updatedBy   Int?
 
-  pivotPermissions RolesPermissions[]
-  pivotUsers       UsersRoles[]
+  pivotPolicies RolesPolicies[]
+  users         User[]          @relation("UserRole")
 
+  @@unique([name])
+  @@index([type, createdAt])
   @@map("roles")
 }
 
-model Permission {
+model Policy {
   id        Int       @id @default(autoincrement())
   title     Json?
   context   String?
@@ -284,29 +266,29 @@ model Permission {
   createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
   updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
 
-  pivotRoles RolesPermissions[]
+  pivotRoles RolesPolicies[]
 
-  @@map("permissions")
+  @@map("policies")
 }
 
-model RolesPermissions {
-  permissionId Int
-  roleId       Int
-  bitwise      Int?      @default(0)
-  assignedBy   Int?
-  assignedAt   DateTime? @default(now())
+model RolesPolicies {
+  policyId   Int
+  roleId     Int
+  bitwise    Int?      @default(0)
+  assignedBy Int?
+  assignedAt DateTime? @default(now())
 
-  permission Permission @relation(fields: [permissionId], references: [id])
-  role       Role       @relation(fields: [roleId], references: [id])
+  policy Policy @relation(fields: [policyId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
 
-  @@id([permissionId, roleId])
-  @@map("_roles_permissions")
+  @@id([policyId, roleId])
+  @@map("_roles_policies")
 }
 
 model User {
   id              Int       @id @default(autoincrement())
   type            String?
-  level           Int?
+  roleId          Int?
   email           String?   @unique
   phone           String?
   name            String?
@@ -331,36 +313,29 @@ model User {
   createdBy       Int?
   updatedBy       Int?
 
-  createdUserTwoFactor   UserTwoFactor[]    @relation("createdByUser")
-  updatedUserTwoFactor   UserTwoFactor[]    @relation("updatedByUser")
-  createdMemberTwoFactor MemberTwoFactor[]  @relation("createdByUser")
-  updatedMemberTwoFactor MemberTwoFactor[]  @relation("updatedByUser")
-  createdPermissions     Permission[]       @relation("createdByUser")
-  updatedPermissions     Permission[]       @relation("updatedByUser")
-  createdNotifications   Notification[]     @relation("createdByUser")
-  updatedNotifications   Notification[]     @relation("updatedByUser")
-  createdPushes          Push[]             @relation("createdByUser")
-  updatedPushes          Push[]             @relation("updatedByUser")
-  createdPages           Page[]             @relation("createdByUser")
-  updatedPages           Page[]             @relation("updatedByUser")
-  createdMembers         Member[]           @relation("createdByUser")
-  updatedMembers         Member[]           @relation("updatedByUser")
-  deletedMembers         Member[]           @relation("deletedByUser")
-  createdProducts        Product[]          @relation("createdByUser")
-  updatedProducts        Product[]          @relation("updatedByUser")
-  deletedProducts        Product[]          @relation("deletedByUser")
-  createdPoints          MemberPoint[]      @relation("createdByUser")
-  createdRedemptions     MemberRedemption[] @relation("createdByUser")
-  updatedRedemptions     MemberRedemption[] @relation("updatedByUser")
-  createdPromotions      Promotion[]        @relation("createdByUser")
-  updatedPromotions      Promotion[]        @relation("updatedByUser")
+  createdUserTwoFactor     UserTwoFactor[]     @relation("createdByUser")
+  updatedUserTwoFactor     UserTwoFactor[]     @relation("updatedByUser")
+  createdCustomerTwoFactor CustomerTwoFactor[] @relation("createdByUser")
+  updatedCustomerTwoFactor CustomerTwoFactor[] @relation("updatedByUser")
+  createdPolicies          Policy[]            @relation("createdByUser")
+  updatedPolicies          Policy[]            @relation("updatedByUser")
+  createdNotifications     Notification[]      @relation("createdByUser")
+  updatedNotifications     Notification[]      @relation("updatedByUser")
+  createdPushes            Push[]              @relation("createdByUser")
+  updatedPushes            Push[]              @relation("updatedByUser")
+  createdContents          Content[]           @relation("createdByUser")
+  updatedContents          Content[]           @relation("updatedByUser")
+  createdCustomers         Customer[]          @relation("createdByUser")
+  updatedCustomers         Customer[]          @relation("updatedByUser")
+  deletedCustomers         Customer[]          @relation("deletedByUser")
 
   twoFactor     UserTwoFactor?
   activities    UserActivity[]
   sessions      UserSession[]
   verifications UserVerification[]
-  pivotRoles    UsersRoles[]
+  role          Role?              @relation("UserRole", fields: [roleId], references: [id])
 
+  @@index([roleId])
   @@map("users")
 }
 
@@ -451,113 +426,72 @@ model UserVerification {
   @@map("user_verifications")
 }
 
-model UsersRoles {
-  roleId     Int
-  userId     Int
-  assignedBy Int?
-  assignedAt DateTime? @default(now())
-
-  role Role @relation(fields: [roleId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
-  @@id([userId, roleId])
-  @@map("_users_roles")
-}
-
-model Member {
-  id                  Int             @id @default(autoincrement())
-  refId               String? // ID to integrate with other system
-  code                String?
-  tierId              Int?
-  minTierId           Int?
-  countryId           Int?
-  districtId          Int?
-  referralCode        String?         @unique
-  friendCode          String?
-  type                EnumMemberType? @default(NORMAL)
-  email               String?
-  name                String?
-  citizenId           String?
-  appleId             String?
-  facebookId          String?
-  facebookToken       String?
-  phone               String?
-  locale              String?
-  gender              String?
-  address             String?
-  avatar              String?
-  birthDate           DateTime?
-  expiryDate          DateTime?
-  pointBalance        Int?            @default(0)
-  personalAmount      Float?          @default(0)
-  referralAmount      Float?          @default(0)
-  phoneRegion         String?
-  phoneNumber         String?
-  birthYear           Int?
-  birthMonth          Int?
-  birthDay            Int?
-  loginToken          String?
-  loginDate           DateTime?
-  password            String?
-  passwordAttempt     Int?            @default(0)
-  passwordExpired     DateTime?
-  isActive            Boolean?        @default(true)
-  isVisible           Boolean?        @default(true)
-  isDeleted           Boolean?        @default(false)
-  isPushable          Boolean?        @default(true)
-  isNotifiable        Boolean?        @default(true)
-  isPromotable        Boolean?        @default(true)
-  isEmailVerified     Boolean?        @default(false)
-  isPhoneVerified     Boolean?        @default(false)
-  promoViaApp         Boolean?        @default(false)
-  promoViaEmail       Boolean?        @default(false)
-  hasFirstOfficial    Boolean?        @default(false)
-  hasFirstPurchased   Boolean?        @default(false)
-  hasBirthPurchased   Boolean?        @default(false)
-  hasFirstOfficialAt  DateTime?
-  hasFirstPurchasedAt DateTime?
-  hasBirthPurchasedAt DateTime?
-  startedAt           DateTime?
-  deletedAt           DateTime?
-  createdAt           DateTime?       @default(now())
-  updatedAt           DateTime?       @updatedAt
-  deletedBy           Int?
-  createdBy           Int?
-  updatedBy           Int?
+model Customer {
+  id              Int       @id @default(autoincrement())
+  refId           String? // ID to integrate with other system
+  countryId       Int?
+  districtId      Int?
+  email           String?   @unique
+  name            String?
+  citizenId       String?
+  appleId         String?   @unique
+  phone           String?   @unique
+  locale          String?
+  gender          String?
+  address         String?
+  avatar          String?
+  birthDate       DateTime?
+  phoneRegion     String?
+  phoneNumber     String?
+  birthYear       Int?
+  birthMonth      Int?
+  birthDay        Int?
+  loginToken      String?
+  loginDate       DateTime?
+  password        String?
+  passwordAttempt Int?      @default(0)
+  passwordExpired DateTime?
+  isActive        Boolean?  @default(true)
+  isVisible       Boolean?  @default(true)
+  isDeleted       Boolean?  @default(false)
+  isPushable      Boolean?  @default(true)
+  isNotifiable    Boolean?  @default(true)
+  isPromotable    Boolean?  @default(true)
+  isEmailVerified Boolean?  @default(false)
+  isPhoneVerified Boolean?  @default(false)
+  promoViaApp     Boolean?  @default(false)
+  promoViaEmail   Boolean?  @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @updatedAt
+  deletedBy       Int?
+  createdBy       Int?
+  updatedBy       Int?
 
   createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
   updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
   deletedByUser User? @relation("deletedByUser", fields: [deletedBy], references: [id])
 
-  twoFactor MemberTwoFactor?
-  tier      Tier?            @relation(fields: [tierId], references: [id])
-  district  District?        @relation(fields: [districtId], references: [id])
-  country   Country?         @relation(fields: [countryId], references: [id])
+  twoFactor CustomerTwoFactor?
+  district  District?          @relation(fields: [districtId], references: [id])
+  country   Country?           @relation(fields: [countryId], references: [id])
 
-  deletions     MemberDeletion[]
-  sessions      MemberSession[]
-  activities    MemberActivity[]
-  devices       MemberDevice[]
-  verifications MemberVerification[]
-  notifications MemberNotification[]
-  redemptions   MemberRedemption[]
-  favorites     MemberFavorite[]
-  pushes        MemberPush[]
-  tiers         MemberTier[]
-  points        MemberPoint[]        @relation(name: "member")
-  rewardPoints  MemberPoint[]        @relation(name: "referee")
-  carts         Cart[]
-  orders        Order[]
-  invoices      Invoice[]
+  deletions     CustomerDeletion[]
+  sessions      CustomerSession[]
+  activities    CustomerActivity[]
+  devices       CustomerDevice[]
+  verifications CustomerVerification[]
+  notifications CustomerNotification[]
+  pushes        CustomerPush[]
 
   @@index([isActive, email])
   @@index([isActive, phone])
-  @@map("members")
+  @@map("customers")
 }
 
-model MemberTwoFactor {
+model CustomerTwoFactor {
   id            Int       @id @default(autoincrement())
-  memberId      Int       @unique()
+  customerId    Int       @unique()
   secret        String?
   iv            String?
   backupCodes   Json
@@ -574,87 +508,87 @@ model MemberTwoFactor {
   createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
   updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
 
-  member Member @relation(fields: [memberId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
 
-  @@map("member_two_factors")
+  @@map("customer_two_factors")
 }
 
-model MemberActivity {
-  id        Int       @id @default(autoincrement())
-  memberId  Int
-  action    String
-  ipAddress String
-  userAgent Json?
-  metadata  Json?
-  createdAt DateTime? @default(now())
-  createdBy Int?
+model CustomerActivity {
+  id         Int       @id @default(autoincrement())
+  customerId Int
+  action     String
+  ipAddress  String
+  userAgent  Json?
+  metadata   Json?
+  createdAt  DateTime? @default(now())
+  createdBy  Int?
 
-  member Member? @relation(fields: [memberId], references: [id])
+  customer Customer? @relation(fields: [customerId], references: [id])
 
-  @@index(fields: [memberId])
+  @@index(fields: [customerId])
   @@index(fields: [createdAt])
-  @@map("member_activities")
+  @@map("customer_activities")
 }
 
-model MemberDeletion {
-  id        Int       @id @default(autoincrement())
-  memberId  Int
-  title     String?
-  createdAt DateTime? @default(now())
+model CustomerDeletion {
+  id         Int       @id @default(autoincrement())
+  customerId Int
+  title      String?
+  createdAt  DateTime? @default(now())
 
-  member Member @relation(fields: [memberId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
 
-  @@map("member_deletions")
+  @@map("customer_deletions")
 }
 
-model MemberSession {
-  id        Int       @id @default(autoincrement())
-  memberId  Int
-  jti       String
-  ipAddress String
-  userToken String    @unique()
-  userAgent Json
-  expiredAt DateTime
-  revokedAt DateTime?
-  isRevoked Boolean   @default(false)
-  createdAt DateTime? @default(now())
-  createdBy Int?
-  updatedAt DateTime? @updatedAt
-  updatedBy Int?
+model CustomerSession {
+  id         Int       @id @default(autoincrement())
+  customerId Int
+  jti        String
+  ipAddress  String
+  userToken  String    @unique()
+  userAgent  Json
+  expiredAt  DateTime
+  revokedAt  DateTime?
+  isRevoked  Boolean   @default(false)
+  createdAt  DateTime? @default(now())
+  createdBy  Int?
+  updatedAt  DateTime? @updatedAt
+  updatedBy  Int?
 
-  member Member @relation(fields: [memberId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
 
-  @@index(fields: [memberId])
-  @@index(fields: [memberId, isRevoked, expiredAt])
+  @@index(fields: [customerId])
+  @@index(fields: [customerId, isRevoked, expiredAt])
   @@index(fields: [createdAt])
   @@index(fields: [updatedAt])
-  @@map("member_sessions")
+  @@map("customer_sessions")
 }
 
-model MemberDevice {
-  id        Int       @id @default(autoincrement())
-  memberId  Int
-  type      String?
-  model     String?
-  version   String?
-  token     String?
-  isActive  Boolean?  @default(true)
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+model CustomerDevice {
+  id         Int       @id @default(autoincrement())
+  customerId Int
+  type       String?
+  model      String?
+  version    String?
+  token      String?
+  isActive   Boolean?  @default(true)
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
-  member Member @relation(fields: [memberId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
 
-  @@unique([memberId, token])
-  @@index([memberId])
-  @@map("member_devices")
+  @@unique([customerId, token])
+  @@index([customerId])
+  @@map("customer_devices")
 }
 
-model MemberVerification {
+model CustomerVerification {
   id         Int                     @id @default(autoincrement())
   channel    EnumVerificationChannel
   type       EnumVerificationMethod
   code       String
-  memberId   Int?
+  customerId Int?
   phone      String?
   email      String?
   attempts   Int?                    @default(1)
@@ -666,15 +600,15 @@ model MemberVerification {
   createdAt  DateTime?               @default(now())
   updatedAt  DateTime?               @updatedAt
 
-  member Member? @relation(fields: [memberId], references: [id])
+  customer Customer? @relation(fields: [customerId], references: [id])
 
-  @@index([memberId])
-  @@map("member_verifications")
+  @@index([customerId])
+  @@map("customer_verifications")
 }
 
-model MemberNotification {
+model CustomerNotification {
   id             Int       @id @default(autoincrement())
-  memberId       Int
+  customerId     Int
   notificationId Int?
   pushId         Int?
   title          String?
@@ -689,17 +623,17 @@ model MemberNotification {
   deletedAt      DateTime?
   createdAt      DateTime? @default(now())
 
-  member       Member        @relation(fields: [memberId], references: [id])
+  customer     Customer      @relation(fields: [customerId], references: [id])
   notification Notification? @relation(fields: [notificationId], references: [id])
   push         Push?         @relation(fields: [pushId], references: [id])
 
-  @@index([memberId, pushedAt, isRead])
-  @@map("member_notifications")
+  @@index([customerId, pushedAt, isRead])
+  @@map("customer_notifications")
 }
 
-model MemberPush {
+model CustomerPush {
   id          Int            @id @default(autoincrement())
-  memberId    Int
+  customerId  Int
   pushId      Int
   deviceToken String
   status      EnumPushResult
@@ -708,458 +642,15 @@ model MemberPush {
   pushedAt  DateTime
   createdAt DateTime? @default(now())
 
-  member Member @relation(fields: [memberId], references: [id])
-  push   Push   @relation(fields: [pushId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+  push     Push     @relation(fields: [pushId], references: [id])
 
-  @@index([memberId, createdAt])
-  @@index([memberId, pushId])
-  @@map("member_pushes")
+  @@index([customerId, createdAt])
+  @@index([customerId, pushId])
+  @@map("customer_pushes")
 }
 
-model MemberTier {
-  id              Int            @id @default(autoincrement())
-  memberId        Int
-  tierId          Int
-  invoiceId       Int?
-  source          EnumTierSource @default(SYSTEM)
-  action          EnumTierAction @default(IMPORT)
-  personalAmount  Float?         @default(0)
-  referralAmount  Float?         @default(0)
-  qualifiedAmount Float?         @default(0)
-  isActive        Boolean?       @default(true)
-  expiryDate      DateTime?
-  deletedAt       DateTime?
-  createdAt       DateTime?      @default(now())
-  updatedAt       DateTime       @updatedAt
-
-  tier    Tier     @relation(fields: [tierId], references: [id])
-  member  Member   @relation(fields: [memberId], references: [id])
-  invoice Invoice? @relation(fields: [invoiceId], references: [id])
-
-  @@index([memberId, isActive])
-  @@map("member_tiers")
-}
-
-model MemberPoint {
-  id           Int             @id @default(autoincrement())
-  memberId     Int
-  schemaId     Int?
-  tierId       Int?
-  invoiceId    Int?
-  refereeId    Int?
-  origin       EnumPointOrigin
-  reason       EnumPointReason
-  action       EnumPointAction
-  point        Int?            @default(0)
-  pointBalance Int?            @default(0)
-  note         String?
-  isActive     Boolean?        @default(true)
-  isVisible    Boolean?        @default(true)
-  isPending    Boolean?        @default(false)
-  isDeleted    Boolean?        @default(false)
-  expiryDate   DateTime?
-  releaseDate  DateTime?
-  createdAt    DateTime?       @default(now())
-  updatedAt    DateTime        @updatedAt
-  createdBy    Int?
-
-  createdByUser User? @relation(name: "createdByUser", fields: [createdBy], references: [id])
-
-  member  Member       @relation(fields: [memberId], references: [id], name: "member")
-  referee Member?      @relation(fields: [refereeId], references: [id], name: "referee")
-  schema  PointSchema? @relation(fields: [schemaId], references: [id])
-  tier    Tier?        @relation(fields: [tierId], references: [id])
-  invoice Invoice?     @relation(fields: [invoiceId], references: [id])
-
-  @@index([memberId])
-  @@index([reason])
-  @@index([action])
-  @@map("member_points")
-}
-
-model MemberRedemption {
-  id          Int                   @id @default(autoincrement())
-  memberId    Int
-  productId   Int
-  orderId     Int?
-  promotionId Int?
-  redeemPrice Float?                @default(0)
-  redeemPoint Int?                  @default(0)
-  source      EnumRedemptionSource? @default(SYSTEM)
-  status      EnumRedemptionStatus? @default(PENDING)
-  isActive    Boolean?              @default(true)
-  startDate   DateTime?
-  untilDate   DateTime?
-  usedAt      DateTime?
-  issuedAt    DateTime?
-  deletedAt   DateTime?
-  createdAt   DateTime?             @default(now())
-  updatedAt   DateTime              @updatedAt
-  createdBy   Int?
-  updatedBy   Int?
-
-  createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
-  updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
-
-  member    Member     @relation(fields: [memberId], references: [id])
-  product   Product    @relation(fields: [productId], references: [id])
-  order     Order?     @relation(fields: [orderId], references: [id])
-  promotion Promotion? @relation(fields: [promotionId], references: [id])
-
-  @@index([memberId, productId])
-  @@map("member_redemptions")
-}
-
-model MemberFavorite {
-  id        Int      @id @default(autoincrement())
-  memberId  Int
-  productId Int
-  isActive  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  member  Member  @relation(fields: [memberId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([memberId, isActive])
-  @@map("member_favorites")
-}
-
-model Tier {
-  id         Int       @id @default(autoincrement())
-  name       Json?
-  code       String?   @unique
-  level      Int?      @unique
-  cardIcon   String?
-  cardImage  String?
-  cardCover  String?
-  keepExcess Boolean?  @default(true)
-  isActive   Boolean   @default(true)
-  createdAt  DateTime? @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  languages  TierLanguage[]
-  rates      TierRate[]
-  prevs      TierTransition[] @relation(name: "prevTier")
-  nexts      TierTransition[] @relation(name: "nextTier")
-  members    Member[]
-  points     MemberPoint[]
-  tierMinins MemberTier[]
-
-  @@map("tiers")
-}
-
-model TierLanguage {
-  id          Int    @id @default(autoincrement())
-  tierId      Int
-  language    String @db.Char(3)
-  description String @db.LongText()
-
-  tier Tier @relation(fields: [tierId], references: [id])
-
-  @@unique([tierId, language])
-  @@map("tier_languages")
-}
-
-model TierTransition {
-  id         Int @id @default(autoincrement())
-  prevTierId Int
-  nextTierId Int
-
-  rule      EnumTransitionRule
-  value     Float
-  priority  Int                @default(0)
-  isEnabled Boolean            @default(true)
-
-  prevTier Tier @relation("prevTier", fields: [prevTierId], references: [id])
-  nextTier Tier @relation("nextTier", fields: [nextTierId], references: [id])
-
-  @@unique([prevTierId, nextTierId, rule])
-  @@map("tier_transitions")
-}
-
-model TierRate {
-  id       Int          @id @default(autoincrement())
-  tierId   Int
-  rule     EnumRateRule
-  value    Float        @default(0)
-  priority Int          @default(0)
-
-  tier Tier @relation(fields: [tierId], references: [id])
-
-  @@unique([tierId, rule])
-  @@map("tier_rates")
-}
-
-model PointSchema {
-  id        Int       @id @default(autoincrement())
-  trigger   String
-  name      String?
-  sinceDate DateTime?
-  untilDate DateTime?
-  priority  Int       @default(0)
-  version   Int       @default(1)
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  createdBy Int?
-  updatedBy Int?
-
-  conditions   PointSchemaCondition[]
-  rewards      PointSchemaReward[]
-  limits       PointSchemaLimit[]
-  memberPoints MemberPoint[]
-
-  @@index([trigger])
-  @@map("point_schemas")
-}
-
-model PointSchemaCondition {
-  id          Int                         @id @default(autoincrement())
-  schemaId    Int
-  type        EnumSchemaConditionType
-  operator    EnumSchemaConditionOperator
-  intValue    Int?
-  floatValue  Float?
-  stringValue String?
-  dateValue   DateTime?
-  createdAt   DateTime                    @default(now())
-
-  schema PointSchema @relation(fields: [schemaId], references: [id])
-
-  @@index([schemaId])
-  @@map("point_schema_conditions")
-}
-
-model PointSchemaReward {
-  id        Int                  @id @default(autoincrement())
-  schemaId  Int
-  type      EnumSchemaRewardType
-  value     Float?
-  createdAt DateTime             @default(now())
-
-  schema PointSchema @relation(fields: [schemaId], references: [id])
-
-  @@index([schemaId])
-  @@map("point_schema_rewards")
-}
-
-model PointSchemaLimit {
-  id        Int                 @id @default(autoincrement())
-  schemaId  Int
-  type      EnumSchemaLimitType
-  maxTimes  Int?
-  createdAt DateTime            @default(now())
-
-  schema PointSchema @relation(fields: [schemaId], references: [id])
-
-  @@index([schemaId])
-  @@map("point_schema_limits")
-}
-
-model Cart {
-  id        Int            @id @default(autoincrement())
-  memberId  Int
-  version   Int            @default(1)
-  status    EnumCartStatus @default(ACTIVE)
-  price     Decimal        @default(0)
-  point     Decimal        @default(0)
-  shipping  Decimal        @default(0)
-  tax       Decimal        @default(0)
-  createdAt DateTime?      @default(now())
-  updatedAt DateTime       @updatedAt
-
-  member Member @relation(fields: [memberId], references: [id])
-
-  items CartItem[]
-
-  @@index([memberId])
-  @@map("carts")
-}
-
-model CartItem {
-  id            Int            @id @default(autoincrement())
-  cartId        Int
-  productId     Int
-  vendorId      Int?
-  offerId       Int?
-  bundleId      Int?
-  promotionId   Int?
-  status        CartItemStatus @default(ACTIVE)
-  quantity      Int?           @default(1)
-  vatPercentage Float?         @default(0)
-  unitPrice     Float?
-  unitPoint     Int?
-  discPrice     Float?         @default(0)
-  discPoint     Int?           @default(0)
-  finalPrice    Float?
-  finalPoint    Int?
-  createdAt     DateTime?      @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  cart    Cart    @relation(fields: [cartId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([cartId, productId])
-  @@map("cart_items")
-}
-
-model Promotion {
-  id        Int       @id @default(autoincrement())
-  code      String?   @unique
-  sorting   Int?      @default(0)
-  priority  Int?      @default(0)
-  isActive  Boolean?  @default(true)
-  createdAt DateTime? @default(now())
-  updatedAt DateTime  @updatedAt
-  createdBy Int?
-  updatedBy Int?
-
-  createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
-  updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
-
-  redemptions MemberRedemption[]
-
-  @@map("promotions")
-}
-
-model Order {
-  id          Int             @id @default(autoincrement())
-  code        String?         @unique
-  memberId    Int
-  promotionId Int?
-  totalPrice  Float?          @default(0)
-  totalPoint  Int?            @default(0)
-  discPrice   Float?          @default(0)
-  discPoint   Int?            @default(0)
-  finalPrice  Float?          @default(0)
-  finalPoint  Int?            @default(0)
-  source      EnumOrderSource @default(SYSTEM)
-  status      EnumOrderStatus @default(PENDING)
-  note        String?
-  isBirth     Boolean?        @default(false)
-  issuedAt    DateTime?       @default(now())
-  createdAt   DateTime?       @default(now())
-  updatedAt   DateTime        @updatedAt
-
-  member      Member             @relation(fields: [memberId], references: [id])
-  invoice     Invoice?
-  shipment    Shipment?
-  items       OrderItem[]
-  redemptions MemberRedemption[]
-
-  @@index([memberId])
-  @@map("orders")
-}
-
-model OrderItem {
-  id          Int       @id @default(autoincrement())
-  orderId     Int
-  productId   Int
-  promotionId Int?
-  quantity    Int?      @default(1)
-  unitPrice   Float?
-  unitPoint   Int?
-  finalPrice  Float?
-  finalPoint  Int?
-  expiryDate  DateTime?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@map("order_items")
-}
-
-model Shipment {
-  id        Int       @id @default(autoincrement())
-  orderId   Int       @unique
-  address   String
-  phone     String
-  note      String?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime  @updatedAt
-
-  order Order @relation(fields: [orderId], references: [id])
-
-  @@index([orderId])
-  @@map("shipments")
-}
-
-model Invoice {
-  id             Int                @id @default(autoincrement())
-  code           String?            @unique
-  orderId        Int                @unique
-  memberId       Int
-  promotionId    Int?
-  invoiceRef     String?            @unique()
-  invoicePath    String?
-  paidPrice      Float?             @default(0)
-  paidPoint      Int?               @default(0)
-  finalPrice     Float?             @default(0)
-  finalPoint     Int?               @default(0)
-  transactions   Json?
-  transactionIds Json?
-  isBirth        Boolean?           @default(false)
-  isEarned       Boolean?           @default(false)
-  status         EnumInvoiceStatus? @default(PENDING)
-  dueDate        DateTime?
-  issuedAt       DateTime?          @default(now())
-  createdAt      DateTime?          @default(now())
-  updatedAt      DateTime?          @updatedAt
-
-  member   Member        @relation(fields: [memberId], references: [id])
-  order    Order         @relation(fields: [orderId], references: [id])
-  payments Payment[]
-  points   MemberPoint[]
-  tiers    MemberTier[]
-
-  @@index([status, isEarned, issuedAt, createdAt])
-  @@index([memberId, orderId, issuedAt])
-  @@map("invoices")
-}
-
-model Payment {
-  id        Int                 @id @default(autoincrement())
-  invoiceId Int
-  amount    Float
-  method    EnumPaymentMethod
-  status    EnumPaymentStatus
-  provider  EnumPaymentProvider
-  issuedAt  DateTime?
-  createdAt DateTime?           @default(now())
-  updatedAt DateTime            @updatedAt
-
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-
-  @@index([invoiceId])
-  @@map("payments")
-}
-
-model PaymentMethod {
-  code     EnumPaymentMethod @unique
-  isActive Boolean?          @default(true)
-
-  @@map("payment_methods")
-}
-
-model PaymentProvider {
-  id        Int                 @id @default(autoincrement())
-  method    EnumPaymentMethod
-  provider  EnumPaymentProvider
-  name      String?
-  isActive  Boolean             @default(true)
-  sorting   Int?                @default(0)
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-
-  @@unique([method, provider])
-  @@map("payment_providers")
-}
-
-model Page {
+model Content {
   id        Int       @id @default(autoincrement())
   type      String
   title     Json?
@@ -1176,147 +667,10 @@ model Page {
   createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
   updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
 
-  @@map("pages")
+  @@map("contents")
 }
 
-model Product {
-  id                Int              @id @default(autoincrement())
-  vendorId          Int?
-  brandId           Int?
-  categoryId        Int?
-  type              EnumProductType? @default(SIMPLE)
-  sku               String?
-  name              Json?
-  thumbnail         String?
-  salePoint         Float?           @default(0)
-  salePrice         Float?           @default(0)
-  costPrice         Float?           @default(0)
-  stockQty          Int?             @default(0)
-  unpaidQty         Int?             @default(0)
-  paidQty           Int?             @default(0)
-  sorting           Int?             @default(0)
-  salePerPerson     Int?
-  duePaidDays       Int?             @default(0)
-  expiryType        EnumExpiryType?  @default(DYNAMIC)
-  dynamicExpiryDays Int?             @default(0)
-  staticExpiryDate  DateTime?
-  hasShipment       Boolean?         @default(true)
-  hasInventory      Boolean?         @default(true)
-  hasExpiration     Boolean?         @default(true)
-  hasDuePayment     Boolean?         @default(true)
-  hasLimitPerson    Boolean?         @default(true)
-  isPopular         Boolean?         @default(false)
-  isBestSale        Boolean?         @default(false)
-  isFlashSale       Boolean?         @default(false)
-  isComingSoon      Boolean?         @default(false)
-  isNewArrival      Boolean?         @default(false)
-  isActive          Boolean?         @default(true)
-  isDeleted         Boolean          @default(false)
-  deletedBy         Int?
-  createdBy         Int?
-  updatedBy         Int?
-  deletedAt         DateTime?
-  createdAt         DateTime?        @default(now())
-  updatedAt         DateTime?        @updatedAt
-
-  createdByUser User? @relation("createdByUser", fields: [createdBy], references: [id])
-  updatedByUser User? @relation("updatedByUser", fields: [updatedBy], references: [id])
-  deletedByUser User? @relation("deletedByUser", fields: [deletedBy], references: [id])
-
-  brand    ProductBrand?    @relation(fields: [brandId], references: [id])
-  category ProductCategory? @relation(fields: [categoryId], references: [id])
-
-  languages   ProductLanguage[]
-  medias      ProductMedia[]
-  reviews     ProductReview[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  redemptions MemberRedemption[]
-  favorites   MemberFavorite[]
-
-  @@map("products")
-}
-
-model ProductLanguage {
-  id          Int    @id @default(autoincrement())
-  productId   Int
-  language    String @db.Char(3)
-  content     String @db.LongText()
-  termAndCond String @db.LongText()
-
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([productId, language])
-  @@map("product_languages")
-}
-
-model ProductMedia {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  url       String
-  mime      String?
-  sorting   Int?    @default(0)
-
-  product Product @relation(fields: [productId], references: [id])
-
-  @@map("product_medias")
-}
-
-model ProductCategory {
-  id        Int       @id @default(autoincrement())
-  name      Json?
-  sorting   Int?      @default(0)
-  isActive  Boolean?  @default(true)
-  createdAt DateTime? @default(now())
-  updatedAt DateTime  @updatedAt
-
-  products Product[]
-
-  @@map("product_categories")
-}
-
-model ProductBrand {
-  id        Int       @id @default(autoincrement())
-  name      Json?
-  latitude  Float?
-  longitude Float?
-  thumbnail String?
-  address   String?
-  sorting   Int?      @default(0)
-  isActive  Boolean?  @default(true)
-  createdAt DateTime? @default(now())
-  updatedAt DateTime  @updatedAt
-
-  products Product[]
-
-  @@map("product_brands")
-}
-
-model ProductReview {
-  id        Int       @id @default(autoincrement())
-  memberId  Int
-  productId Int
-  rating    Int?      @default(1)
-  comment   String    @db.LongText()
-  createdAt DateTime? @default(now())
-
-  product Product @relation(fields: [productId], references: [id])
-
-  @@map("product_reviews")
-}
-
-model SlipCounter {
-  id        Int          @id @default(autoincrement())
-  type      EnumSlipType
-  key       String
-  sequence  Int
-  createdAt DateTime?    @default(now())
-
-  @@unique([type, key])
-  @@map("slip_counters")
-}
-
-model AuditLogHttp {
+model HttpLog {
   id              Int      @id @default(autoincrement())
   pid             Int?
   correlationId   String?
@@ -1343,19 +697,15 @@ model AuditLogHttp {
   rawResponse     Json?
   createdAt       DateTime @default(now())
 
-  @@map("_audit_log_http")
+  @@index([createdAt])
+  @@index([correlationId])
+  @@map("http_logs")
 }
 
 enum EnumJobStatus {
   PENDING
   RUNNING
-  SUCCESS
   FAILED
-}
-
-enum EnumMediaType {
-  BANNER
-  SLIDER
 }
 
 enum EnumApiKeyType {
@@ -1385,12 +735,12 @@ enum EnumVerificationMethod {
 enum EnumNotificationChannel {
   SMS
   EMAIL
-  WHATAPP
+  WHATSAPP
 }
 
 enum EnumNotificationMethod {
   TEXT
-  REFERRENCE
+  REFERENCE
 }
 
 enum EnumPushType {
@@ -1414,196 +764,8 @@ enum EnumPushResult {
   INVALID
 }
 
-enum EnumMemberType {
-  VIP
-  STAFF
-  NORMAL
-  PARTNER
-}
-
-enum EnumTierSource {
-  SYSTEM
-  REFER
-  PURCHASE
-}
-
-enum EnumTierAction {
-  IMPORT
-  EARN
-  ADJUST
-  EXPIRE
-}
-
-enum EnumTransitionRule {
-  AMOUNT
-}
-
-enum EnumRateRule {
-  PERSONAL
-  REFERRAL
-  FIRST_PURCHASE
-}
-
-enum EnumRedemptionSource {
-  SYSTEM
-  ORDER
-  PROMOTION
-}
-
-enum EnumRedemptionStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  EXPIRED
-  CANCELED
-  RESERVED
-  USED
-  FAILED
-}
-
-enum EnumSchemaLimitType {
-  ONCE_PER_DAY
-  ONCE_PER_MONTH
-  ONCE_PER_YEAR
-  ONCE_PER_LIFE
-  MAX_TIMES
-}
-
-enum EnumSchemaRewardType {
-  GRANT
-  MULTIPLIER
-}
-
-enum EnumSchemaConditionType {
-  AMOUNT
-  COUNT
-  VALUE
-  DATE_MATCH
-  TIME_RANGE
-}
-
-enum EnumSchemaConditionOperator {
-  EQ
-  GTE
-  LTE
-  GT
-  LT
-}
-
-enum EnumPointOrigin {
-  SCHEMA
+enum EnumRoleType {
+  SUPER_ADMIN
   ADMIN
-  MEMBER
-  SYSTEM
-}
-
-enum EnumPointReason {
-  IMPORT
-  PURCHASE
-  REFER
-  SHARE
-  REWARD
-  WELCOME
-  REGISTER
-  UPGRADE
-  RENEWAL
-  ADJUST
-  EXPIRE
-}
-
-enum EnumPointAction {
-  PLUS
-  DEDUCT
-}
-
-enum EnumProductType {
-  SIMPLE
-  VIRTUAL
-  GROUPED
-  BUNDLE
-  CONFIGURABLE
-  DOWNLOADABLE
-}
-
-enum EnumExpiryType {
-  STATIC
-  DYNAMIC
-}
-
-enum EnumPromotionOperator {
-  GTE
-  GT
-  LT
-  LTE
-}
-
-enum EnumPromotionMethod {
-  PERCENT_OF_PROUDCT
-  FIXED_AMOUNT_FOR_PRODUCT
-  FIXED_AMOUNT_FOR_WHOLE_CART
-  BUY_X_FIXED_AMOUNT_Y
-  BUY_X_PERCENT_Y
-}
-
-enum EnumPaymentProvider {
-  PAYPAL
-  STRIPE
-  VNPAY
-  MOMO
-}
-
-enum EnumPaymentMethod {
-  CASH
-  CARD
-  WALLET
-}
-
-enum EnumPaymentStatus {
-  PAID
-  CANCELED
-}
-
-enum EnumCartStatus {
-  ACTIVE
-  COMPLETED
-  ABANDONED
-  SAVED
-}
-
-enum CartItemStatus {
-  ACTIVE
-  OUT_OF_STOCK
-  DISABLED
-}
-
-enum EnumOrderSource {
-  SYSTEM
-  WEB
-  APP
-  POS
-}
-
-enum EnumOrderStatus {
-  PENDING
-  SHIPPED
-  DELIVERED
-  CANCELED
-}
-
-enum EnumInvoiceStatus {
-  PENDING
-  // SENT
-  // VIEWED
-  PARTIALLY_PAID
-  FULLY_PAID
-  OVERDUE
-  CANCELED
-  REFUNDED
-  FAILED
-  DISPUTED
-}
-
-enum EnumSlipType {
-  ORDER
-  INVOICE
+  USER
 }

@@ -1,4 +1,6 @@
-export interface IUserProfilePermission {
+import { EnumRoleType } from '@runtime/prisma-client'
+
+export interface IUserProfilePolicy {
   group: boolean
   title: string
   context: string
@@ -12,14 +14,13 @@ export interface IUserProfilePermission {
   }[]
 }
 
-export interface IContextUserPermission {
-  [context: string]: IUserProfilePermission
+export interface IContextUserPolicy {
+  [context: string]: IUserProfilePolicy
 }
 
 export interface IUserRoleTransformOptions {
   key?: boolean
-  level?: boolean
-  flat?: boolean
+  type?: boolean
 }
 
 export interface IUserTransformOptions {
@@ -29,23 +30,21 @@ export interface IUserTransformOptions {
 }
 
 export interface IUserTransformData {
-  level: number
-  pivotRoles: {
-    role: IUserDataRole
-  }[]
+  roleId: number
+  role: IUserDataRole
 }
 
 export interface IUserDataRole {
   id: number
-  level: number
+  type: EnumRoleType
   isActive: boolean
-  pivotPermissions: {
+  pivotPolicies: {
     bitwise: number
-    permission: IUserDataPermission
+    policy: IUserDataPolicy
   }[]
 }
 
-export interface IUserDataPermission {
+export interface IUserDataPolicy {
   context: string
   subject: string
   path: string

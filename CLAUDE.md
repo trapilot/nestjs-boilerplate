@@ -9,7 +9,7 @@ Use **pnpm** only (enforced by `preinstall`). Node >= 22.18, pnpm >= 10.25.
 ```sh
 pnpm start:dev                      # API in watch mode (nest project "api", entry src/main.ts)
 pnpm start:debug                    # same, with inspector
-pnpm start:cli <command>            # nest-commander CLI (src/cli.ts), e.g. seed:role, seed:permission, seed:user
+pnpm start:cli <command>            # nest-commander CLI (src/cli.ts), e.g. seed:role, seed:policy, seed:user
 pnpm start:repl                     # Nest REPL (src/repl.ts)
 pnpm build                          # prebuild runs `prisma generate`; builds both "api" and "cli" with webpack
 pnpm bundle                         # ncc single-file bundle of dist/main.js
@@ -35,7 +35,7 @@ pnpm db:migrate      # create a migration (--create-only), does not apply it
 pnpm db:deploy       # apply migrations
 pnpm db:clear        # db push --force-reset (wipes the DB)
 pnpm db:studio
-pnpm app:reset       # clear logs/uploads/temporary, reset DB, seed role + permission + user
+pnpm app:reset       # clear logs/uploads/temporary, reset DB, seed role + policy + user
 ```
 
 - Schema: `prisma/schema.prisma`; config: `prisma.config.ts` (reads `DATABASE_URL`).
@@ -80,7 +80,7 @@ Controllers are **not** registered in their feature modules. They are listed in 
 
 The global prefix and URI versioning come from config (`app.http.prefix`, `app.urlVersion.prefix`). `admin/`, `health/`, and `metrics/` are excluded from the prefix. When you add a controller, also add it (and its feature module import) to the right routes module.
 
-Auth and permissions are declared per endpoint inside the `@ApiRequest*` decorator options (`jwtAccessToken.scope`, `user.abilities: [{ subject, actions }]`), not through separate guards.
+Auth and policies are declared per endpoint inside the `@ApiRequest*` decorator options (`jwtAccessToken.scope`, `user.abilities: [{ subject, actions }]`), not through separate guards.
 
 ### Background jobs (DB-backed queue, not BullMQ)
 
@@ -90,7 +90,18 @@ Jobs are rows in the `QueueJob` table, with cursor state in `QueueCursor`. The f
 2. A **scan** handler (`IWorkerHandler`, `topic` + `version`) uses `WorkerScanner.runWithCursor({ retrieve, process, chunking })` to page through records and publish **proc** jobs in batches.
 3. A **proc** handler does the actual work.
 
-Topics are enums in the module (e.g. `EnumMemberQueue`); versions are in `*_QUEUE_SCAN_VERSION` / `*_QUEUE_PROC_VERSION` constants. Bump a version to reset the cursor or invalidate old jobs. **Every handler must be registered** in the `worker.modules[].handlers` list in `src/app/app.module.ts`. Handlers live in `modules/<x>/handlers/`.
+Topics are enums in the module (e.g. `EnumCustomerQueue`); versions are in `*_QUEUE_SCAN_VERSION` / `*_QUEUE_PROC_VERSION` constants. Bump a version to reset the cursor or invalidate old jobs. **Every handler must be registered** in the `worker.modules[].handlers` list in `src/app/app.module.ts`. Handlers live in `modules/<x>/handlers/`.
+
+### Domain
+
+Two kinds of account, kept fully separate (own tables, sessions, 2FA, auth scope):
+
+- **User** (`modules/user`): admin staff using the CMS portal; one role per user (`User.roleId`); policies come from `role` / `policy` (CASL). `Role.type` (`EnumRoleType`: SUPER_ADMIN, ADMIN, USER; ranks in `modules/role/helpers/role.util.ts`, lower = more powerful) drives the hierarchy: a requester can only view/manage/assign roles with rank >= their own, and SUPER_ADMIN bypasses policies (`can('manage', 'all')`).
+- **Customer** (`modules/customer`): end users of the mobile app and web; receive notifications/pushes (`modules/notification`).
+
+Other modules: `content` (static pages shown in the app), `setting`, `api-key`, `app-version`, `country`, `district`, `dashboard`, `activity-log`.
+
+Session naming: one value identifies a login session, named by the family of fields it sits in. Next to other `login*` fields it is `loginToken` (`IAuthUserSession` / JWT payload, `IAuthTokenGenerate`, `User.loginToken` / `Customer.loginToken` beside `loginDate`). Next to other `user*` fields it is `userToken` (`*Session.userToken` beside `ipAddress`/`userAgent`, `IAuthUserSessionCache`, `IAuthLoginOptions`, the `x-user-token` header alongside `x-user-ott` / `x-user-otp` / `x-user-agent`). The single-login check compares `User/Customer.loginToken` with the JWT `loginToken`. `CUSTOMER_AUTH_VALIDATOR` / `USER_AUTH_VALIDATOR` are Nest provider tokens whose value must equal the `EnumAuthScopeType` scope, because the scope guard resolves the validator with `ModuleRef.get(payload.scopeType)`.
 
 ### Feature module layout
 

@@ -31,12 +31,7 @@ export class AppVersionSeed extends CommandMigrateBase {
     await this.prisma.$transaction(
       this.dtos.map(dto =>
         this.prisma.appVersion.upsert({
-          where: {
-            type_version: {
-              type: dto.type,
-              version: dto.version,
-            },
-          },
+          where: { type: dto.type },
           create: dto,
           update: {},
         }),

@@ -1,5 +1,10 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { EnumPushResult, EnumPushStatus, MemberNotification, Prisma } from '@runtime/prisma-client'
+import {
+  CustomerNotification,
+  EnumPushResult,
+  EnumPushStatus,
+  Prisma,
+} from '@runtime/prisma-client'
 import {
   APP_LANGUAGE,
   AppUtil,
@@ -114,11 +119,11 @@ export class NotificationService {
     })
   }
 
-  async getUnsentPushMembers(
+  async getUnsentPushCustomers(
     pushId: number,
     cursor: { lastId: number; size: number },
   ): Promise<number[]> {
-    const members = await this.prisma.member.findMany({
+    const customers = await this.prisma.customer.findMany({
       where: {
         isActive: true,
         isPhoneVerified: true,
@@ -134,7 +139,7 @@ export class NotificationService {
       select: { id: true },
       take: cursor.size,
     })
-    return members.map(i => i.id)
+    return customers.map(i => i.id)
   }
 
   async isPushRunning(pushId: number): Promise<boolean> {
@@ -156,8 +161,8 @@ export class NotificationService {
     })
   }
 
-  async dispatchPushToMember(memberId: number, pushId: number): Promise<void> {
-    const data = await this.getPushData(memberId, pushId)
+  async dispatchPushToCustomer(customerId: number, pushId: number): Promise<void> {
+    const data = await this.getPushData(customerId, pushId)
 
     await this.sendPushData(data, [EnumPushDriver.ONESIGNAL])
   }
@@ -271,7 +276,7 @@ export class NotificationService {
   }
 
   async dispatchPushData(
-    history: MemberNotification,
+    history: CustomerNotification,
     options: { token: string; drivers: EnumPushDriver[] },
   ): Promise<void> {
     for (const driver of options.drivers) {
@@ -293,15 +298,15 @@ export class NotificationService {
   }
 
   async sendPushData(
-    payload: Prisma.MemberNotificationUncheckedCreateInput,
+    payload: Prisma.CustomerNotificationUncheckedCreateInput,
     drivers: EnumPushDriver[],
   ): Promise<void> {
-    const memberDevices = await this.prisma.memberDevice.findMany({
-      where: { memberId: payload.memberId, isActive: true },
+    const customerDevices = await this.prisma.customerDevice.findMany({
+      where: { customerId: payload.customerId, isActive: true },
       select: { token: true },
     })
 
-    const deviceTokens = memberDevices.map(i => i.token).filter(i => i)
+    const deviceTokens = customerDevices.map(i => i.token).filter(i => i)
     if (!deviceTokens.length) {
       throw new Error(`No device tokens available`)
     }
@@ -310,13 +315,13 @@ export class NotificationService {
       const nowDate = this.helperService.dateNow()
       if (payload?.pushId) {
         const [inbox] = await this.prisma.$transaction([
-          this.prisma.memberNotification.create({
+          this.prisma.customerNotification.create({
             data: { ...payload, pushedAt: nowDate },
           }),
-          this.prisma.memberPush.create({
+          this.prisma.customerPush.create({
             data: {
               deviceToken,
-              memberId: payload.memberId,
+              customerId: payload.customerId,
               status: EnumPushResult.SENT,
               pushId: payload.pushId,
               pushedAt: nowDate,
@@ -326,7 +331,7 @@ export class NotificationService {
 
         await this.dispatchPushData(inbox, { token: deviceToken, drivers })
       } else {
-        const inbox = await this.prisma.memberNotification.create({
+        const inbox = await this.prisma.customerNotification.create({
           data: { ...payload, pushedAt: nowDate },
         })
 
@@ -336,9 +341,9 @@ export class NotificationService {
   }
 
   async getPushData(
-    memberId: number,
+    customerId: number,
     pushId: number,
-  ): Promise<Prisma.MemberNotificationUncheckedCreateInput> {
+  ): Promise<Prisma.CustomerNotificationUncheckedCreateInput> {
     const push = await this.prisma.push.findUnique({
       where: { id: pushId, status: EnumPushStatus.RUNNING },
       select: {
@@ -351,26 +356,26 @@ export class NotificationService {
       throw new Error(`Push is finished`)
     }
 
-    const member = await this.prisma.member.findUnique({
-      where: { id: memberId },
+    const customer = await this.prisma.customer.findUnique({
+      where: { id: customerId },
       select: { id: true, locale: true },
     })
 
     const title = push.notification.title
     const description = push.notification.description
 
-    const pushTitle = title[member.locale] || title[APP_LANGUAGE]
+    const pushTitle = title[customer.locale] || title[APP_LANGUAGE]
     if (!pushTitle) {
-      throw new Error(`[${member.locale}] Push title is invalid`)
+      throw new Error(`[${customer.locale}] Push title is invalid`)
     }
 
-    const pushContent = description[member.locale] || description[APP_LANGUAGE]
+    const pushContent = description[customer.locale] || description[APP_LANGUAGE]
     if (!pushContent) {
-      throw new Error(`[${member.locale}] Push content is invalid`)
+      throw new Error(`[${customer.locale}] Push content is invalid`)
     }
 
     return {
-      memberId,
+      customerId,
       pushId: push.id,
       notificationId: push.notification.id,
       title: pushTitle,

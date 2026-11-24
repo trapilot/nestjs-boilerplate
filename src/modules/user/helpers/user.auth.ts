@@ -35,15 +35,11 @@ import { UserUtil } from './user.util'
 @Injectable()
 export class UserAuth implements IAuthValidator<TUser> {
   private readonly authRelation: Prisma.UserInclude = {
-    pivotRoles: {
+    role: {
       include: {
-        role: {
-          include: {
-            pivotPermissions: {
-              orderBy: { permission: { sorting: 'asc' } },
-              include: { permission: true },
-            },
-          },
+        pivotPolicies: {
+          orderBy: { policy: { sorting: 'asc' } },
+          include: { policy: true },
         },
       },
     },

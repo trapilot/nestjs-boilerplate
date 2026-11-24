@@ -144,11 +144,6 @@ export class NotificationAdminController {
   async get(@RequestParam('id') id: number): Promise<IResponseData> {
     const notification = await this.notificationService.findOrFail(id, {
       include: {
-        // pivotGroups: {
-        //   include: {
-        //     group: true,
-        //   },
-        // },
         pushes: true,
       },
     })
@@ -238,15 +233,9 @@ export class NotificationAdminController {
   })
   @Post('/')
   async create(@RequestBody() body: NotificationRequestCreateDto): Promise<IResponseData> {
-    const { pushes, groupIds, ...data } = body
+    const { pushes, ...data } = body
     const notification = await this.notificationService.create({
       ...data,
-      // pivotGroups: {
-      //   createMany: {
-      //     data: groupIds.map(groupId => ({ groupId })),
-      //     skipDuplicates: true,
-      //   },
-      // },
       pushes: {
         createMany: {
           data: NotificationUtil.makeDtos(pushes),
@@ -286,15 +275,9 @@ export class NotificationAdminController {
     @RequestBody() body: NotificationRequestUpdateDto,
     @RequestParam('id') id: number,
   ): Promise<IResponseData> {
-    const { pushes, groupIds, ...data } = body
+    const { pushes, ...data } = body
     const notification = await this.notificationService.update(id, {
       ...data,
-      // pivotGroups: {
-      //   createMany: {
-      //     data: groupIds.map(groupId => ({ groupId })),
-      //     skipDuplicates: true,
-      //   },
-      // },
       pushes: {
         createMany: {
           data: NotificationUtil.makeDtos(pushes),

@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer'
 import { ToUrl } from 'lib/nest-core'
 import { ResponseUserBelongDto } from 'lib/nest-web'
 import { RoleResponseBelongDto } from 'modules/role/dtos/role.response.detail.dto'
-import { ToUserRoles } from '../transforms/user.roles.transform'
+import { ToUserRole } from '../transforms/user.role.transform'
 
 class ResponseDataDetailDto {
   @ApiProperty({ example: 1 })
@@ -55,7 +55,7 @@ class ResponseDataDetailDto {
 }
 
 class ResponseDataRelationDto extends ResponseUserBelongDto {
-  @ToUserRoles({ flat: true })
+  @ToUserRole()
   @Expose()
   role: RoleResponseBelongDto
 }

@@ -1,8 +1,9 @@
 import { ApiProperty, IntersectionType, OmitType, PickType } from '@nestjs/swagger'
+import { EnumRoleType } from '@runtime/prisma-client'
 import { Expose, Type } from 'class-transformer'
 import { ResponseUserBelongDto } from 'lib/nest-web'
 import { IRoleResponseTransform } from '../interfaces/role.interface'
-import { ToRolePermissions } from '../transforms/role.permissions.transform'
+import { ToRolePolicies } from '../transforms/role.policies.transform'
 
 class ResponseDataDetailDto {
   @ApiProperty({ example: 1 })
@@ -12,7 +13,11 @@ class ResponseDataDetailDto {
 
   @Type(() => String)
   @Expose()
-  title: string
+  name: string
+
+  @ApiProperty({ enum: EnumRoleType })
+  @Expose()
+  type: EnumRoleType
 
   @Type(() => String)
   @Expose()
@@ -32,9 +37,9 @@ class ResponseDataDetailDto {
 }
 
 class ResponseDataRelationDto extends ResponseUserBelongDto {
-  @ToRolePermissions()
+  @ToRolePolicies()
   @Expose()
-  permissions: IRoleResponseTransform[]
+  policies: IRoleResponseTransform[]
 }
 
 export class RoleResponseDetailDto extends IntersectionType(
@@ -48,6 +53,6 @@ export class RoleResponseListDto extends IntersectionType(
 ) {}
 
 export class RoleResponseBelongDto extends IntersectionType(
-  PickType(ResponseDataDetailDto, ['id', 'title', 'isActive'] as const),
+  PickType(ResponseDataDetailDto, ['id', 'name', 'type', 'isActive'] as const),
   ResponseDataRelationDto,
 ) {}

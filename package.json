@@ -33,7 +33,7 @@
     "app:keys:generate": "npx ts-node scripts/generate-keys.ts",
     "app:reset": "pnpm app:reset:file && pnpm app:reset:data",
     "app:reset:file": "rimraf logs/*/ public/uploads/*/ src/temporary/*/ logs/.nestjs_repl_history",
-    "app:reset:data": "pnpm db:clear && pnpm start:cli seed:role && pnpm start:cli seed:permission && pnpm start:cli seed:user",
+    "app:reset:data": "pnpm db:clear && pnpm start:cli seed:role && pnpm start:cli seed:policy && pnpm start:cli seed:user && pnpm start:cli seed:user-role",
     "admin:install": "pnpm install --filter nest-admin",
     "admin:build": "pnpm --filter nest-admin schema:rebuild",
     "admin:migrate": "rm -rf public/admin && mv ./packages/nest-admin/dist public/admin",

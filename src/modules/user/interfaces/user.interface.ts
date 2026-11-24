@@ -1,13 +1,9 @@
-import { Role, User, UserSession, UserTwoFactor, UsersRoles } from '@runtime/prisma-client'
-
-export type TUsersRoles = UsersRoles & {
-  role?: Role
-}
+import { Role, User, UserSession, UserTwoFactor } from '@runtime/prisma-client'
 
 export type TUser = User & {
   twoFactor?: UserTwoFactor
   sessions?: UserSession[]
-  pivotRoles?: TUsersRoles[]
+  role?: Role
 }
 
 export interface IUserCreatedOptions {

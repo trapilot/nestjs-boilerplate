@@ -236,21 +236,8 @@ export class UserAuthController {
     @RequestBody() body: UserEditProfileRequestDto,
     @AuthJwtPayload('user.id') userId: number,
   ): Promise<IResponseData> {
-    const { roleId, ...data } = body
-    const profile = await this.userAuth.editProfile(userId, {
-      ...data,
-      pivotRoles: {
-        deleteMany: {
-          roleId: {
-            not: roleId,
-          },
-        },
-        createMany: {
-          data: [{ roleId }],
-          skipDuplicates: true,
-        },
-      },
-    })
+    // The role is never editable from the profile endpoint (no self privilege escalation)
+    const profile = await this.userAuth.editProfile(userId, body)
     return { data: profile }
   }
 

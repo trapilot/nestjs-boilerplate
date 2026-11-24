@@ -14,14 +14,14 @@ export class RoleNotSelfPipe implements PipeTransform {
   constructor(@Inject(REQUEST) protected readonly request: IRequestApp) {}
 
   async transform(roleId: number): Promise<number> {
-    const userRoles = this.request?.user?.user?.roles ?? []
-    if (userRoles.length === 0) {
+    const userRoleId = this.request?.user?.user?.roleId
+    if (!userRoleId) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'auth.error.abilityForbidden',
       })
     }
-    if (userRoles.includes(roleId)) {
+    if (userRoleId === roleId) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'auth.error.notSelf',

@@ -19,8 +19,8 @@ export class NotificationSendPushHandler implements IWorkerHandler {
     this.logger.log(`${this.topic}:v${version} is handling...`)
 
     try {
-      for (const memberId of payload.memberIds) {
-        await this.notificationService.dispatchPushToMember(memberId, payload.pushId)
+      for (const customerId of payload.customerIds) {
+        await this.notificationService.dispatchPushToCustomer(customerId, payload.pushId)
       }
     } catch (err: unknown) {
       this.logger.log(err)

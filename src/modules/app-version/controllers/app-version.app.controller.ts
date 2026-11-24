@@ -24,7 +24,7 @@ export class AppVersionAppController {
     docExclude: true,
     docExpansion: false,
     jwtAccessToken: {
-      scope: EnumAuthScopeType.MEMBER,
+      scope: EnumAuthScopeType.CUSTOMER,
       user: {
         synchronize: false,
         require: false,

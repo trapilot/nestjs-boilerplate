@@ -6,7 +6,7 @@ import configs from '../configs'
 import { DataSeedModule } from './data/data.seed.module'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from './enums/user.enum'
 import { UserAbilityFactory } from './helpers/user.ability.factory'
-import { PermissionSeed } from './seeds/permission.seed'
+import { PolicySeed } from './seeds/policy.seed'
 
 @Module({
   imports: [
@@ -28,6 +28,6 @@ import { PermissionSeed } from './seeds/permission.seed'
 
     DataSeedModule, // NOTE: remove before make a new build, it's used to initialize data
   ],
-  providers: [PermissionSeed],
+  providers: [PolicySeed],
 })
 export class CliModule {}

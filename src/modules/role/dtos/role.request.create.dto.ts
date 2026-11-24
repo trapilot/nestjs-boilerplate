@@ -1,7 +1,9 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { EnumRoleType } from '@runtime/prisma-client'
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -9,7 +11,7 @@ import {
   MinLength,
 } from 'class-validator'
 import { ToArray, ToBoolean, ToString } from 'lib/nest-core'
-import { RolePermissionRequestCreateDto } from './role-permission.request.create.dto'
+import { RolePolicyRequestCreateDto } from './role-policy.request.create.dto'
 
 export class RoleRequestCreateDto {
   @IsOptional()
@@ -27,7 +29,12 @@ export class RoleRequestCreateDto {
   @MinLength(3)
   @MaxLength(30)
   @ApiProperty({ required: true, example: 'ADMIN' })
-  title: string
+  name: string
+
+  @IsOptional()
+  @IsEnum(EnumRoleType)
+  @ApiProperty({ required: false, enum: EnumRoleType, example: EnumRoleType.USER })
+  type?: EnumRoleType
 
   @IsOptional()
   @IsString()
@@ -43,7 +50,7 @@ export class RoleRequestCreateDto {
 
   @IsOptional()
   @IsArray()
-  @ToArray({ type: RolePermissionRequestCreateDto })
-  @ApiProperty({ required: true, isArray: true, type: () => RolePermissionRequestCreateDto })
-  permissions?: RolePermissionRequestCreateDto[]
+  @ToArray({ type: RolePolicyRequestCreateDto })
+  @ApiProperty({ required: true, isArray: true, type: () => RolePolicyRequestCreateDto })
+  policies?: RolePolicyRequestCreateDto[]
 }

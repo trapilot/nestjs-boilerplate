@@ -19,20 +19,8 @@ import {
 import { NestWebModule, ValidateException } from 'lib/nest-web'
 import { AppVersionModule } from 'modules/app-version/app-version.module'
 import { AppVersionCheckMiddleware } from 'modules/app-version/middleware/app-version.check.middleware'
-import { InvoiceProcEarnPointsHandler } from 'modules/invoice/handlers/invoice.proc-earn-points'
-import { InvoiceProcOverDueHandler } from 'modules/invoice/handlers/invoice.proc-over-due'
-import { InvoiceScanEarnPointsHandler } from 'modules/invoice/handlers/invoice.scan-earn-points.handler'
-import { InvoiceScanOverDueHandler } from 'modules/invoice/handlers/invoice.scan-over-due.handler'
-import { InvoiceModule } from 'modules/invoice/invoice.module'
-import { MemberEarnPointFromPurchaseHandler } from 'modules/member/handlers/member.earn-point-from-purchases.handler'
-import { MemberEmailWelcomeHandler } from 'modules/member/handlers/member.email-welcome.handler'
-import { MemberGenerateCodeHandler } from 'modules/member/handlers/member.generate-code.handler'
-import { MemberGrantTierRewardHandler } from 'modules/member/handlers/member.grant-tier-reward.handler'
-import { MemberProcessExpiredHandler } from 'modules/member/handlers/member.process-expired.handler'
-import { MemberProcessReleasePointsHandler } from 'modules/member/handlers/member.process-release-points.handler'
-import { MemberScanExpiredHandler } from 'modules/member/handlers/member.scan-expired.handler'
-import { MemberScanPendingPointHandler } from 'modules/member/handlers/member.scan-pending-points.handler'
-import { MemberModule } from 'modules/member/member.module'
+import { CustomerEmailWelcomeHandler } from 'modules/customer/handlers/customer.email-welcome.handler'
+import { CustomerModule } from 'modules/customer/customer.module'
 import { NotificationDispatchPushHandler } from 'modules/notification/handlers/notification.dispatch-push.handler'
 import { NotificationSendPushHandler } from 'modules/notification/handlers/notification.send-notification.handler'
 import { NotificationModule } from 'modules/notification/notification.module'
@@ -91,8 +79,8 @@ import { RoutesWebModule } from './routes/routes.web.module'
           autoLogging: StrUtil.isNot(process.env.APP_ENV, EnumAppEnvironment.DEVELOPMENT),
           excludeRoutes: [
             { path: '*', method: RequestMethod.OPTIONS },
-            { path: 'audit/*spat', method: RequestMethod.ALL },
-            { path: 'v:version/audit/*spat', method: RequestMethod.ALL },
+            { path: 'activity-logs/*spat', method: RequestMethod.ALL },
+            { path: 'v:version/activity-logs/*spat', method: RequestMethod.ALL },
           ],
         },
         middlewares: [
@@ -137,30 +125,12 @@ import { RoutesWebModule } from './routes/routes.web.module'
         scanner: PrismaWorkerScanner,
         modules: [
           {
-            module: MemberModule,
-            handlers: [
-              MemberScanExpiredHandler,
-              MemberScanPendingPointHandler,
-              MemberProcessReleasePointsHandler,
-              MemberProcessExpiredHandler,
-              MemberEarnPointFromPurchaseHandler,
-              MemberGenerateCodeHandler,
-              MemberGrantTierRewardHandler,
-              MemberEmailWelcomeHandler,
-            ],
+            module: CustomerModule,
+            handlers: [CustomerEmailWelcomeHandler],
           },
           {
             module: NotificationModule,
             handlers: [NotificationDispatchPushHandler, NotificationSendPushHandler],
-          },
-          {
-            module: InvoiceModule,
-            handlers: [
-              InvoiceScanEarnPointsHandler,
-              InvoiceScanOverDueHandler,
-              InvoiceProcEarnPointsHandler,
-              InvoiceProcOverDueHandler,
-            ],
           },
         ],
       },

@@ -29,7 +29,7 @@ export interface IAuthPasswordOptions {
   temporary: boolean
 }
 
-export interface IAuthPayloadPermission {
+export interface IAuthPayloadPolicy {
   [subjectIndex: number]: [bitwise: number]
 }
 

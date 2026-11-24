@@ -1,3 +1,4 @@
+import { EnumRoleType } from '@runtime/prisma-client'
 import { CommandMigrateBase } from 'lib/nest-core'
 import { PrismaService } from 'lib/nest-prisma'
 import { Command } from 'nest-commander'
@@ -12,42 +13,34 @@ export class RoleSeed extends CommandMigrateBase {
   }
 
   async up(): Promise<void> {
-    let roleId = 1
-    for (const code in this.userRoles) {
-      const { level, title, description } = this.userRoles[code]
-
+    for (const { name, type, description } of this.userRoles) {
       await this.prisma.role.upsert({
-        where: { id: roleId },
-        update: { level, isActive: true },
-        create: { level, title, description, isActive: true },
+        where: { name },
+        update: { type, isActive: true },
+        create: { name, type, description, isActive: true },
       })
-
-      // increment roleId
-      roleId++
     }
   }
 
   async down(): Promise<void> {}
 
-  private get userRoles(): {
-    [role: string]: { level: number; title: string; description: string }
-  } {
-    return {
-      SUPER_ADMIN: {
-        level: 0,
-        title: 'Super Admin',
+  private get userRoles(): { name: string; type: EnumRoleType; description: string }[] {
+    return [
+      {
+        name: 'Super Admin',
+        type: EnumRoleType.SUPER_ADMIN,
         description: 'Able to login to the web portal as the Super Admin role ',
       },
-      ADMIN: {
-        level: 1,
-        title: 'Admin',
+      {
+        name: 'Admin',
+        type: EnumRoleType.ADMIN,
         description: 'Able to login to the web portal as the Admin role ',
       },
-      TESTER: {
-        level: 2,
-        title: 'Tester',
+      {
+        name: 'Tester',
+        type: EnumRoleType.USER,
         description: 'Able to login to the web portal as the Tester role ',
       },
-    }
+    ]
   }
 }

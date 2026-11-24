@@ -8,7 +8,7 @@ import {
   UploadedFile,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { Prisma } from '@runtime/prisma-client'
+import { EnumRoleType, Prisma } from '@runtime/prisma-client'
 import { EnumAuthAbilityAction, EnumAuthAbilitySubject } from 'app/enums/user.enum'
 import { AuthJwtPayload, AuthUtil, EnumAuthScopeType } from 'lib/nest-auth'
 import {
@@ -33,8 +33,8 @@ import {
   RequestParam,
   RequestQuery,
   RequestQueryFilterContain,
+  RequestQueryFilterEqual,
   RequestQueryFilterInBoolean,
-  RequestQueryFilterMany,
   RequestQueryList,
   RequestRequiredMonthPipe,
   RequestRequiredPipe,
@@ -48,6 +48,7 @@ import { UserRequestUpdateDto } from '../dtos/user.request.update.dto'
 import { UserResponseDetailDto, UserResponseListDto } from '../dtos/user.response.detail.dto'
 import { UserResponseLoginHistoryDto } from '../dtos/user.response.login-history.dto'
 import { EnumUserActivityAction } from '../enums/user.enum'
+import { RoleService } from 'modules/role/services/role.service'
 import { UserService } from '../services/user.service'
 
 @ApiTags(USER_DOC_OPERATION)
@@ -57,6 +58,7 @@ export class UserAdminController {
     protected readonly authUtil: AuthUtil,
     protected readonly userService: UserService,
     protected readonly helperService: HelperService,
+    protected readonly roleService: RoleService,
   ) {}
 
   @ApiRequestPaging({
@@ -93,7 +95,7 @@ export class UserAdminController {
     })
     { _search, _kwargs }: RequestListDto,
     @RequestBookType() bookType: EnumFileExtensionDocument,
-    @RequestQueryFilterMany('roleId', { parseAs: 'id' }) rawRole: RequestFilterDto,
+    @RequestQueryFilterEqual('roleId', { parseAs: 'id' }) _role: RequestFilterDto,
     @RequestQueryFilterContain('phone') _phone: RequestFilterDto,
     @RequestQueryFilterContain('name') _name: RequestFilterDto,
     @RequestQueryFilterInBoolean('isActive') _enabled: RequestFilterDto,
@@ -105,15 +107,11 @@ export class UserAdminController {
         ..._enabled,
         ..._name,
         ..._phone,
-        pivotRoles: rawRole,
+        ..._role,
       },
       include: {
-        pivotRoles: {
-          select: {
-            role: {
-              select: { id: true, title: true },
-            },
-          },
+        role: {
+          select: { id: true, name: true, type: true, isActive: true },
         },
       },
     }
@@ -148,12 +146,8 @@ export class UserAdminController {
   async get(@RequestParam('id') id: number): Promise<IResponseData> {
     const user = await this.userService.findOrFail(id, {
       include: {
-        pivotRoles: {
-          select: {
-            role: {
-              select: { id: true, title: true },
-            },
-          },
+        role: {
+          select: { id: true, name: true, type: true, isActive: true },
         },
       },
     })
@@ -258,8 +252,10 @@ export class UserAdminController {
       ]),
     )
     file: IFile,
+    @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
   ): Promise<IResponseData> {
     const { roleId, password, ...data } = body
+    await this.roleService.assertCanAssign(requesterType, roleId)
     const { passwordHash } = this.authUtil.passwordCreate(password)
     const created = await this.userService.create(
       {
@@ -302,13 +298,16 @@ export class UserAdminController {
     @RequestParam('id') id: number,
     @RequestBody() body: UserRequestUpdateDto,
     @AuthJwtPayload('user.id') userId: number,
+    @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
   ): Promise<IResponseData> {
     const { roleId, ...data } = body
 
+    if (roleId) {
+      await this.roleService.assertCanAssign(requesterType, roleId)
+    }
+
     if (userId === id) {
-      const user = await this.userService.findOrFail(id, {
-        include: { pivotRoles: true },
-      })
+      const user = await this.userService.findOrFail(id)
 
       if (user.isActive && user.isActive !== data.isActive) {
         throw new BadRequestException({
@@ -317,8 +316,7 @@ export class UserAdminController {
         })
       }
 
-      const userRoles = user.pivotRoles.map(role => role.roleId)
-      if (roleId && !userRoles.includes(roleId)) {
+      if (roleId && roleId !== user.roleId) {
         throw new BadRequestException({
           statusCode: HttpStatus.BAD_REQUEST,
           message: 'auth.error.notSelf',

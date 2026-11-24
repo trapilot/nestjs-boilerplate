@@ -1,10 +1,11 @@
+import { EnumRoleType } from '@runtime/prisma-client'
 import { CommandMigrateBase, HelperService } from 'lib/nest-core'
 import { PrismaService } from 'lib/nest-prisma'
 import { Command, Option } from 'nest-commander'
 
 @Command({
   name: 'seed:user-role',
-  description: 'Attach admin role with all permissions',
+  description: 'Grant all policies to the super admin and admin roles',
 })
 export class UserRoleSeed extends CommandMigrateBase {
   constructor(
@@ -16,75 +17,52 @@ export class UserRoleSeed extends CommandMigrateBase {
 
   @Option({
     flags: '-ids, --users [string]',
-    description: 'List of members, separator by comma',
+    description: 'List of customers, separator by comma',
   })
   parseIds(val: string): number[] {
     return (val ?? '').split(',').map(s => Number(s))
   }
 
   async up(): Promise<void> {
-    const adminUsers = await this.prisma.user.findMany({
-      where: { level: 0 },
-      select: { id: true },
-    })
+    // Super admin and admin roles receive every policy
     const adminRoles = await this.prisma.role.findMany({
-      where: { level: { lte: 1 } },
-      include: { pivotPermissions: true },
+      where: { type: { in: [EnumRoleType.SUPER_ADMIN, EnumRoleType.ADMIN] } },
+      include: { pivotPolicies: true },
     })
 
     for (const adminRole of adminRoles) {
-      const roleUsers = await this.prisma.user.findMany({
-        where: { pivotRoles: { some: { roleId: adminRole.id } } },
-        select: { id: true },
-      })
-
-      if (roleUsers.length) {
-        const userIds = roleUsers.map(user => user.id)
-        await this.prisma.usersRoles.deleteMany({
-          where: { roleId: adminRole.id, userId: { in: userIds } },
-        })
-      }
-
-      const permissions = await this.prisma.permission.findMany({
+      const policies = await this.prisma.policy.findMany({
         select: { id: true, bitwise: true },
       })
-      const oldPermissionIds = adminRole.pivotPermissions.map(rp => rp.permissionId)
-      const newPermissionIds = permissions.map(p => p.id)
+      const oldPolicyIds = adminRole.pivotPolicies.map(rp => rp.policyId)
+      const newPolicyIds = policies.map(p => p.id)
 
-      const diffIds = this.helperService.arrayDifference(oldPermissionIds, newPermissionIds)
-      const oldIds = this.helperService.arrayIntersection(oldPermissionIds, newPermissionIds)
-      const addIds = this.helperService.arrayIntersection(diffIds, newPermissionIds)
+      const diffIds = this.helperService.arrayDifference(oldPolicyIds, newPolicyIds)
+      const oldIds = this.helperService.arrayIntersection(oldPolicyIds, newPolicyIds)
+      const addIds = this.helperService.arrayIntersection(diffIds, newPolicyIds)
       const delIds = this.helperService.arrayDifference(diffIds, addIds)
 
       await this.prisma.$transaction(async tx => {
-        await tx.rolesPermissions.deleteMany({ where: { permissionId: { in: delIds } } })
-        await tx.rolesPermissions.createMany({
-          data: addIds.map(permissionId => {
+        await tx.rolesPolicies.deleteMany({
+          where: { roleId: adminRole.id, policyId: { in: delIds } },
+        })
+        await tx.rolesPolicies.createMany({
+          data: addIds.map(policyId => {
             return {
-              permissionId,
+              policyId,
               roleId: adminRole.id,
-              bitwise: permissions.find(p => p.id === permissionId)?.bitwise ?? 0,
+              bitwise: policies.find(p => p.id === policyId)?.bitwise ?? 0,
             }
           }),
-        })
-
-        const userRoles = []
-        const userIds = [...adminUsers, ...roleUsers].map(user => user.id)
-        for (const userId of this.helperService.arrayUnique(userIds)) {
-          userRoles.push({ userId: userId, roleId: adminRole.id })
-        }
-        await tx.usersRoles.createMany({
-          data: userRoles,
-          skipDuplicates: true,
         })
       })
 
       // update bitwise
       for (const id of oldIds) {
-        const bitwise = permissions.find(p => p.id === id)?.bitwise ?? 0
-        await this.prisma.rolesPermissions.updateMany({
+        const bitwise = policies.find(p => p.id === id)?.bitwise ?? 0
+        await this.prisma.rolesPolicies.updateMany({
           data: { bitwise },
-          where: { roleId: adminRole.id, permissionId: id },
+          where: { roleId: adminRole.id, policyId: id },
         })
       }
     }

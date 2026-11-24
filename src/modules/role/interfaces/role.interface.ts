@@ -1,16 +1,16 @@
-import { Role, RolesPermissions } from '@runtime/prisma-client'
-import { TPermission } from 'modules/permission/interfaces/permission.interface'
-import { RolePermissionRequestCreateDto } from '../dtos/role-permission.request.create.dto'
+import { Role, RolesPolicies } from '@runtime/prisma-client'
+import { TPolicy } from 'modules/policy/interfaces/policy.interface'
+import { RolePolicyRequestCreateDto } from '../dtos/role-policy.request.create.dto'
 
-export type TRolePermission = RolesPermissions
+export type TRolePolicy = RolesPolicies
 
 export type TRole = Role & {
-  pivotPermissions?: TRolePermission[]
-  fullPermissions?: TPermission[]
+  pivotPolicies?: TRolePolicy[]
+  fullPolicies?: TPolicy[]
 }
 
 export interface IRoleCreateOptions {
-  permissions: RolePermissionRequestCreateDto[]
+  policies: RolePolicyRequestCreateDto[]
 }
 
 export interface IRoleUpdateOptions extends IRoleCreateOptions {

@@ -273,8 +273,12 @@ export class NestWebModule
       )
       .forRoutes('*')
 
-    // Custom middleware (user-defined)
-    const routerMiddlewares = NestWebModule.options.router.middlewares
+    // Custom middleware (user-defined). Their modules are only imported when the router is enabled
+    // (see forRoot), so applying them on a router-less instance (e.g. APP_ROUTER=false, worker
+    // only) would fail dependency resolution at boot.
+    const routerMiddlewares = NestWebModule.options.router.enabled
+      ? NestWebModule.options.router.middlewares
+      : []
     if (routerMiddlewares.length) {
       routerMiddlewares.forEach(config => {
         const excludeRoutes = config.excludeRoutes

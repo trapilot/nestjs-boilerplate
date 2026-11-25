@@ -19,9 +19,6 @@ export enum EnumAppLocale {
 export enum EnumAppTimezone {
   UTC = 'UTC',
   ASIA_HCM = 'Asia/Ho_Chi_Minh',
-  ASIA_TOKYO = 'Asia/Tokyo',
-  ASIA_HONGKONG = 'Asia/Hong_Kong',
-  ASIA_SHANGHAI = 'Asia/Shanghai',
 }
 
 export enum EnumNumberLocale {
@@ -77,14 +74,4 @@ export enum EnumLoggerSeverity {
   INFO = 'info',
   DEBUG = 'debug',
   TRACE = 'trace',
-}
-
-export enum EnumTierCode {
-  NORMAL = 'NORMAL',
-  BRONZE = 'BRONZE',
-  SILVER = 'SILVER',
-  GOLD = 'GOLD',
-  BLACK = 'BLACK',
-  PLATINUM = 'PLATINUM',
-  DIAMOND = 'DIAMOND',
 }

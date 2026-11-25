@@ -24,13 +24,13 @@ import { UserModule } from 'modules/user/user.module'
 
 @Module({
   controllers: [
-    UserAuthController,
-    UserAdminController,
-    ActivityLogAdminController,
     SettingAdminController,
-    DashboardAdminController,
+    UserAuthController,
+    ActivityLogAdminController,
     ApiKeyAdminController,
     AppVersionAdminController,
+    UserAdminController,
+    DashboardAdminController,
     RoleAdminController,
     PolicyAdminController,
     CustomerAdminController,
@@ -38,11 +38,11 @@ import { UserModule } from 'modules/user/user.module'
     NotificationAdminController,
   ],
   imports: [
-    UserModule,
     SettingModule,
-    DashboardModule,
+    UserModule,
     ApiKeyModule,
     AppVersionModule,
+    DashboardModule,
     RoleModule,
     PolicyModule,
     CustomerModule,

@@ -54,5 +54,6 @@ restore.sh
 *.csv
 *.graphql
 *.sql
+!prisma/migrations/**/*.sql
 
 notes

@@ -57,6 +57,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The client is generated into prisma/runtime (gitignored); tests import it as @runtime/prisma-client
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
       - name: Run Prisma Migrations
         run: pnpm db:deploy
         env:

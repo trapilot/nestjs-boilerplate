@@ -30,6 +30,8 @@ export interface IScopeContextData {
   }
   readonly logger?: {
     readonly context: string
+    // false = do not log SQL queries run in this scope (e.g. the job worker's polling)
+    readonly query?: boolean
   }
   // Mutable per-request carrier (e.g. staged activity-log events); absent outside HTTP requests
   readonly store?: Map<string, unknown>

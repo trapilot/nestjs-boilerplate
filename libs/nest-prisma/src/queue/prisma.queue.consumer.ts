@@ -1,10 +1,11 @@
-import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
 import { EnumJobStatus, Prisma, QueueJob } from '@runtime/prisma-client'
 import { randomUUID } from 'crypto'
 import { hostname } from 'os'
 import {
   AppUtil,
+  EnumScopeType,
   EnumWorkerBatchMode,
   HelperService,
   IWorkerCallbackOptions,
@@ -13,8 +14,11 @@ import {
   IWorkerJobBatchInfo,
   IWorkerJobContext,
   IWorkerJobResult,
+  LoggerService,
   RunnerService,
+  ScopeContext,
   WORKER_CONFIG,
+  WORKER_LOG_CONTEXT,
   WorkerConsumer,
   WorkerResultException,
   WorkerTimeoutException,
@@ -23,14 +27,14 @@ import { PrismaService } from '../services'
 import { PrismaQueueStore } from './prisma.queue.store'
 
 const DEFAULT_CONFIG: Required<IWorkerConfig> = {
-  concurrency: 3,
-  maxRunningJobs: 0, // raised to concurrency: locking fewer jobs would leave slots unused
-  pollIntervalMs: 5000,
-  maintainIntervalMs: 60_000,
-  recoveryIntervalMs: 60_000,
-  heartbeatIntervalMs: 5000,
-  shutdownTimeoutMs: 25_000,
-  jobTimeoutMs: 5 * 60_000,
+  concurrency: 5, // ≤ half the DB pool, so API requests always get a connection
+  maxRunningJobs: 5, // locked per node (running + waiting); keep equal to concurrency
+  pollIntervalMs: 5000, // a job waits at most ~5s before it starts
+  maintainIntervalMs: 30_000, // retry onSuccess/onFailure callbacks that did not complete
+  recoveryIntervalMs: 60_000, // hand back jobs of a dead worker
+  heartbeatIntervalMs: 10_000, // a job is stale after 3 missed beats = 30s
+  shutdownTimeoutMs: 25_000, // platform grace period must be longer
+  jobTimeoutMs: 5 * 60_000, // per attempt; a handler's timeoutMs overrides it
 }
 
 const toJson = (value: unknown) =>
@@ -49,7 +53,12 @@ const errorMessage = (err: unknown) => AppUtil.catchMessage(err)
  */
 @Injectable()
 export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(PrismaWorkerConsumer.name)
+  // Worker logs go to logs/worker (context-routed by the file logger), not the system log
+  private readonly log = {
+    info: (message: string) => this.logger.log(message, WORKER_LOG_CONTEXT),
+    warn: (message: string) => this.logger.warn(message, WORKER_LOG_CONTEXT),
+    error: (message: string) => this.logger.error(message, WORKER_LOG_CONTEXT),
+  }
   private readonly cfg: Required<IWorkerConfig>
   private readonly heartbeatTimeoutMs: number // stale after 3 missed heartbeats
   // Unique per process start: pid alone collides across containers (often pid 1) and restarts
@@ -72,6 +81,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
 
   constructor(
     private readonly ref: ModuleRef,
+    private readonly logger: LoggerService,
     private readonly runner: RunnerService,
     private readonly helperService: HelperService,
     @Inject(WORKER_CONFIG) config: IWorkerConfig,
@@ -103,7 +113,21 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     if (this.isPolling) return
 
     this.isPolling = true
-    this.logger.log(`Worker started: ${this.workerId}`)
+
+    // Loops, timers and jobs started inside this scope inherit it (AsyncLocalStorage): their logs
+    // go to logs/worker and their SQL is not logged. Handlers' @OnScope reuses this scope.
+    await this.inWorkerScope(() => this.startLoops())
+  }
+
+  private inWorkerScope<T>(fn: () => Promise<T>): Promise<T> {
+    return ScopeContext.create(
+      { scopeType: EnumScopeType.QUEUE, logger: { context: WORKER_LOG_CONTEXT, query: false } },
+      fn,
+    ) as Promise<T>
+  }
+
+  private async startLoops(): Promise<void> {
+    this.log.info(`Worker started: ${this.workerId}`)
 
     // Pick up jobs left by a previous process right away instead of waiting for the first tick
     await this.guard('Recovery', () => this.recoverOrphanJobs())
@@ -129,9 +153,9 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
 
     // Stop polling first so no new jobs are picked up while draining
     this.isPolling = false
-    this.logger.log(`Stopping worker: ${this.workerId}`)
+    this.log.info(`Stopping worker: ${this.workerId}`)
 
-    this.stoppingPromise = (async () => {
+    this.stoppingPromise = this.inWorkerScope(async () => {
       this.loopTimers.forEach(clearInterval)
       this.loopTimers = []
 
@@ -148,8 +172,8 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       )
 
       clearInterval(this.heartbeatTimer)
-      this.logger.log(`Worker stopped: ${this.workerId}`)
-    })()
+      this.log.info(`Worker stopped: ${this.workerId}`)
+    })
 
     return this.stoppingPromise
   }
@@ -178,7 +202,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     try {
       await task()
     } catch (err: unknown) {
-      this.logger.error(`${name} failed: ${errorMessage(err)}`)
+      this.log.error(`${name} failed: ${errorMessage(err)}`)
     }
   }
 
@@ -223,7 +247,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
         .run(this.workerQueue, () => this.processJob(jobId), { concurrency: this.cfg.concurrency })
         .catch((err: unknown) => {
           this.lockedJobIds.delete(jobId)
-          this.logger.error(`Job ${jobId} failed to settle: ${errorMessage(err)}`)
+          this.log.error(`Job ${jobId} failed to settle: ${errorMessage(err)}`)
         })
     }
   }
@@ -236,7 +260,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     const tracked = [...this.lockedJobIds]
     const count = await this.store.recoverStale(this.workerId, tracked, this.heartbeatTimeoutMs)
 
-    if (count > 0) this.logger.warn(`Recovered ${count} stale jobs`)
+    if (count > 0) this.log.warn(`Recovered ${count} stale jobs`)
   }
 
   /**
@@ -250,7 +274,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     const count = await this.store.releaseLocked(jobIds, this.workerId)
     jobIds.forEach(id => this.lockedJobIds.delete(id))
 
-    this.logger.log(`Released ${count} unstarted jobs`)
+    this.log.info(`Released ${count} unstarted jobs`)
   }
 
   /**
@@ -284,7 +308,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     try {
       const job = await this.store.findOwned(jobId, this.workerId)
       if (!job) {
-        this.logger.warn(`Job ${jobId} not found or lock lost`)
+        this.log.warn(`Job ${jobId} not found or lock lost`)
         return
       }
 
@@ -302,7 +326,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       // retried and its side effect runs twice
       await this.completeJob(job, result, context.metadata)
     } catch (err: unknown) {
-      this.logger.error(`Job ${jobId} failed: ${errorMessage(err)}`)
+      this.log.error(`Job ${jobId} failed: ${errorMessage(err)}`)
     } finally {
       this.runningJobIds.delete(jobId)
       this.lockedJobIds.delete(jobId)
@@ -393,19 +417,19 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
             ),
       )
     } catch (err: unknown) {
-      this.logger.error(
+      this.log.error(
         `Job ${job.id} could not record its result, it may run again: ${errorMessage(err)}`,
       )
       return
     }
 
     if (!owned) {
-      this.logger.warn(`Job ${job.id} lock lost or already transitioned, skip finalize`)
+      this.log.warn(`Job ${job.id} lock lost or already transitioned, skip finalize`)
       return
     }
 
     if (batches) {
-      this.logger.log(`Job ${job.id} split into ${batches.payloads.length} ${batches.mode} batches`)
+      this.log.info(`Job ${job.id} split into ${batches.payloads.length} ${batches.mode} batches`)
       return
     }
 
@@ -451,16 +475,16 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     )
 
     if (!owned) {
-      this.logger.warn(`Job ${job.id} lock lost, skip ${retry ? 'retry' : 'finalize'}`)
+      this.log.warn(`Job ${job.id} lock lost, skip ${retry ? 'retry' : 'finalize'}`)
       return
     }
 
     if (retry) {
-      this.logger.warn(`Job ${job.id} (${job.jobName}) retry #${job.retryCount}: ${lastError}`)
+      this.log.warn(`Job ${job.id} (${job.jobName}) retry #${job.retryCount}: ${lastError}`)
       return
     }
 
-    this.logger.error(`Job ${job.id} (${job.jobName}) failed: ${lastError}`)
+    this.log.error(`Job ${job.id} (${job.jobName}) failed: ${lastError}`)
     await this.finalizeJob(job)
   }
 
@@ -499,7 +523,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
       // A throwing callback counts as not handled
       const handled = await callback.catch((err: unknown) => {
         const name = succeeded ? 'onSuccess' : 'onFailure'
-        this.logger.error(`Job ${job.id} ${name} failed: ${errorMessage(err)}`)
+        this.log.error(`Job ${job.id} ${name} failed: ${errorMessage(err)}`)
         return false
       })
 
@@ -512,7 +536,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
 
     const { moved, closedParent } = await this.store.moveFinalized(job, this.workerId)
     if (!moved) {
-      this.logger.warn(`Job ${job.id} lock lost, skip archive`)
+      this.log.warn(`Job ${job.id} lock lost, skip archive`)
       return
     }
     if (!closedParent) return
@@ -548,7 +572,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
         if (attempt >= attempts) throw err
 
         const delayMs = 1000 * 2 ** (attempt - 1)
-        this.logger.warn(
+        this.log.warn(
           `DB write attempt ${attempt} failed, retry in ${delayMs}ms: ${errorMessage(err)}`,
         )
         await new Promise(resolve => setTimeout(resolve, delayMs))

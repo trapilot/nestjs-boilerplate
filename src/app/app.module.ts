@@ -115,13 +115,15 @@ import { RoutesWebModule } from './routes/routes.web.module'
       },
       worker: {
         enabled: StrUtil.isTrue(process.env.APP_WORKER),
+        // Sized for a small project: one node sharing pg's default pool (10 connections) with
+        // the API. Raise concurrency only together with the DB pool size.
         config: {
-          concurrency: 50,
-          maxRunningJobs: 50, // locked per node (running + waiting); keep close to concurrency
-          pollIntervalMs: 2000,
-          maintainIntervalMs: 10_000,
-          recoveryIntervalMs: 10_000,
-          heartbeatIntervalMs: 5000,
+          concurrency: 5, // ≤ half the DB pool, so API requests always get a connection
+          maxRunningJobs: 5, // locked per node (running + waiting); keep equal to concurrency
+          pollIntervalMs: 5000, // a job waits at most ~5s before it starts
+          maintainIntervalMs: 30_000, // retry onSuccess/onFailure callbacks that did not complete
+          recoveryIntervalMs: 60_000, // hand back jobs of a dead worker
+          heartbeatIntervalMs: 10_000, // a job is stale after 3 missed beats = 30s
           shutdownTimeoutMs: 25_000, // platform grace period must be longer
           jobTimeoutMs: 5 * 60_000, // per attempt; a handler's timeoutMs overrides it
         },

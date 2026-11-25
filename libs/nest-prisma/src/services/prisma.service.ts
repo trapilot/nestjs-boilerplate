@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit, Type } from 
 import { ConfigService } from '@nestjs/config'
 import { PrismaClientExtends } from '@prisma/client/extension'
 import { Prisma, PrismaClient } from '@runtime/prisma-client'
-import { IDatabaseProvider, LOGGER_MESSAGE_KEY, LoggerService } from 'lib/nest-core'
+import { IDatabaseProvider, LOGGER_MESSAGE_KEY, LoggerService, ScopeContext } from 'lib/nest-core'
 import { PRISMA_OPTIONS } from '../constants'
 import { useReplicas, useUtilities } from '../extensions'
 import { IPrismaClientOptions, IPrismaModuleOptions } from '../interfaces'
@@ -122,6 +122,9 @@ class PrismaClientExtension extends PrismaClient implements OnModuleInit, OnModu
   }
 
   private logQuery(event: Prisma.QueryEvent): void {
+    // Scopes such as the job worker opt out: its polling/heartbeat SQL would flood the log
+    if (ScopeContext.current()?.logger?.query === false) return
+
     const { query, duration, params, ...other } = event
 
     this.logger.debug(

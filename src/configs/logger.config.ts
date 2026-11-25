@@ -24,6 +24,10 @@ export default registerAs(
         maxDays: 7,
         maxSize: 500 * 1024 * 1024,
       },
+      worker: {
+        maxDays: 7,
+        maxSize: 500 * 1024 * 1024,
+      },
     },
   }),
 )

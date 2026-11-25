@@ -1,4 +1,4 @@
-import { EnumActivityLogAction } from '../enums/activity-log.enum'
+import { EnumActivityLogAction, EnumActivityLogOwnerType } from '../enums/activity-log.enum'
 
 export const ACTIVITY_LOG_DOC_OPERATION = 'Activity Log'
 
@@ -21,6 +21,19 @@ export const ACTIVITY_LOG_DOC_ADMIN_QUERY_LIST = [
     enum: EnumActivityLogAction,
     enumName: 'EnumActivityLogAction',
   },
+]
+export const ACTIVITY_LOG_DOC_ADMIN_QUERY_LIST_ALL = [
+  ...ACTIVITY_LOG_DOC_ADMIN_QUERY_LIST,
+  {
+    name: 'ownerType',
+    allowEmptyValue: true,
+    required: false,
+    enum: EnumActivityLogOwnerType,
+    enumName: 'EnumActivityLogOwnerType',
+  },
+  { name: 'userId', allowEmptyValue: true, required: false, type: 'number' },
+  { name: 'customerId', allowEmptyValue: true, required: false, type: 'number' },
+  { name: 'correlationId', allowEmptyValue: true, required: false, type: 'string' },
 ]
 export const ACTIVITY_LOG_DOC_ADMIN_PARAM_USER = [
   {

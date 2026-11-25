@@ -1,6 +1,6 @@
 {
   "error": {
-    "overloadSmsCredit": "Sms credit have been overload",
+    "overloadSmsCredit": "SMS credit has been used up",
     "retriesAttemptsLeft": "SMS to {property} failed, retrying ({retriesLeft} attempts left)"
   }
 }

@@ -99,7 +99,9 @@ export class LoggerFactory {
       }
     }
 
-    return request.id as string
+    // Express never sets request.id: without a client header, generate one so every request has
+    // an id (shared by the HTTP log and activity logs as the correlation id)
+    return (request.id as string) || LoggerUtil.genReqId()
   }
 
   private sanitizeMessage(message: unknown): string | unknown {

@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  ForbiddenException,
   HttpStatus,
   Inject,
   Injectable,
@@ -31,9 +31,9 @@ export class RoleLimitedTypePipe implements PipeTransform {
     }
 
     if (!RoleUtil.canAccess(requesterType, role.type)) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'auth.error.scopePredefinedNotFound',
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'module.role.forbidden',
       })
     }
 

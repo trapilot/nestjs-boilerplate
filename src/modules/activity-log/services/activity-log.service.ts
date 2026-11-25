@@ -93,6 +93,14 @@ export class ActivityLogService {
     return this.getPage({ ...kwargs, where: { ...kwargs.where, userId } }, options)
   }
 
+  /** All logs (staff and customers); filter with kwargs.where. */
+  async getPageAll(
+    kwargs: Prisma.ActivityLogFindManyArgs,
+    options?: IPrismaExportOptions,
+  ): Promise<IPrismaReturnPaging> {
+    return this.getPage(kwargs, options)
+  }
+
   async getPageByCustomer(
     customerId: number,
     kwargs: Prisma.ActivityLogFindManyArgs,
@@ -108,7 +116,11 @@ export class ActivityLogService {
     return await this.prisma.activityLog.paginate(
       {
         ...kwargs,
-        include: { createdByUser: { select: { id: true, name: true, email: true } } },
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+          customer: { select: { id: true, name: true, email: true } },
+          createdByUser: { select: { id: true, name: true, email: true } },
+        },
       },
       options,
     )
@@ -202,6 +214,7 @@ export class ActivityLogService {
       description: this.activityLogUtil.getDescription(event.action, event.metadata),
       ipAddress: request.ipAddress,
       userAgent: request.userAgent ?? Prisma.JsonNull,
+      correlationId: request.correlationId,
       metadata: event.metadata,
     }
   }

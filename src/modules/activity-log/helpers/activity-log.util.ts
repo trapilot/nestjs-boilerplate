@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { EnumActivityLogAction } from '../enums/activity-log.enum'
-import { APP_LANGUAGE, IRequestApp, MessageService } from 'lib/nest-core'
+import {
+  APP_LANGUAGE,
+  IRequestApp,
+  LOGGER_REQUEST_ID_HEADERS,
+  LoggerUtil,
+  MessageService,
+} from 'lib/nest-core'
 import { PrismaUtil } from 'lib/nest-prisma'
 import { UAParser } from 'ua-parser-js'
 import { IActivityLogMetadata, IActivityLogRequestInfo } from '../interfaces/activity-log.interface'
@@ -29,7 +35,24 @@ export class ActivityLogUtil {
       payload: scopeType && Number.isInteger(id) && id > 0 ? { scopeType, id } : null,
       ipAddress: request.ip ?? null,
       userAgent: PrismaUtil.toPlainObject(this.parseUserAgent(request)),
+      correlationId: this.getCorrelationId(request),
     }
+  }
+
+  /**
+   * The request's id, so activity rows and the HTTP log line share it: `request.id` set by the HTTP
+   * logger, else the client's x-correlation-id / x-request-id header, else a new one (stored back on
+   * the request). Client values are capped: they are stored as-is.
+   */
+  private getCorrelationId(request: IRequestApp): string {
+    const header = LOGGER_REQUEST_ID_HEADERS.map(name => request.headers?.[name]).find(Boolean)
+    const value = String(request.id || (Array.isArray(header) ? header[0] : header) || '').trim()
+    const correlationId = value ? value.slice(0, 128) : LoggerUtil.genReqId()
+
+    if (!request.id) {
+      request.id = correlationId
+    }
+    return correlationId
   }
 
   // Same resolution as the RequestUserAgent decorator: the app's x-user-agent first, then the header

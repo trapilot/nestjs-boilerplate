@@ -1,10 +1,10 @@
 {
   "validation": "Validation errors",
   "unknownValue": "Unknown value doesn't allowed",
-  "min": "{property} has less elements than the minimum allowed",
-  "max": "{property} has more elements than the maximum allowed",
-  "maxLength": "{property} has more elements than the maximum allowed",
-  "minLength": "{property} has less elements than the minimum allowed",
+  "min": "{property} is smaller than the minimum allowed",
+  "max": "{property} is larger than the maximum allowed",
+  "maxLength": "{property} is longer than the maximum length allowed",
+  "minLength": "{property} is shorter than the minimum length allowed",
   "isString": "{property} should be a type of string",
   "isNotEmpty": "{property} cannot be empty",
   "isLowercase": "{property} should be lowercase",
@@ -12,16 +12,16 @@
   "isPositive": "{property} should be a positive number",
   "isEmail": "{property} should be a type of email",
   "isPhone": "{property} should be a type of phone",
-  "isInt": "{property} should be a number",
-  "isNumberString": "{property} should be a number",
+  "isInt": "{property} should be an integer",
+  "isNumberString": "{property} should be a string of digits",
   "isNumber": "{property} should be a number {value}",
   "isBoolean": "{property} should be a boolean",
   "isEnum": "{property} don't match with enum",
   "isObject": "{property} should be a object",
   "isArray": "{property} should be a array",
   "arrayNotEmpty": "{property} array is not empty",
-  "minDate": "{property} has less date than the minimum allowed",
-  "maxDate": "{property} has more elements than the maximum allowed",
+  "minDate": "{property} is earlier than the earliest date allowed",
+  "maxDate": "{property} is later than the latest date allowed",
   "isDate": "{property} should be a date",
   "isYear": "{value} is not a valid year",
   "isMonth": "{value} is not a valid month",
@@ -33,14 +33,14 @@
   "safeString": "{property} should safe string, only contain A-Z, a-z, 0-9 and symbol allowed is '_-'",
   "mobileNumber": "{property} should be a mobile number that allowed",
   "maxBinaryFile": "{property} size is more than max. {property} should less than {value}",
-  "dateGreaterThan": "{property} must greater than {value}",
-  "dateGreaterThanEqual": "{property} must greater than equal {value}",
-  "dateLessThan": "{property} must less than {value}",
-  "dateLessThanEqual": "{property} must less than equal {value}",
-  "propertyLessThan": "{property} has less than {value}",
-  "propertyLessThanEqual": "{property} must less than equal {value}",
-  "propertyGreaterThan": "{property} must greater than {value}",
-  "propertyGreaterThanEqual": "{property} must greater than equal {value}",
+  "dateGreaterThan": "{property} must be later than {value}",
+  "dateGreaterThanEqual": "{property} must be on or after {value}",
+  "dateLessThan": "{property} must be earlier than {value}",
+  "dateLessThanEqual": "{property} must be on or before {value}",
+  "propertyLessThan": "{property} must be less than {value}",
+  "propertyLessThanEqual": "{property} must be less than or equal to {value}",
+  "propertyGreaterThan": "{property} must be greater than {value}",
+  "propertyGreaterThanEqual": "{property} must be greater than or equal to {value}",
   "isPassword": "{property} is not strong",
   "isHKID": "{property} should reference with HongKong ID",
   "isMAC": "{property} should reference with a valid MAC address",
@@ -59,15 +59,14 @@
     "localPartMaxLength": "{property} local part length should be less than or equal to 64 characters",
     "localPartDot": "{property} local part should not start or end with a dot",
     "consecutiveDots": "{property} local part should not contain consecutive dots",
-    "invalidChars": "{property} local part should not contain invalid characters."
+    "invalidChars": "{property} local part should not contain invalid characters"
   },
   "phone": {
-    "invalid": "{property} should be a valid phone number",
-    "invalidCountryCode": "{property} should be a valid country code",
-    "invalidNumber": "{property} should be a valid phone number",
-    "invalidExtension": "{property} should be a valid phone number extension."
+    "invalid": "{property} is not in a valid phone number format",
+    "invalidCountryCode": "{property} should have a valid country code",
+    "invalidNumber": "{property} is not a valid number for its country",
+    "invalidExtension": "{property} should have a valid phone extension"
   },
-
   "apikey": {
     "isActiveInvalid": "API Key is active invalid",
     "expired": "API Key expired",
@@ -78,7 +77,6 @@
     "invalid": "Invalid API Key",
     "typeInvalid": "Api Key type invalid"
   },
-
   "error": {
     "paramRequired": "Required parameter is missing",
     "userAgentInvalid": "Request user agent not acceptable",
@@ -89,7 +87,6 @@
     "appVersionNoLongerSupported": "Your app version is no longer supported. Please update",
     "requestIsLocked": "Your request have not completed. Please try again"
   },
-
   "success": {
     "list": "Get list successfully",
     "get": "Get successfully",
@@ -106,7 +103,7 @@
     "use": "Use successfully",
     "pay": "Pay successfully",
     "add": "Add successfully",
-    "remove": "Remove successfully",
+    "remove": "Removed successfully",
     "checkIn": "Check in successfully",
     "checkOut": "Check out successfully",
     "confirm": "Confirm successfully",

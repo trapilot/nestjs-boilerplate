@@ -10,7 +10,9 @@ export const RESOURCES: ResourceMeta[] = [
     children: [],
     list: {
       method: 'GET',
-      path: '/activity-logs/_me',
+      path: '/activity-logs',
+      subject: 'ACTIVITY_LOG',
+      action: 'read',
       columns: [
         {
           name: 'id',
@@ -24,6 +26,31 @@ export const RESOURCES: ResourceMeta[] = [
           enumName: 'EnumActivityLogAction',
         },
         {
+          name: 'ownerType',
+          type: 'enum',
+          required: true,
+          enumName: 'EnumActivityLogOwnerType',
+        },
+        {
+          name: 'owner',
+          type: 'object',
+          fields: [
+            {
+              name: 'id',
+              type: 'number',
+              required: true,
+            },
+            {
+              name: 'name',
+              type: 'object',
+            },
+            {
+              name: 'email',
+              type: 'object',
+            },
+          ],
+        },
+        {
           name: 'description',
           type: 'string',
           required: true,
@@ -34,10 +61,14 @@ export const RESOURCES: ResourceMeta[] = [
         },
         {
           name: 'ipAddress',
-          type: 'string',
+          type: 'object',
         },
         {
           name: 'userAgent',
+          type: 'object',
+        },
+        {
+          name: 'correlationId',
           type: 'object',
         },
         {
@@ -47,7 +78,7 @@ export const RESOURCES: ResourceMeta[] = [
         },
         {
           name: 'createdBy',
-          type: 'string',
+          type: 'object',
         },
       ],
       filters: [
@@ -55,6 +86,24 @@ export const RESOURCES: ResourceMeta[] = [
           name: 'action',
           type: 'enum',
           enumName: 'EnumActivityLogAction',
+        },
+        {
+          name: 'userId',
+          type: 'number',
+        },
+        {
+          name: 'customerId',
+          type: 'number',
+          lookup: '/customers/map-shorted',
+        },
+        {
+          name: 'correlationId',
+          type: 'string',
+        },
+        {
+          name: 'ownerType',
+          type: 'enum',
+          enumName: 'EnumActivityLogOwnerType',
         },
       ],
       paged: true,
@@ -618,10 +667,6 @@ export const RESOURCES: ResourceMeta[] = [
       subject: 'APP_VERSION',
       action: 'delete',
     },
-    lookup: {
-      path: '/app-versions/map-shorted',
-      filters: [],
-    },
   },
   {
     key: 'content',
@@ -721,39 +766,6 @@ export const RESOURCES: ResourceMeta[] = [
         },
       ],
     },
-    create: {
-      method: 'POST',
-      path: '/contents',
-      subject: 'CONTENT',
-      action: 'create',
-      contentType: 'json',
-      body: [
-        {
-          name: 'title',
-          type: 'locale',
-          required: true,
-          languages: ['en', 'vi'],
-          localeFormat: 'line',
-        },
-        {
-          name: 'content',
-          type: 'locale',
-          required: true,
-          languages: ['en', 'vi'],
-          localeFormat: 'html',
-        },
-        {
-          name: 'type',
-          type: 'enum',
-          required: true,
-          enumName: 'EnumContentType',
-        },
-        {
-          name: 'thumbnail',
-          type: 'file',
-        },
-      ],
-    },
     update: {
       method: 'PUT',
       path: '/contents/{id}',
@@ -780,12 +792,6 @@ export const RESOURCES: ResourceMeta[] = [
           type: 'file',
         },
       ],
-    },
-    delete: {
-      method: 'DELETE',
-      path: '/contents/{id}',
-      subject: 'CONTENT',
-      action: 'delete',
     },
   },
   {
@@ -844,6 +850,31 @@ export const RESOURCES: ResourceMeta[] = [
             enumName: 'EnumActivityLogAction',
           },
           {
+            name: 'ownerType',
+            type: 'enum',
+            required: true,
+            enumName: 'EnumActivityLogOwnerType',
+          },
+          {
+            name: 'owner',
+            type: 'object',
+            fields: [
+              {
+                name: 'id',
+                type: 'number',
+                required: true,
+              },
+              {
+                name: 'name',
+                type: 'object',
+              },
+              {
+                name: 'email',
+                type: 'object',
+              },
+            ],
+          },
+          {
             name: 'description',
             type: 'string',
             required: true,
@@ -854,10 +885,14 @@ export const RESOURCES: ResourceMeta[] = [
           },
           {
             name: 'ipAddress',
-            type: 'string',
+            type: 'object',
           },
           {
             name: 'userAgent',
+            type: 'object',
+          },
+          {
+            name: 'correlationId',
             type: 'object',
           },
           {
@@ -867,7 +902,7 @@ export const RESOURCES: ResourceMeta[] = [
           },
           {
             name: 'createdBy',
-            type: 'string',
+            type: 'object',
           },
         ],
         filters: [
@@ -1291,7 +1326,6 @@ export const RESOURCES: ResourceMeta[] = [
               name: 'notificationId',
               type: 'number',
               required: true,
-              lookup: '/notifications/map-shorted',
             },
             {
               name: 'type',
@@ -1463,7 +1497,6 @@ export const RESOURCES: ResourceMeta[] = [
               name: 'notificationId',
               type: 'number',
               required: true,
-              lookup: '/notifications/map-shorted',
             },
             {
               name: 'type',
@@ -1735,10 +1768,6 @@ export const RESOURCES: ResourceMeta[] = [
       subject: 'NOTIFICATION',
       action: 'delete',
     },
-    lookup: {
-      path: '/notifications/map-shorted',
-      filters: [],
-    },
   },
   {
     key: 'policy',
@@ -1792,147 +1821,6 @@ export const RESOURCES: ResourceMeta[] = [
       sortable: false,
       searchable: false,
       exportable: false,
-    },
-    get: {
-      method: 'GET',
-      path: '/policies/{id}',
-      subject: 'POLICY',
-      action: 'read',
-      fields: [
-        {
-          name: 'id',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'createdBy',
-          type: 'string',
-          required: true,
-        },
-        {
-          name: 'updatedBy',
-          type: 'string',
-          required: true,
-        },
-        {
-          name: 'deletedBy',
-          type: 'string',
-          required: true,
-        },
-        {
-          name: 'assignedBy',
-          type: 'string',
-          required: true,
-        },
-      ],
-    },
-    create: {
-      method: 'POST',
-      path: '/policies',
-      subject: 'POLICY',
-      action: 'create',
-      contentType: 'json',
-      body: [
-        {
-          name: 'context',
-          type: 'enum',
-          enumName: 'EnumAuthAbilityContext',
-        },
-        {
-          name: 'subject',
-          type: 'enum',
-          required: true,
-          enumName: 'EnumAuthAbilitySubject',
-        },
-        {
-          name: 'actions',
-          type: 'array',
-          required: true,
-          itemType: 'enum',
-          itemEnumName: 'EnumAuthAbilityAction',
-        },
-        {
-          name: 'path',
-          type: 'string',
-          required: true,
-        },
-        {
-          name: 'title',
-          type: 'locale',
-          required: true,
-          languages: ['en', 'vi'],
-          localeFormat: 'line',
-        },
-        {
-          name: 'sorting',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'isVisible',
-          type: 'boolean',
-          required: true,
-        },
-        {
-          name: 'isActive',
-          type: 'boolean',
-          required: true,
-        },
-      ],
-    },
-    update: {
-      method: 'PUT',
-      path: '/policies/{id}',
-      subject: 'POLICY',
-      action: 'update',
-      contentType: 'json',
-      body: [
-        {
-          name: 'context',
-          type: 'enum',
-          enumName: 'EnumAuthAbilityContext',
-        },
-        {
-          name: 'subject',
-          type: 'enum',
-          required: true,
-          enumName: 'EnumAuthAbilitySubject',
-        },
-        {
-          name: 'actions',
-          type: 'array',
-          required: true,
-          itemType: 'enum',
-          itemEnumName: 'EnumAuthAbilityAction',
-        },
-        {
-          name: 'path',
-          type: 'string',
-          required: true,
-        },
-        {
-          name: 'title',
-          type: 'locale',
-          required: true,
-          languages: ['en', 'vi'],
-          localeFormat: 'line',
-        },
-        {
-          name: 'sorting',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'isVisible',
-          type: 'boolean',
-          required: true,
-        },
-        {
-          name: 'isActive',
-          type: 'boolean',
-          required: true,
-        },
-      ],
     },
   },
   {
@@ -2063,7 +1951,7 @@ export const RESOURCES: ResourceMeta[] = [
         },
         {
           name: 'description',
-          type: 'string',
+          type: 'object',
         },
         {
           name: 'isActive',
@@ -2131,7 +2019,7 @@ export const RESOURCES: ResourceMeta[] = [
         },
         {
           name: 'description',
-          type: 'string',
+          type: 'object',
         },
         {
           name: 'isActive',
@@ -2438,6 +2326,31 @@ export const RESOURCES: ResourceMeta[] = [
             enumName: 'EnumActivityLogAction',
           },
           {
+            name: 'ownerType',
+            type: 'enum',
+            required: true,
+            enumName: 'EnumActivityLogOwnerType',
+          },
+          {
+            name: 'owner',
+            type: 'object',
+            fields: [
+              {
+                name: 'id',
+                type: 'number',
+                required: true,
+              },
+              {
+                name: 'name',
+                type: 'object',
+              },
+              {
+                name: 'email',
+                type: 'object',
+              },
+            ],
+          },
+          {
             name: 'description',
             type: 'string',
             required: true,
@@ -2448,10 +2361,14 @@ export const RESOURCES: ResourceMeta[] = [
           },
           {
             name: 'ipAddress',
-            type: 'string',
+            type: 'object',
           },
           {
             name: 'userAgent',
+            type: 'object',
+          },
+          {
+            name: 'correlationId',
             type: 'object',
           },
           {
@@ -2461,7 +2378,7 @@ export const RESOURCES: ResourceMeta[] = [
           },
           {
             name: 'createdBy',
-            type: 'string',
+            type: 'object',
           },
         ],
         filters: [

@@ -659,16 +659,19 @@ model Content {
 // the action, or the owner itself for a staff User acting on itself, or null when a customer
 // acted on itself or the system did.
 model ActivityLog {
-  id          Int      @id @default(autoincrement())
-  userId      Int?
-  customerId  Int?
-  action      String // EnumActivityLogAction (TS enum in modules/activity-log)
-  description String
-  ipAddress   String?
-  userAgent   Json?
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  createdBy   Int?
+  id            Int      @id @default(autoincrement())
+  userId        Int?
+  customerId    Int?
+  action        String // EnumActivityLogAction (TS enum in modules/activity-log)
+  description   String
+  ipAddress     String?
+  userAgent     Json?
+  metadata      Json?
+  // Id of the HTTP request that produced the row (same as the request log's id): groups everything
+  // an account did in one request
+  correlationId String?
+  createdAt     DateTime @default(now())
+  createdBy     Int?
 
   user          User?     @relation("UserActivityLogs", fields: [userId], references: [id], onDelete: Restrict)
   customer      Customer? @relation(fields: [customerId], references: [id], onDelete: Restrict)
@@ -678,6 +681,7 @@ model ActivityLog {
   @@index([customerId, createdAt(sort: Desc), id(sort: Desc)])
   @@index([action, createdAt(sort: Desc)])
   @@index([createdBy, createdAt(sort: Desc)])
+  @@index([correlationId])
   @@map("activity_logs")
 }
 

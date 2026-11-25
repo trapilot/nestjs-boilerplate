@@ -282,6 +282,9 @@ export class UserAdminController {
   ): Promise<IResponseData> {
     const { roleId, ...data } = body
 
+    // The target's current role must be manageable too: checking only the new roleId would let an
+    // Admin demote a Super Admin (and set their password) by sending a roleId it may assign
+    await this.assertCanManageUser(requesterType, id)
     if (roleId) {
       await this.roleService.assertCanAssign(requesterType, roleId)
     }
@@ -357,6 +360,7 @@ export class UserAdminController {
     @RequestBody() _body: UserRequestChangeAvatarDto,
     @RequestParam('id') id: number,
     @AuthJwtPayload('user.id') updatedBy: number,
+    @AuthJwtPayload('user.roleType') requesterType: EnumRoleType,
     @UploadedFile(
       RequestRequiredPipe,
       FileExtensionPipe([
@@ -367,6 +371,8 @@ export class UserAdminController {
     )
     file: IFile,
   ): Promise<IResponseData> {
+    await this.assertCanManageUser(requesterType, id)
+
     const events = this.prepareActivityLogs(
       EnumActivityLogAction.adminUserUpdatePhotoProfile,
       EnumActivityLogAction.userUpdatePhotoProfileByAdmin,
@@ -382,6 +388,15 @@ export class UserAdminController {
 
     return {
       data: updated,
+    }
+  }
+
+  /** Throws unless the requester's role ranks at or above the target user's current role. */
+  private async assertCanManageUser(requesterType: EnumRoleType, userId: number): Promise<void> {
+    const target = await this.userService.findOrFail(userId, { include: { role: true } })
+    const targetType = (target as { role?: { type: EnumRoleType } | null }).role?.type
+    if (targetType) {
+      this.roleService.assertCanManageType(requesterType, targetType)
     }
   }
 }

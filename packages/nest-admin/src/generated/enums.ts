@@ -70,6 +70,10 @@ export type EnumActivityLogAction =
   | 'adminSettingCreate'
   | 'adminSettingUpdate'
 
+export type EnumActivityLogOwnerType =
+  | 'USER'
+  | 'CUSTOMER'
+
 export type EnumApiKeyType =
   | 'SYSTEM'
   | 'CLIENT'
@@ -86,14 +90,6 @@ export type EnumAuthAbilityAction =
   | 'delete'
   | 'export'
   | 'import'
-
-export type EnumAuthAbilityContext =
-  | 'DASHBOARD'
-  | 'SETTING_MANAGEMENT'
-  | 'USER_MANAGEMENT'
-  | 'CUSTOMER_MANAGEMENT'
-  | 'LOCATION_MANAGEMENT'
-  | 'MARKETING_MANAGEMENT'
 
 export type EnumAuthAbilitySubject =
   | 'DASHBOARD'
@@ -160,10 +156,10 @@ export type EnumStatus =
 
 export const ENUMS: Record<string, string[]> = {
   EnumActivityLogAction: ['customerSignedUp', 'customerLoginCredential', 'customerLoginGoogle', 'customerLoginApple', 'customerLoginFailed', 'customerRefreshToken', 'customerForgotPassword', 'customerResetPassword', 'customerUpdateProfile', 'customerUpdatePhotoProfile', 'customerDeleteSelf', 'customerCreatedByAdmin', 'customerUpdatedByAdmin', 'customerBlocked', 'customerUpdateStatus', 'customerUpdatePhotoProfileByAdmin', 'userSignedUp', 'userLoginCredential', 'userLoginGoogle', 'userLoginApple', 'userLoginFailed', 'userRefreshToken', 'userUpdateProfile', 'userUpdatePhotoProfile', 'userChangePassword', 'userChangeConfirmPassword', 'userCreatedByAdmin', 'userUpdatedByAdmin', 'userUpdatePhotoProfileByAdmin', 'adminUserCreate', 'adminUserUpdate', 'adminUserUpdatePhotoProfile', 'adminCustomerCreate', 'adminCustomerUpdate', 'adminCustomerUpdateStatus', 'adminCustomerUpdatePhotoProfile', 'adminRoleCreate', 'adminRoleUpdate', 'adminRoleUpdateStatus', 'adminRoleDelete', 'adminPolicyCreate', 'adminPolicyUpdate', 'adminApiKeyCreate', 'adminApiKeyUpdate', 'adminApiKeyReset', 'adminApiKeyRenew', 'adminApiKeyUpdateStatus', 'adminApiKeyDelete', 'adminAppVersionCreate', 'adminAppVersionUpdate', 'adminAppVersionUpdateStatus', 'adminAppVersionDelete', 'adminContentCreate', 'adminContentUpdate', 'adminContentUpdateStatus', 'adminContentDelete', 'adminCountryCreate', 'adminCountryUpdate', 'adminCountryDelete', 'adminDistrictCreate', 'adminDistrictUpdate', 'adminDistrictDelete', 'adminNotificationCreate', 'adminNotificationUpdate', 'adminNotificationUpdateStatus', 'adminNotificationDelete', 'adminSettingCreate', 'adminSettingUpdate'],
+  EnumActivityLogOwnerType: ['USER', 'CUSTOMER'],
   EnumApiKeyType: ['SYSTEM', 'CLIENT', 'DEFAULT'],
   EnumAppLanguage: ['en', 'vi'],
   EnumAuthAbilityAction: ['read', 'create', 'update', 'delete', 'export', 'import'],
-  EnumAuthAbilityContext: ['DASHBOARD', 'SETTING_MANAGEMENT', 'USER_MANAGEMENT', 'CUSTOMER_MANAGEMENT', 'LOCATION_MANAGEMENT', 'MARKETING_MANAGEMENT'],
   EnumAuthAbilitySubject: ['DASHBOARD', 'SETTING', 'API_KEY', 'APP_VERSION', 'ROLE', 'POLICY', 'USER', 'CONTENT', 'COUNTRY', 'DISTRICT', 'PUSH', 'PUSH_GROUP', 'NOTIFICATION', 'CUSTOMER', 'CUSTOMER_PUSH', 'CUSTOMER_NOTIFICATION', 'ACTIVITY_LOG'],
   EnumContentType: ['ABOUT_US', 'PRIVACY', 'TERM_AND_CONDITION'],
   EnumNotificationChannel: ['SMS', 'EMAIL', 'WHATSAPP'],

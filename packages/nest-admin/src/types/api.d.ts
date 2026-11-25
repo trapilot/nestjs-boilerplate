@@ -108,23 +108,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/auth/sign-up": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Authentication */
-        post: operations["UserAuthController_signUp"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/admin/auth/login": {
         parameters: {
             query?: never;
@@ -142,40 +125,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/auth/login/social/google": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Authentication */
-        post: operations["UserAuthController_loginWithGoogle"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/auth/login/social/apple": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Authentication */
-        post: operations["UserAuthController_loginWithApple"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/admin/auth/_me": {
         parameters: {
             query?: never;
@@ -185,23 +134,6 @@ export interface paths {
         };
         /** Authentication */
         get: operations["UserAuthController_me"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/auth/_route": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Authentication */
-        get: operations["UserAuthController_route"];
         put?: never;
         post?: never;
         delete?: never;
@@ -306,6 +238,23 @@ export interface paths {
         put?: never;
         /** Authentication */
         post: operations["UserAuthController_changeConfirmPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/activity-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Log */
+        get: operations["ActivityLogAdminController_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -497,23 +446,6 @@ export interface paths {
         put?: never;
         /** App Version */
         post: operations["AppVersionAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/app-versions/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** App Version */
-        get: operations["AppVersionAdminController_mapShorted"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -792,25 +724,6 @@ export interface paths {
         /** Policy */
         get: operations["PolicyAdminController_list"];
         put?: never;
-        /** Policy */
-        post: operations["PolicyAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/policies/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Policy */
-        get: operations["PolicyAdminController_get"];
-        /** Policy */
-        put: operations["PolicyAdminController_update"];
         post?: never;
         delete?: never;
         options?: never;
@@ -932,11 +845,7 @@ export interface paths {
         /** Content */
         get: operations["ContentAdminController_list"];
         put?: never;
-        /**
-         * Content
-         * @deprecated
-         */
-        post: operations["ContentAdminController_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -955,11 +864,7 @@ export interface paths {
         /** Content */
         put: operations["ContentAdminController_update"];
         post?: never;
-        /**
-         * Content
-         * @deprecated
-         */
-        delete: operations["ContentAdminController_delete"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1011,23 +916,6 @@ export interface paths {
         put?: never;
         /** Notification */
         post: operations["NotificationAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/notifications/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Notification */
-        get: operations["NotificationAdminController_mapShorted"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1181,13 +1069,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-11-24T07:39:02.105Z
+             * @example 2026-11-24T08:25:56.589Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-11-25T12:39:02.105Z
+             * @example 2026-11-25T13:25:56.589Z
              */
             updatedAt: string;
         };
@@ -1221,13 +1109,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-11-24T07:39:02.105Z
+             * @example 2026-11-24T08:25:56.589Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-11-25T12:39:02.105Z
+             * @example 2026-11-25T13:25:56.589Z
              */
             updatedAt: string;
         };
@@ -1260,76 +1148,6 @@ export interface components {
             value: string | number | boolean;
             /** @description The refer of setting */
             refer: string | null;
-        };
-        ResponseUserPolicySubject: {
-            /** @example  */
-            path: string;
-            /** @example  */
-            title: string;
-            /** @example  */
-            context: string;
-            /** @example  */
-            subject: string;
-            /** @example true */
-            isVisible: boolean;
-            /**
-             * @example [
-             *       "read"
-             *     ]
-             */
-            actions: string[];
-        };
-        ResponseUserPolicy: {
-            /** @example true */
-            group: boolean;
-            /** @example  */
-            path: string;
-            /** @example  */
-            title: string;
-            /** @example  */
-            context: string;
-            subjects: components["schemas"]["ResponseUserPolicySubject"][];
-        };
-        UserProfileResponseDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            email: string;
-            /** @example  */
-            phone: string;
-            /** @example  */
-            name: string;
-            /** @example  */
-            address: string;
-            /** @example  */
-            avatar: string;
-            /**
-             * Format: date-time
-             * @example 2026-11-25T13:39:02.116Z
-             */
-            loginDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-11-25T13:39:02.116Z
-             */
-            createdAt: string;
-            /** @example 1 */
-            roleId: number;
-            /** @enum {string} */
-            roleType: "SUPER_ADMIN" | "ADMIN" | "USER";
-            policies: components["schemas"]["ResponseUserPolicy"][];
-        };
-        UserRequestSignUpDto: {
-            /** @example admin.3b9ced@example.com */
-            email: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** Format: binary */
-            avatar?: string;
-            /** @example 6%dy95-QZZh8fZKM */
-            password: string;
         };
         AuthResponseTokenDto: {
             /** @example Bearer */
@@ -1393,6 +1211,61 @@ export interface components {
             email: string;
             /** @example 6%dy95-QZZh8fZKM */
             password: string;
+        };
+        ResponseUserPolicySubject: {
+            /** @example  */
+            path: string;
+            /** @example  */
+            title: string;
+            /** @example  */
+            context: string;
+            /** @example  */
+            subject: string;
+            /** @example true */
+            isVisible: boolean;
+            /**
+             * @example [
+             *       "read"
+             *     ]
+             */
+            actions: string[];
+        };
+        ResponseUserPolicy: {
+            /** @example true */
+            group: boolean;
+            /** @example  */
+            path: string;
+            /** @example  */
+            title: string;
+            /** @example  */
+            context: string;
+            subjects: components["schemas"]["ResponseUserPolicySubject"][];
+        };
+        UserProfileResponseDto: {
+            /** @example 1 */
+            id: number;
+            /** @example  */
+            email: string;
+            /** @example  */
+            phone: Record<string, never>;
+            /** @example  */
+            name: Record<string, never>;
+            /** @example  */
+            address: Record<string, never>;
+            /** @example  */
+            avatar: Record<string, never>;
+            /** @example 2026-11-25T14:25:56.595Z */
+            loginDate: Record<string, never>;
+            /**
+             * Format: date-time
+             * @example 2026-11-25T14:25:56.595Z
+             */
+            createdAt: string;
+            /** @example 1 */
+            roleId: number;
+            /** @enum {string} */
+            roleType: "SUPER_ADMIN" | "ADMIN" | "USER";
+            policies: components["schemas"]["ResponseUserPolicy"][];
         };
         UserEditProfileRequestDto: {
             /** @example admin.3b9ced@example.com */
@@ -1464,10 +1337,22 @@ export interface components {
         };
         /** @enum {string} */
         EnumActivityLogAction: "customerSignedUp" | "customerLoginCredential" | "customerLoginGoogle" | "customerLoginApple" | "customerLoginFailed" | "customerRefreshToken" | "customerForgotPassword" | "customerResetPassword" | "customerUpdateProfile" | "customerUpdatePhotoProfile" | "customerDeleteSelf" | "customerCreatedByAdmin" | "customerUpdatedByAdmin" | "customerBlocked" | "customerUpdateStatus" | "customerUpdatePhotoProfileByAdmin" | "userSignedUp" | "userLoginCredential" | "userLoginGoogle" | "userLoginApple" | "userLoginFailed" | "userRefreshToken" | "userUpdateProfile" | "userUpdatePhotoProfile" | "userChangePassword" | "userChangeConfirmPassword" | "userCreatedByAdmin" | "userUpdatedByAdmin" | "userUpdatePhotoProfileByAdmin" | "adminUserCreate" | "adminUserUpdate" | "adminUserUpdatePhotoProfile" | "adminCustomerCreate" | "adminCustomerUpdate" | "adminCustomerUpdateStatus" | "adminCustomerUpdatePhotoProfile" | "adminRoleCreate" | "adminRoleUpdate" | "adminRoleUpdateStatus" | "adminRoleDelete" | "adminPolicyCreate" | "adminPolicyUpdate" | "adminApiKeyCreate" | "adminApiKeyUpdate" | "adminApiKeyReset" | "adminApiKeyRenew" | "adminApiKeyUpdateStatus" | "adminApiKeyDelete" | "adminAppVersionCreate" | "adminAppVersionUpdate" | "adminAppVersionUpdateStatus" | "adminAppVersionDelete" | "adminContentCreate" | "adminContentUpdate" | "adminContentUpdateStatus" | "adminContentDelete" | "adminCountryCreate" | "adminCountryUpdate" | "adminCountryDelete" | "adminDistrictCreate" | "adminDistrictUpdate" | "adminDistrictDelete" | "adminNotificationCreate" | "adminNotificationUpdate" | "adminNotificationUpdateStatus" | "adminNotificationDelete" | "adminSettingCreate" | "adminSettingUpdate";
+        /** @enum {string} */
+        EnumActivityLogOwnerType: "USER" | "CUSTOMER";
+        ActivityLogOwnerDto: {
+            /** @example 1 */
+            id: number;
+            /** @example John Doe */
+            name?: Record<string, never>;
+            /** @example john@example.com */
+            email?: Record<string, never>;
+        };
         ActivityLogResponseDetailDto: {
             /** @example 1 */
             id: number;
             action: components["schemas"]["EnumActivityLogAction"];
+            ownerType: components["schemas"]["EnumActivityLogOwnerType"];
+            owner?: components["schemas"]["ActivityLogOwnerDto"];
             /** @example Logged in with password */
             description: string;
             /**
@@ -1477,7 +1362,7 @@ export interface components {
              */
             metadata?: Record<string, never>;
             /** @example 127.0.0.1 */
-            ipAddress?: string;
+            ipAddress?: Record<string, never>;
             /**
              * @example {
              *       "os": {
@@ -1486,13 +1371,15 @@ export interface components {
              *     }
              */
             userAgent?: Record<string, never>;
+            /** @example 019a3f0e-7c1b-7d3e-9a2b-4f5e6d7c8b9a */
+            correlationId?: Record<string, never>;
             /**
              * Format: date-time
-             * @example 2026-11-25T13:39:02.051Z
+             * @example 2026-11-25T14:25:56.546Z
              */
             createdAt: string;
             /** @example Admin */
-            createdBy?: string;
+            createdBy?: Record<string, never>;
         };
         /** @enum {string} */
         EnumApiKeyType: "SYSTEM" | "CLIENT" | "DEFAULT";
@@ -1523,23 +1410,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-25T12:39:02.059Z
+             * @example 2026-11-25T13:25:56.556Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-26T19:39:02.059Z
+             * @example 2026-11-26T20:25:56.557Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.059Z
+             * @example 2026-11-24T08:25:56.557Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.059Z
+             * @example 2026-11-25T13:25:56.557Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1574,23 +1461,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-25T12:39:02.059Z
+             * @example 2026-11-25T13:25:56.556Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-26T19:39:02.059Z
+             * @example 2026-11-26T20:25:56.557Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.059Z
+             * @example 2026-11-24T08:25:56.557Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.059Z
+             * @example 2026-11-25T13:25:56.557Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1609,13 +1496,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-25T12:39:02.057Z
+             * @example 2026-11-25T13:25:56.555Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-26T19:39:02.057Z
+             * @example 2026-11-26T20:25:56.555Z
              */
             untilDate?: string;
         };
@@ -1628,13 +1515,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-25T12:39:02.057Z
+             * @example 2026-11-25T13:25:56.555Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-26T19:39:02.057Z
+             * @example 2026-11-26T20:25:56.555Z
              */
             untilDate?: string;
         };
@@ -1642,13 +1529,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-25T12:39:02.058Z
+             * @example 2026-11-25T13:25:56.556Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-26T19:39:02.058Z
+             * @example 2026-11-26T20:25:56.556Z
              */
             untilDate?: string;
         };
@@ -1671,12 +1558,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.066Z
+             * @example 2026-11-24T08:25:56.562Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.066Z
+             * @example 2026-11-25T13:25:56.562Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1701,12 +1588,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.066Z
+             * @example 2026-11-24T08:25:56.562Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.066Z
+             * @example 2026-11-25T13:25:56.562Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1867,7 +1754,7 @@ export interface components {
              * @enum {string}
              */
             type?: "SUPER_ADMIN" | "ADMIN" | "USER";
-            description?: string;
+            description?: Record<string, never>;
             /** @example true */
             isActive: boolean;
             policies: components["schemas"]["RolePolicyRequestCreateDto"][];
@@ -1880,7 +1767,7 @@ export interface components {
              * @enum {string}
              */
             type?: "SUPER_ADMIN" | "ADMIN" | "USER";
-            description?: string;
+            description?: Record<string, never>;
             /** @example true */
             isActive: boolean;
             policies: components["schemas"]["RolePolicyRequestCreateDto"][];
@@ -1892,52 +1779,6 @@ export interface components {
             updatedBy: string;
             deletedBy: string;
             assignedBy: string;
-        };
-        PolicyResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        /** @enum {string} */
-        EnumAuthAbilityContext: "DASHBOARD" | "SETTING_MANAGEMENT" | "USER_MANAGEMENT" | "CUSTOMER_MANAGEMENT" | "LOCATION_MANAGEMENT" | "MARKETING_MANAGEMENT";
-        /** @enum {string} */
-        EnumAuthAbilitySubject: "DASHBOARD" | "SETTING" | "API_KEY" | "APP_VERSION" | "ROLE" | "POLICY" | "USER" | "CONTENT" | "COUNTRY" | "DISTRICT" | "PUSH" | "PUSH_GROUP" | "NOTIFICATION" | "CUSTOMER" | "CUSTOMER_PUSH" | "CUSTOMER_NOTIFICATION" | "ACTIVITY_LOG";
-        RequestSentenceDto: {
-            /** @example Lorem ipsum dolor sit amet, consectetur adipiscing elit... */
-            en: string;
-            /** @example Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi u.... */
-            vi: string;
-        };
-        PolicyRequestUpdateDto: {
-            context?: components["schemas"]["EnumAuthAbilityContext"];
-            subject: components["schemas"]["EnumAuthAbilitySubject"];
-            actions: components["schemas"]["EnumAuthAbilityAction"][];
-            /** @example  */
-            path: string;
-            title: components["schemas"]["RequestSentenceDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example true */
-            isVisible: boolean;
-            /** @example true */
-            isActive: boolean;
-        };
-        PolicyRequestCreateDto: {
-            context?: components["schemas"]["EnumAuthAbilityContext"];
-            subject: components["schemas"]["EnumAuthAbilitySubject"];
-            actions: components["schemas"]["EnumAuthAbilityAction"][];
-            /** @example  */
-            path: string;
-            title: components["schemas"]["RequestSentenceDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example true */
-            isVisible: boolean;
-            /** @example true */
-            isActive: boolean;
         };
         CustomerResponseListDto: {
             /** @example 1 */
@@ -1961,12 +1802,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.030Z
+             * @example 2026-11-24T08:25:56.533Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.030Z
+             * @example 2026-11-25T13:25:56.533Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1996,12 +1837,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.030Z
+             * @example 2026-11-24T08:25:56.533Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.030Z
+             * @example 2026-11-25T13:25:56.533Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2022,7 +1863,7 @@ export interface components {
             address?: string;
             /**
              * Format: date-time
-             * @example 2025-05-19T13:39:02.072Z
+             * @example 2025-05-19T14:25:56.567Z
              */
             birthDate?: string;
             /** Format: binary */
@@ -2047,7 +1888,7 @@ export interface components {
             address?: string;
             /**
              * Format: date-time
-             * @example 2025-05-19T13:39:02.072Z
+             * @example 2025-05-19T14:25:56.567Z
              */
             birthDate?: string;
             /** @example en */
@@ -2079,12 +1920,11 @@ export interface components {
             deletedBy: string;
             assignedBy: string;
         };
-        ContentRequestCreateDto: {
-            title: components["schemas"]["RequestSentenceDto"];
-            content: components["schemas"]["RequestSentenceDto"];
-            type: components["schemas"]["EnumContentType"];
-            /** Format: binary */
-            thumbnail?: string;
+        RequestSentenceDto: {
+            /** @example Lorem ipsum dolor sit amet, consectetur adipiscing elit... */
+            en: string;
+            /** @example Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi u.... */
+            vi: string;
         };
         ContentRequestUpdateDto: {
             title: components["schemas"]["RequestSentenceDto"];
@@ -2109,7 +1949,7 @@ export interface components {
             status: string;
             /** @example 08:30 */
             executeTime: string;
-            /** @example 2026-11-24T07:39:02.081Z */
+            /** @example 2026-11-24T08:25:56.573Z */
             executeDate: string;
             /** @example 1 */
             weekday: number;
@@ -2119,24 +1959,24 @@ export interface components {
             month: number;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.081Z
+             * @example 2026-11-24T08:25:56.573Z
              */
             startDate: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.081Z
+             * @example 2026-11-24T08:25:56.573Z
              */
             untilDate: string;
             /** @example true */
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.081Z
+             * @example 2026-11-24T08:25:56.573Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.081Z
+             * @example 2026-11-25T13:25:56.573Z
              */
             updatedAt: string;
         };
@@ -2158,12 +1998,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.081Z
+             * @example 2026-11-24T08:25:56.573Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.081Z
+             * @example 2026-11-25T13:25:56.573Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2190,12 +2030,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-24T07:39:02.081Z
+             * @example 2026-11-24T08:25:56.573Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-25T12:39:02.081Z
+             * @example 2026-11-25T13:25:56.573Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2239,9 +2079,9 @@ export interface components {
         NotificationPushDto: {
             /** @example ONCE */
             type: components["schemas"]["EnumPushType"];
-            /** @example 2026-11-25T13:39:02.079Z */
+            /** @example 2026-11-25T14:25:56.571Z */
             executeTime: string;
-            /** @example 2026-11-25T13:39:02.079Z */
+            /** @example 2026-11-25T14:25:56.571Z */
             executeDate: string;
             /** @example  */
             weekday?: number;
@@ -2251,12 +2091,12 @@ export interface components {
             month?: number;
             /**
              * Format: date-time
-             * @example 2026-11-26T19:39:02.080Z
+             * @example 2026-11-26T20:25:56.571Z
              */
             sinceDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-28T01:39:02.080Z
+             * @example 2026-11-28T02:25:56.571Z
              */
             untilDate?: string;
             /** @example true */
@@ -2507,36 +2347,6 @@ export interface operations {
             };
         };
     };
-    UserAuthController_signUp: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserRequestSignUpDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["UserRequestSignUpDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserProfileResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     UserAuthController_loginWithCredential: {
         parameters: {
             query?: never;
@@ -2567,82 +2377,7 @@ export interface operations {
             };
         };
     };
-    UserAuthController_loginWithGoogle: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["AuthResponseTokenDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    UserAuthController_loginWithApple: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["AuthResponseTokenDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     UserAuthController_me: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserProfileResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    UserAuthController_route: {
         parameters: {
             query?: never;
             header?: {
@@ -2830,6 +2565,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ActivityLogAdminController_list: {
+        parameters: {
+            query?: {
+                action?: components["schemas"]["EnumActivityLogAction"];
+                userId?: number;
+                customerId?: number;
+                correlationId?: string;
+                ownerType?: components["schemas"]["EnumActivityLogOwnerType"];
+                /** @description Data per page */
+                perPage?: number;
+                /** @description Page number */
+                page?: number;
+                /** @description Order by base on metadata.availableOrderBy */
+                orderBy?: string;
+            };
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ActivityLogResponseDetailDto"][];
+                    } & components["schemas"]["ResponsePagingDto"];
+                };
             };
         };
     };
@@ -3281,31 +3053,6 @@ export interface operations {
                     "application/json": {
                         data?: components["schemas"]["AppVersionResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    AppVersionAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["AppVersionResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
                 };
             };
         };
@@ -3954,95 +3701,6 @@ export interface operations {
             };
         };
     };
-    PolicyAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PolicyRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PolicyRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PolicyResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PolicyAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PolicyResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PolicyAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PolicyRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PolicyRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PolicyResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     CustomerAdminController_list: {
         parameters: {
             query?: {
@@ -4310,36 +3968,6 @@ export interface operations {
             };
         };
     };
-    ContentAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ContentRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ContentRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ContentResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     ContentAdminController_get: {
         parameters: {
             query?: never;
@@ -4396,29 +4024,6 @@ export interface operations {
                         data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
-            };
-        };
-    };
-    ContentAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
@@ -4534,31 +4139,6 @@ export interface operations {
                     "application/json": {
                         data?: components["schemas"]["NotificationResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    NotificationAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["NotificationResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
                 };
             };
         };

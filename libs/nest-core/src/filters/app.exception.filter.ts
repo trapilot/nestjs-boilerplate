@@ -46,7 +46,7 @@ export class AppExceptionFilter implements ExceptionFilter {
 
     // default
     const statusHttp: number = HttpStatus.INTERNAL_SERVER_ERROR
-    const messagePath: string = `http.internalServerError`
+    const messagePath: string = `http.${HttpStatus.INTERNAL_SERVER_ERROR}`
 
     const message = this.message.setMessage(messagePath, {
       customLanguage: metadata.language,

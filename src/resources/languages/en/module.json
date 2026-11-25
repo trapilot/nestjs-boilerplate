@@ -6,7 +6,8 @@
   "role": {
     "notFound": "Role not found",
     "exist": "Role existed",
-    "conflict": "Role already in use"
+    "conflict": "Role already in use",
+    "forbidden": "You cannot manage an account or role ranked above your own"
   },
   "policy": {
     "notFound": "Policy not found"

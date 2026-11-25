@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
   ConflictException,
+  ForbiddenException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -137,9 +137,9 @@ export class RoleService {
   /** Throws when the requester is not allowed to manage or assign a role of the given type. */
   assertCanManageType(requesterType: EnumRoleType | null | undefined, type: EnumRoleType): void {
     if (!RoleUtil.canAccess(requesterType, type)) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'auth.error.scopePredefinedNotFound',
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'module.role.forbidden',
       })
     }
   }

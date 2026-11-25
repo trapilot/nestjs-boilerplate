@@ -29,10 +29,10 @@
   "P2026": "The current database provider doesn't support a feature that the query used: {feature}",
   "P2027": "Multiple errors occurred on the database during query execution: {errors}",
   "P2028": "Transaction API error: {error}",
-  "P2029": "",
+  "P2029": "Query parameter limit exceeded: {message}",
   "P2030": "Cannot find a fulltext index to use for the search, try adding a @@fulltext([Fields...]) to your schema",
   "P2031": "Prisma needs to perform transactions, which requires your MongoDB server to be run as a replica set",
-  "P2032": "",
+  "P2032": "A value read from the database could not be converted to its field type",
   "P2033": "A number used in the query does not fit into a 64 bit signed integer. Consider using BigInt as field type if you're trying to store large integers",
   "P2034": "Transaction failed due to a write conflict or a deadlock. Please retry your transaction"
 }

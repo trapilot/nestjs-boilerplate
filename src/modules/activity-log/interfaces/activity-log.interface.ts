@@ -38,6 +38,8 @@ export interface IActivityLogRequestInfo {
   payload: { scopeType: string; id: number } | null
   ipAddress: string | null
   userAgent: Prisma.InputJsonValue | null
+  /** Request id shared by every row of the request (and the HTTP log). */
+  correlationId: string
 }
 
 export interface IActivityLogFlushOptions {

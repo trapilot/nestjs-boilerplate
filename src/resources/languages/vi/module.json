@@ -6,7 +6,8 @@
   "role": {
     "notFound": "Không tìm thấy vai trò",
     "exist": "Vai trò đã tồn tại",
-    "conflict": "Vai trò đang được sử dụng"
+    "conflict": "Vai trò đang được sử dụng",
+    "forbidden": "Bạn không thể quản lý tài khoản hoặc vai trò cao hơn vai trò của bạn"
   },
   "policy": {
     "notFound": "Không tìm thấy chính sách"

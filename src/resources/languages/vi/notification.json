@@ -1,0 +1,6 @@
+{
+  "error": {
+    "overloadSmsCredit": "Đã hết hạn mức gửi SMS",
+    "retriesAttemptsLeft": "Gửi SMS đến {property} thất bại, đang thử lại (còn {retriesLeft} lần)"
+  }
+}

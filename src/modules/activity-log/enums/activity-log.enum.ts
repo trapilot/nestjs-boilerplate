@@ -12,6 +12,12 @@ export enum EnumActivityLogOwner {
   CUSTOMER = 'CUSTOMER',
 }
 
+/** Who a stored row belongs to (exactly one of userId / customerId is set). Used by the API. */
+export enum EnumActivityLogOwnerType {
+  USER = 'USER', // admin staff User
+  CUSTOMER = 'CUSTOMER',
+}
+
 /**
  * Every recorded user behaviour. Stored as a plain string in `activity_logs.action`, so adding
  * a value needs no migration. Naming follows the owner of the row:

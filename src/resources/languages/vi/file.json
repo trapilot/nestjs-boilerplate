@@ -1,0 +1,13 @@
+{
+  "error": {
+    "incorrectAspectRatio": "Tỉ lệ khung hình không đúng. Phải là {ratio}",
+    "incorrectDimension": "Kích thước không đúng. Phải lớn hơn hoặc bằng {size}",
+    "maxFiles": "Quá nhiều tệp",
+    "maxSize": "Kích thước tệp quá lớn",
+    "mimeInvalid": "Loại tệp không được phép",
+    "needExtractFirst": "Cần trích xuất dữ liệu trước",
+    "notFound": "Không tìm thấy tệp",
+    "required": "Chưa tải lên {field}",
+    "validationDto": "Dữ liệu nhập không hợp lệ"
+  }
+}

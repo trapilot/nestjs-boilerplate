@@ -1,27 +1,27 @@
 {
   "validation": "Lỗi xác thực",
   "unknownValue": "Không cho phép sử dụng giá trị không xác định",
-  "min": "Số lượng phần tử của {property} ít hơn số lượng tối thiểu cho phép",
-  "max": "Số lượng phần tử của {property} vượt quá số lượng tối đa cho phép",
-  "maxLength": "Số lượng phần tử của {property} vượt quá độ dài tối đa cho phép",
-  "minLength": "Số lượng phần tử của {property} ít hơn độ dài tối thiểu cho phép",
+  "min": "{property} nhỏ hơn giá trị tối thiểu cho phép",
+  "max": "{property} lớn hơn giá trị tối đa cho phép",
+  "maxLength": "{property} dài hơn độ dài tối đa cho phép",
+  "minLength": "{property} ngắn hơn độ dài tối thiểu cho phép",
   "isString": "{property} phải là kiểu chuỗi",
   "isNotEmpty": "{property} không được để trống",
   "isLowercase": "{property} phải là chữ thường",
   "isOptional": "{property} là tùy chọn",
   "isPositive": "{property} phải là số dương",
-  "isEmail": "{property} phải là địa chỉ email hợp lệ",
+  "isEmail": "{property} phải có định dạng email",
   "isPhone": "{property} phải là số điện thoại",
   "isInt": "{property} phải là số nguyên",
-  "isNumberString": "{property} phải là chuỗi số",
+  "isNumberString": "{property} phải là chuỗi chữ số",
   "isNumber": "{property} phải là số {value}",
   "isBoolean": "{property} phải là giá trị boolean",
   "isEnum": "{property} không khớp với giá trị liệt kê",
   "isObject": "{property} phải là đối tượng",
   "isArray": "{property} phải là mảng",
   "arrayNotEmpty": "Mảng {property} không được rỗng",
-  "minDate": "Ngày của {property} sớm hơn giá trị tối thiểu cho phép",
-  "maxDate": "Ngày của {property} trễ hơn giá trị tối đa cho phép",
+  "minDate": "{property} sớm hơn ngày tối thiểu cho phép",
+  "maxDate": "{property} muộn hơn ngày tối đa cho phép",
   "isDate": "{property} phải là ngày hợp lệ",
   "isYear": "{value} không phải là năm hợp lệ",
   "isMonth": "{value} không phải là tháng hợp lệ",
@@ -33,14 +33,14 @@
   "safeString": "{property} phải là chuỗi an toàn, chỉ gồm A-Z, a-z, 0-9 và các ký tự '_-'",
   "mobileNumber": "{property} phải là số điện thoại hợp lệ",
   "maxBinaryFile": "Kích thước của {property} vượt quá giới hạn tối đa. {property} phải nhỏ hơn {value}",
-  "dateGreaterThan": "{property} must greater than {value}",
-  "dateGreaterThanEqual": "{property} must greater than equal {value}",
-  "dateLessThan": "{property} must less than {value}",
-  "dateLessThanEqual": "{property} must less than equal {value}",
-  "propertyLessThan": "{property} has less than {value}",
-  "propertyLessThanEqual": "{property} must less than equal {value}",
-  "propertyGreaterThan": "{property} must greater than {value}",
-  "propertyGreaterThanEqual": "{property} must greater than equal {value}",
+  "dateGreaterThan": "{property} phải sau {value}",
+  "dateGreaterThanEqual": "{property} phải bằng hoặc sau {value}",
+  "dateLessThan": "{property} phải trước {value}",
+  "dateLessThanEqual": "{property} phải bằng hoặc trước {value}",
+  "propertyLessThan": "{property} phải nhỏ hơn {value}",
+  "propertyLessThanEqual": "{property} phải nhỏ hơn hoặc bằng {value}",
+  "propertyGreaterThan": "{property} phải lớn hơn {value}",
+  "propertyGreaterThanEqual": "{property} phải lớn hơn hoặc bằng {value}",
   "isPassword": "Mật khẩu {property} không đủ mạnh",
   "isHKID": "{property} phải là số CMND Hồng Kông hợp lệ",
   "isMAC": "{property} phải là địa chỉ MAC hợp lệ",
@@ -48,10 +48,9 @@
   "isDuration": "{property} phải là khoảng thời gian",
   "isPipeBetween": "{property} phải là khoảng số dạng 'min-max'",
   "isFileRatio": "Tỉ lệ không chính xác. Phải là {constraints.ratio}",
-  "isFileDimension": "Kích thước không chính xác. Phải lớn hơn hoặc bằng {constraints.size}",
+  "isFileDimension": "Kích thước không chính xác. Phải lớn hơn hoặc bằng {constraints.dimension}",
   "isFileMime": "Định dạng tệp không hợp lệ. Phải là {constraints.mimetypeAllowed}",
   "isFileRequire": "Chưa tải lên {property}",
-
   "apikey": {
     "isActiveInvalid": "Trạng thái kích hoạt của API Key không hợp lệ",
     "expired": "API Key đã hết hạn",
@@ -62,7 +61,6 @@
     "invalid": "API Key không hợp lệ",
     "typeInvalid": "Loại API Key không hợp lệ"
   },
-
   "error": {
     "paramRequired": "Thiếu tham số bắt buộc",
     "userAgentInvalid": "User-Agent của yêu cầu không được chấp nhận",
@@ -73,7 +71,6 @@
     "appVersionNoLongerSupported": "Phiên bản ứng dụng của bạn không còn được hỗ trợ. Vui lòng cập nhật",
     "requestIsLocked": "Yêu cầu của bạn chưa được hoàn tất. Vui lòng thử lại"
   },
-
   "success": {
     "list": "Lấy danh sách thành công",
     "get": "Lấy dữ liệu thành công",
@@ -90,7 +87,7 @@
     "use": "Sử dụng thành công",
     "pay": "Thanh toán thành công",
     "add": "Thêm thành công",
-    "remove": "Xóa thành công",
+    "remove": "Gỡ bỏ thành công",
     "checkIn": "Điểm danh thành công",
     "checkOut": "Trả phòng thành công",
     "confirm": "Xác nhận thành công",
@@ -100,5 +97,21 @@
     "create": "Tạo thành công",
     "update": "Cập nhật thành công",
     "delete": "Xóa thành công"
+  },
+  "phone": {
+    "invalid": "{property} không đúng định dạng số điện thoại",
+    "invalidNumber": "{property} không phải là số hợp lệ của quốc gia đó",
+    "invalidCountryCode": "{property} phải có mã quốc gia hợp lệ",
+    "invalidExtension": "{property} phải có số máy lẻ hợp lệ"
+  },
+  "email": {
+    "invalid": "{property} phải là địa chỉ email hợp lệ",
+    "consecutiveDots": "Phần tên của {property} không được chứa hai dấu chấm liên tiếp",
+    "domainLength": "Tên miền của {property} không được dài quá 255 ký tự",
+    "invalidChars": "Phần tên của {property} chứa ký tự không hợp lệ",
+    "localPartDot": "Phần tên của {property} không được bắt đầu hoặc kết thúc bằng dấu chấm",
+    "localPartMaxLength": "Phần tên của {property} không được dài quá 64 ký tự",
+    "localPartNotEmpty": "Phần tên của {property} không được để trống",
+    "multipleAtSymbols": "{property} không được chứa nhiều ký tự '@'"
   }
 }

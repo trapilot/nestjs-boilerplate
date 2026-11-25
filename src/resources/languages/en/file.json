@@ -2,12 +2,12 @@
   "error": {
     "notFound": "File not found",
     "required": "No {field} was uploaded",
-    "maxSize": "File size too big",
-    "maxFiles": "Files are to many",
-    "mimeInvalid": "File extension not valid",
-    "needExtractFirst": "Extract data needed",
+    "maxSize": "File size is too large",
+    "maxFiles": "Too many files",
+    "mimeInvalid": "File type is not allowed",
+    "needExtractFirst": "Extract the data first",
     "incorrectAspectRatio": "Incorrect aspect ratio. It should be {ratio}",
     "incorrectDimension": "Incorrect size. It must be greater or equal {size}",
-    "validationDto": "Import Data invalid"
+    "validationDto": "Imported data is invalid"
   }
 }

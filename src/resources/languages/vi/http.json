@@ -6,7 +6,7 @@
     "noContent": "Không có nội dung"
   },
   "redirection": {
-    "movePermanently": "Chuyển hướng vĩnh viễn",
+    "movePermanently": "Đã chuyển vĩnh viễn",
     "found": "Đã tìm thấy",
     "notModified": "Không thay đổi",
     "temporaryRedirect": "Chuyển hướng tạm thời",
@@ -35,26 +35,21 @@
   "serverError": {
     "internalServerError": "Lỗi máy chủ nội bộ",
     "notImplemented": "Chưa được thực hiện",
-    "temporaryRedirect": "TChuyển hướng tạm thời",
     "badGateway": "Cổng không hợp lệ",
     "featureLocked": "Tính năng tạm khóa",
     "serviceUnavailable": "Dịch vụ không khả dụng",
     "serviceMaintenance": "Chúng tôi đang bảo trì để cải thiện dịch vụ",
-    "requestTimeout": "Yêu cầu quá thời gian",
     "gatewayTimeout": "Cổng thời gian chờ"
   },
-
   "200": "Thành công",
   "201": "Đã tạo",
   "202": "Đã chấp nhận",
   "204": "Không có nội dung",
-
-  "301": "Chuyển hướng vĩnh viễn",
+  "301": "Đã chuyển vĩnh viễn",
   "302": "Đã tìm thấy",
   "304": "Không thay đổi",
   "307": "Chuyển hướng tạm thời",
   "308": "Chuyển hướng vĩnh viễn",
-
   "400": "Yêu cầu không hợp lệ",
   "401": "Chưa được ủy quyền",
   "403": "Bị cấm",
@@ -66,7 +61,6 @@
   "415": "Loại phương tiện không được hỗ trợ",
   "422": "Thực thể không thể xử lý",
   "429": "Quá nhiều yêu cầu",
-
   "500": "Lỗi máy chủ nội bộ",
   "501": "Chưa được thực hiện",
   "502": "Cổng không hợp lệ",

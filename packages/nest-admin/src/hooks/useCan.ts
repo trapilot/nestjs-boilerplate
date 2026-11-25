@@ -5,9 +5,9 @@ export function useCan() {
   const { user } = useUser()
 
   return (subject: EnumAuthAbilitySubject | string, action: EnumAuthAbilityAction): boolean => {
-    if (!user?.permissions) return false
+    if (!user?.policies) return false
 
-    return user.permissions.some((group) =>
+    return user.policies.some((group) =>
       group.subjects?.some(
         (s) =>
           s.subject === subject &&

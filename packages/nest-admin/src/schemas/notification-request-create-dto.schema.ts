@@ -13,7 +13,7 @@ const schema: FormSchema = {
       "options": [
         "SMS",
         "EMAIL",
-        "WHATAPP"
+        "WHATSAPP"
       ]
     },
     "type": {
@@ -23,7 +23,7 @@ const schema: FormSchema = {
       "required": true,
       "options": [
         "TEXT",
-        "REFERRENCE"
+        "REFERENCE"
       ]
     },
     "refId": {
@@ -78,12 +78,6 @@ const schema: FormSchema = {
       "required": false
     },
     "pushes": {
-      "type": "array",
-      "format": "array",
-      "placeholder": "",
-      "required": false
-    },
-    "groupIds": {
       "type": "array",
       "format": "array",
       "placeholder": "",

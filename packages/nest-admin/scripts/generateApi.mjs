@@ -48,6 +48,8 @@ function toKebabCase(name, glue = '-') {
 }
 
 function toWord(name) {
+  // Ability subjects are UPPER_SNAKE (e.g. ACTIVITY_LOG): split on underscores, not on every capital
+  if (/^[A-Z0-9_]+$/.test(name)) return name.toLowerCase().replace(/_/g, ' ')
   return name.replace(/([A-Z])/g, ' $1').trim()
 }
 
@@ -325,14 +327,16 @@ export default function ${route.element}() {
     const onUpdate = route.ability.actions.includes('update') ? `(row) => navigate(\`/${toKebabCase(route.ability.subject)}/\${row.id}/edit\`)` : `() => {}`
     const onDelete = route.ability.actions.includes('delete') ? `${struct.serviceName}.delete` : `() => {}`
 
-    lines.push(`
-import { useNavigate } from 'react-router-dom'
+    const useNav = route.ability.actions.includes('update')
+
+    lines.push(`${useNav ? `
+import { useNavigate } from 'react-router-dom'` : ''}
 import { GenericList } from '../components/GenericList'
 import { ${struct.serviceName} } from '../services'
 
-export default function ${route.element}() {
+export default function ${route.element}() {${useNav ? `
   const navigate = useNavigate()
-
+` : ''}
   return (
     <GenericList
       module="${struct.moduleName}"

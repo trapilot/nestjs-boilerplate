@@ -5,15 +5,21 @@ import { FormSchema } from '../types/form'
 const schema: FormSchema = {
   "title": "RoleRequestUpdateDto",
   "fields": {
-    "title": {
+    "name": {
       "type": "string",
       "format": "string",
       "placeholder": "",
       "required": true
     },
-    "description": {
+    "type": {
       "type": "string",
       "format": "string",
+      "placeholder": "",
+      "required": false
+    },
+    "description": {
+      "type": "object",
+      "format": "object",
       "placeholder": "",
       "required": false
     },
@@ -23,7 +29,7 @@ const schema: FormSchema = {
       "placeholder": "",
       "required": true
     },
-    "permissions": {
+    "policies": {
       "type": "array",
       "format": "array",
       "placeholder": "",

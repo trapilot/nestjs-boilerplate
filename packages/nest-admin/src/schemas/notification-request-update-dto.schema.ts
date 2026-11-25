@@ -61,12 +61,6 @@ const schema: FormSchema = {
       "format": "array",
       "placeholder": "",
       "required": false
-    },
-    "groupIds": {
-      "type": "array",
-      "format": "array",
-      "placeholder": "",
-      "required": false
     }
   }
 }

@@ -34,12 +34,6 @@ const schema: FormSchema = {
       "format": "boolean",
       "placeholder": "",
       "required": true
-    },
-    "roleId": {
-      "type": "number",
-      "format": "number",
-      "placeholder": "",
-      "required": true
     }
   }
 }

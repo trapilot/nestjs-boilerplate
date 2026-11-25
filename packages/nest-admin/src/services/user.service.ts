@@ -70,22 +70,6 @@ const qs = search.toString()
     const data = await client.put(url, body, config)
     return data as T
   },
-  getLoginHistories: async <T = _components['schemas']['UserResponseLoginHistoryDto'][]>(params: { id: string | number }, options?: RequestOptions): Promise<T> => {
-    const query = options?.query || {}
-const search = new URLSearchParams()
-Object.entries(query).forEach(([k, v]) => {
-  if (v === undefined || v === null) return
-  if (Array.isArray(v)) v.forEach((vv) => search.append(k, String(vv)))
-  else search.append(k, String(v))
-})
-const qs = search.toString()
-    const baseUrl = "/users/" + String(params.id) + "/login-histories"
-    const url = qs ? baseUrl + '?' + qs : baseUrl
-    const client = _privateAxios
-    const config = options?.config || {}
-    const data = await client.get(url, config)
-    return data as T
-  },
   changeAvatar: async <T = _components['schemas']['UserResponseDetailDto']>(params: { id: string | number }, body?: unknown, options?: RequestOptions): Promise<T> => {
     const query = options?.query || {}
 const search = new URLSearchParams()

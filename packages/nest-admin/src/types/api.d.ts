@@ -278,23 +278,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/users/{id}/login-histories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User */
-        get: operations["UserAdminController_getLoginHistories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/admin/users/{id}/change-avatar": {
         parameters: {
             query?: never;
@@ -305,6 +288,57 @@ export interface paths {
         get?: never;
         /** User */
         put: operations["UserAdminController_changeAvatar"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/activity-logs/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Log */
+        get: operations["ActivityLogAdminController_listMine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/activity-logs/users/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Log */
+        get: operations["ActivityLogAdminController_listByUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/activity-logs/customers/{customerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Log */
+        get: operations["ActivityLogAdminController_listByCustomer"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -748,35 +782,35 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/permissions": {
+    "/api/admin/policies": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Permission */
-        get: operations["PermissionAdminController_list"];
+        /** Policy */
+        get: operations["PolicyAdminController_list"];
         put?: never;
-        /** Permission */
-        post: operations["PermissionAdminController_create"];
+        /** Policy */
+        post: operations["PolicyAdminController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/admin/permissions/{id}": {
+    "/api/admin/policies/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Permission */
-        get: operations["PermissionAdminController_get"];
-        /** Permission */
-        put: operations["PermissionAdminController_update"];
+        /** Policy */
+        get: operations["PolicyAdminController_get"];
+        /** Policy */
+        put: operations["PolicyAdminController_update"];
         post?: never;
         delete?: never;
         options?: never;
@@ -784,33 +818,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members": {
+    "/api/admin/customers": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Member */
-        get: operations["MemberAdminController_list"];
+        /** Customer */
+        get: operations["CustomerAdminController_list"];
         put?: never;
-        /** Member */
-        post: operations["MemberAdminController_create"];
+        /** Customer */
+        post: operations["CustomerAdminController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/map-shorted": {
+    "/api/admin/customers/map-shorted": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Member */
-        get: operations["MemberAdminController_mapShorted"];
+        /** Customer */
+        get: operations["CustomerAdminController_mapShorted"];
         put?: never;
         post?: never;
         delete?: never;
@@ -819,17 +853,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/{id}": {
+    "/api/admin/customers/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Member */
-        get: operations["MemberAdminController_get"];
-        /** Member */
-        put: operations["MemberAdminController_put"];
+        /** Customer */
+        get: operations["CustomerAdminController_get"];
+        /** Customer */
+        put: operations["CustomerAdminController_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -837,7 +871,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/{id}/inactive": {
+    "/api/admin/customers/{id}/inactive": {
         parameters: {
             query?: never;
             header?: never;
@@ -845,8 +879,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Member */
-        put: operations["MemberAdminController_inactive"];
+        /** Customer */
+        put: operations["CustomerAdminController_inactive"];
         post?: never;
         delete?: never;
         options?: never;
@@ -854,7 +888,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/{id}/active": {
+    "/api/admin/customers/{id}/active": {
         parameters: {
             query?: never;
             header?: never;
@@ -862,8 +896,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Member */
-        put: operations["MemberAdminController_active"];
+        /** Customer */
+        put: operations["CustomerAdminController_active"];
         post?: never;
         delete?: never;
         options?: never;
@@ -871,7 +905,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/{id}/change-avatar": {
+    "/api/admin/customers/{id}/change-avatar": {
         parameters: {
             query?: never;
             header?: never;
@@ -879,8 +913,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Member */
-        put: operations["MemberAdminController_update"];
+        /** Customer */
+        put: operations["CustomerAdminController_update"];
         post?: never;
         delete?: never;
         options?: never;
@@ -888,445 +922,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/members/{id}/points": {
+    "/api/admin/contents": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Member */
-        post: operations["MemberAdminController_addPoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-tiers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Tier */
-        get: operations["MemberTierAdminController_list"];
-        put?: never;
-        /** Member Tier */
-        post: operations["MemberTierAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-tiers/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Tier */
-        get: operations["MemberTierAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-tiers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Tier */
-        get: operations["MemberTierAdminController_get"];
-        /** Member Tier */
-        put: operations["MemberTierAdminController_update"];
-        post?: never;
-        /** Member Tier */
-        delete: operations["MemberTierAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-points": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Point */
-        get: operations["MemberPointAdminController_list"];
-        put?: never;
-        /** Member Point */
-        post: operations["MemberPointAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-points/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Point */
-        get: operations["MemberPointAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-points/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Point */
-        get: operations["MemberPointAdminController_get"];
-        /** Member Point */
-        put: operations["MemberPointAdminController_update"];
-        post?: never;
-        /** Member Point */
-        delete: operations["MemberPointAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-redemptions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Redemption */
-        get: operations["MemberRedemptionAdminController_list"];
-        put?: never;
-        /** Member Redemption */
-        post: operations["MemberRedemptionAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-redemptions/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Redemption */
-        get: operations["MemberRedemptionAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/member-redemptions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Member Redemption */
-        get: operations["MemberRedemptionAdminController_get"];
-        /** Member Redemption */
-        put: operations["MemberRedemptionAdminController_update"];
-        post?: never;
-        /** Member Redemption */
-        delete: operations["MemberRedemptionAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/products": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product */
-        get: operations["ProductAdminController_list"];
-        put?: never;
-        /** Product */
-        post: operations["ProductAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/products/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product */
-        get: operations["ProductAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/products/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product */
-        get: operations["ProductAdminController_get"];
-        /** Product */
-        put: operations["ProductAdminController_update"];
-        post?: never;
-        /** Product */
-        delete: operations["ProductAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-brands": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Brand */
-        get: operations["ProductBrandAdminController_list"];
-        put?: never;
-        /** Product Brand */
-        post: operations["ProductBrandAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-brands/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Brand */
-        get: operations["ProductBrandAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-brands/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Brand */
-        get: operations["ProductBrandAdminController_get"];
-        /** Product Brand */
-        put: operations["ProductBrandAdminController_update"];
-        post?: never;
-        /** Product Brand */
-        delete: operations["ProductBrandAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Category */
-        get: operations["ProductCategoryAdminController_list"];
-        put?: never;
-        /** Product Category */
-        post: operations["ProductCategoryAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-categories/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Category */
-        get: operations["ProductCategoryAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-categories/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Category */
-        get: operations["ProductCategoryAdminController_get"];
-        /** Product Category */
-        put: operations["ProductCategoryAdminController_update"];
-        post?: never;
-        /** Product Category */
-        delete: operations["ProductCategoryAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-reviews": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Review */
-        get: operations["ProductReviewAdminController_list"];
-        put?: never;
-        /** Product Review */
-        post: operations["ProductReviewAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-reviews/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Review */
-        get: operations["ProductReviewAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/product-reviews/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Product Review */
-        get: operations["ProductReviewAdminController_get"];
-        /** Product Review */
-        put: operations["ProductReviewAdminController_update"];
-        post?: never;
-        /** Product Review */
-        delete: operations["ProductReviewAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/pages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Page */
-        get: operations["PageAdminController_list"];
+        /** Content */
+        get: operations["ContentAdminController_list"];
         put?: never;
         /**
-         * Page
+         * Content
          * @deprecated
          */
-        post: operations["PageAdminController_create"];
+        post: operations["ContentAdminController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/admin/pages/{id}": {
+    "/api/admin/contents/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Page */
-        get: operations["PageAdminController_get"];
-        /** Page */
-        put: operations["PageAdminController_update"];
+        /** Content */
+        get: operations["ContentAdminController_get"];
+        /** Content */
+        put: operations["ContentAdminController_update"];
         post?: never;
         /**
-         * Page
+         * Content
          * @deprecated
          */
-        delete: operations["PageAdminController_delete"];
+        delete: operations["ContentAdminController_delete"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/admin/pages/{id}/active": {
+    "/api/admin/contents/{id}/active": {
         parameters: {
             query?: never;
             header?: never;
@@ -1334,8 +973,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Page */
-        put: operations["PageAdminController_active"];
+        /** Content */
+        put: operations["ContentAdminController_active"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1343,7 +982,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/pages/{id}/inactive": {
+    "/api/admin/contents/{id}/inactive": {
         parameters: {
             query?: never;
             header?: never;
@@ -1351,172 +990,10 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Page */
-        put: operations["PageAdminController_inactive"];
+        /** Content */
+        put: operations["ContentAdminController_inactive"];
         post?: never;
         delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/tiers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Tier */
-        get: operations["TierAdminController_list"];
-        put?: never;
-        /** Tier */
-        post: operations["TierAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/tiers/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Tier */
-        get: operations["TierAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/tiers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Tier */
-        get: operations["TierAdminController_get"];
-        /** Tier */
-        put: operations["TierAdminController_update"];
-        post?: never;
-        /** Tier */
-        delete: operations["TierAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/orders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Order */
-        get: operations["OrderAdminController_list"];
-        put?: never;
-        /** Order */
-        post: operations["OrderAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/orders/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Order */
-        get: operations["OrderAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/orders/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Order */
-        get: operations["OrderAdminController_get"];
-        /** Order */
-        put: operations["OrderAdminController_update"];
-        post?: never;
-        /** Order */
-        delete: operations["OrderAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/invoices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Invoice */
-        get: operations["InvoiceAdminController_list"];
-        put?: never;
-        /** Invoice */
-        post: operations["InvoiceAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/invoices/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Invoice */
-        get: operations["InvoiceAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/invoices/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Invoice */
-        get: operations["InvoiceAdminController_get"];
-        /** Invoice */
-        put: operations["InvoiceAdminController_update"];
-        post?: never;
-        /** Invoice */
-        delete: operations["InvoiceAdminController_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1610,60 +1087,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/media": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Media */
-        get: operations["MediaAdminController_list"];
-        put?: never;
-        /** Media */
-        post: operations["MediaAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/media/map-shorted": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Media */
-        get: operations["MediaAdminController_mapShorted"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/media/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Media */
-        get: operations["MediaAdminController_get"];
-        /** Media */
-        put: operations["MediaAdminController_update"];
-        post?: never;
-        /** Media */
-        delete: operations["MediaAdminController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1687,7 +1110,7 @@ export interface components {
              */
             metadata: components["schemas"]["ResponseMetadataDto"];
         };
-        ResponseUserPermissionSubject: {
+        ResponseUserPolicySubject: {
             /** @example  */
             path: string;
             /** @example  */
@@ -1705,7 +1128,7 @@ export interface components {
              */
             actions: string[];
         };
-        ResponseUserPermission: {
+        ResponseUserPolicy: {
             /** @example true */
             group: boolean;
             /** @example  */
@@ -1714,7 +1137,7 @@ export interface components {
             title: string;
             /** @example  */
             context: string;
-            subjects: components["schemas"]["ResponseUserPermissionSubject"][];
+            subjects: components["schemas"]["ResponseUserPolicySubject"][];
         };
         UserProfileResponseDto: {
             /** @example 1 */
@@ -1722,28 +1145,25 @@ export interface components {
             /** @example  */
             email: string;
             /** @example  */
-            phone: string;
+            phone: Record<string, never>;
             /** @example  */
-            name: string;
+            name: Record<string, never>;
             /** @example  */
-            address: string;
+            address: Record<string, never>;
             /** @example  */
-            avatar: string;
+            avatar: Record<string, never>;
+            /** @example 2026-11-24T15:46:29.238Z */
+            loginDate: Record<string, never>;
             /**
              * Format: date-time
-             * @example 2026-02-10T21:06:30.196Z
-             */
-            loginDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T21:06:30.196Z
+             * @example 2026-11-24T15:46:29.238Z
              */
             createdAt: string;
             /** @example 1 */
             roleId: number;
-            /** @example 1 */
-            roleLv: number;
-            permissions: components["schemas"]["ResponseUserPermission"][];
+            /** @enum {string} */
+            roleType: "SUPER_ADMIN" | "ADMIN" | "USER";
+            policies: components["schemas"]["ResponseUserPolicy"][];
         };
         UserRequestSignUpDto: {
             /** @example admin@example.com */
@@ -1754,7 +1174,7 @@ export interface components {
             address: string;
             /** Format: binary */
             avatar?: string;
-            /** @example admin123 */
+            /** @example Admin@123456 */
             password: string;
         };
         AuthResponseTokenDto: {
@@ -1817,13 +1237,13 @@ export interface components {
         UserRequestSignInDto: {
             /** @example admin@example.com */
             email: string;
-            /** @example admin123 */
+            /** @example Admin@123456 */
             password: string;
         };
         UserEditProfileRequestDto: {
             /** @example admin@example.com */
             email: string;
-            /** @example 85200000000 */
+            /** @example +84901234567 */
             phone?: string;
             /** @example Payx */
             name: string;
@@ -1831,18 +1251,16 @@ export interface components {
             address: string;
             /** @example true */
             isActive: boolean;
-            /** @example 1 */
-            roleId: number;
         };
         UserRequestChangePasswordDto: {
             /**
              * @description new string password, newPassword can't same with oldPassword
-             * @example admin123
+             * @example Admin@123456
              */
             newPassword: string;
             /**
              * @description old string password
-             * @example admin123
+             * @example Admin@123456
              */
             oldPassword: string;
         };
@@ -1851,13 +1269,13 @@ export interface components {
             avatar?: string;
         };
         UserVerifyPasswordRequestDto: {
-            /** @example admin123 */
+            /** @example Admin@123456 */
             password: string;
         };
         UserRequestChangeConfirmPasswordDto: {
             /**
              * @description new confirm password
-             * @example admin123
+             * @example Admin@123456
              */
             password: string;
         };
@@ -1912,6 +1330,87 @@ export interface components {
             deletedBy: string;
             assignedBy: string;
         };
+        UserRequestCreateDto: {
+            /** @example admin@example.com */
+            email: string;
+            /** @example +84901234567 */
+            phone?: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** Format: binary */
+            avatar?: string;
+            /** @example Admin@123456 */
+            password: string;
+            /** @example true */
+            isActive: boolean;
+            /** @example 1 */
+            roleId: number;
+        };
+        UserRequestUpdateDto: {
+            /** @example admin@example.com */
+            email: string;
+            /** @example +84901234567 */
+            phone?: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** @example true */
+            isActive?: boolean;
+            /** @example 1 */
+            roleId: number;
+            /** @example Admin@123456 */
+            password?: string;
+        };
+        /** @enum {string} */
+        EnumActivityLogAction: "customerSignedUp" | "customerLoginCredential" | "customerLoginGoogle" | "customerLoginApple" | "customerLoginFailed" | "customerRefreshToken" | "customerForgotPassword" | "customerResetPassword" | "customerUpdateProfile" | "customerUpdatePhotoProfile" | "customerDeleteSelf" | "customerCreatedByAdmin" | "customerUpdatedByAdmin" | "customerBlocked" | "customerUpdateStatus" | "customerUpdatePhotoProfileByAdmin" | "userSignedUp" | "userLoginCredential" | "userLoginGoogle" | "userLoginApple" | "userLoginFailed" | "userRefreshToken" | "userUpdateProfile" | "userUpdatePhotoProfile" | "userChangePassword" | "userChangeConfirmPassword" | "userCreatedByAdmin" | "userUpdatedByAdmin" | "userUpdatePhotoProfileByAdmin" | "adminUserCreate" | "adminUserUpdate" | "adminUserUpdatePhotoProfile" | "adminCustomerCreate" | "adminCustomerUpdate" | "adminCustomerUpdateStatus" | "adminCustomerUpdatePhotoProfile" | "adminRoleCreate" | "adminRoleUpdate" | "adminRoleUpdateStatus" | "adminRoleDelete" | "adminPolicyCreate" | "adminPolicyUpdate" | "adminApiKeyCreate" | "adminApiKeyUpdate" | "adminApiKeyReset" | "adminApiKeyRenew" | "adminApiKeyUpdateStatus" | "adminApiKeyDelete" | "adminAppVersionCreate" | "adminAppVersionUpdate" | "adminAppVersionUpdateStatus" | "adminAppVersionDelete" | "adminContentCreate" | "adminContentUpdate" | "adminContentUpdateStatus" | "adminContentDelete" | "adminCountryCreate" | "adminCountryUpdate" | "adminCountryDelete" | "adminDistrictCreate" | "adminDistrictUpdate" | "adminDistrictDelete" | "adminNotificationCreate" | "adminNotificationUpdate" | "adminNotificationUpdateStatus" | "adminNotificationDelete" | "adminSettingCreate" | "adminSettingUpdate";
+        ActivityLogResponseDetailDto: {
+            /** @example 1 */
+            id: number;
+            action: components["schemas"]["EnumActivityLogAction"];
+            /** @example Logged in with password */
+            description: string;
+            /**
+             * @example {
+             *       "id": 1
+             *     }
+             */
+            metadata?: Record<string, never>;
+            /** @example 127.0.0.1 */
+            ipAddress?: Record<string, never>;
+            /**
+             * @example {
+             *       "os": {
+             *         "name": "iOS"
+             *       }
+             *     }
+             */
+            userAgent?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @example 2026-11-24T15:46:29.186Z
+             */
+            createdAt: string;
+            /** @example Admin */
+            createdBy?: Record<string, never>;
+        };
+        /** @enum {string} */
+        EnumAppLanguage: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+        SettingFileResponseDto: {
+            sizeInBytes: number;
+        };
+        SettingTimezoneResponseDto: {
+            timezone: string;
+            timezoneOffset: string;
+        };
+        SettingCoreResponseDto: {
+            languages: components["schemas"]["EnumAppLanguage"][];
+            file: components["schemas"]["SettingFileResponseDto"] & components["schemas"]["SettingFileResponseDto"];
+            timezone: components["schemas"]["SettingTimezoneResponseDto"] & components["schemas"]["SettingTimezoneResponseDto"];
+            token: string;
+        };
         ResponseListMetadataDto: Record<string, never>;
         ResponseListDto: {
             /**
@@ -1934,59 +1433,6 @@ export interface components {
             metadata: components["schemas"]["ResponseListMetadataDto"];
             /** @default [] */
             data: unknown[][];
-        };
-        UserResponseLoginHistoryDto: {
-            /** @example 1 */
-            id: number;
-        };
-        UserRequestCreateDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example 85200000000 */
-            phone?: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** Format: binary */
-            avatar?: string;
-            /** @example admin123 */
-            password: string;
-            /** @example true */
-            isActive: boolean;
-            /** @example 1 */
-            roleId: number;
-        };
-        UserRequestUpdateDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example 85200000000 */
-            phone?: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** @example true */
-            isActive?: boolean;
-            /** @example 1 */
-            roleId: number;
-            /** @example admin123 */
-            password?: string;
-        };
-        /** @enum {string} */
-        EnumAppLanguage: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-        SettingFileResponseDto: {
-            sizeInBytes: number;
-        };
-        SettingTimezoneResponseDto: {
-            timezone: string;
-            timezoneOffset: string;
-        };
-        SettingCoreResponseDto: {
-            languages: components["schemas"]["EnumAppLanguage"][];
-            file: components["schemas"]["SettingFileResponseDto"] & components["schemas"]["SettingFileResponseDto"];
-            timezone: components["schemas"]["SettingTimezoneResponseDto"] & components["schemas"]["SettingTimezoneResponseDto"];
-            token: string;
         };
         /**
          * @description Data type of setting
@@ -2021,13 +1467,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-02-09T15:06:30.181Z
+             * @example 2026-11-23T09:46:29.231Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-02-10T20:06:30.181Z
+             * @example 2026-11-24T14:46:29.231Z
              */
             updatedAt: string;
         };
@@ -2061,13 +1507,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-02-09T15:06:30.181Z
+             * @example 2026-11-23T09:46:29.231Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-02-10T20:06:30.181Z
+             * @example 2026-11-24T14:46:29.231Z
              */
             updatedAt: string;
         };
@@ -2101,7 +1547,33 @@ export interface components {
             /** @description The refer of setting */
             refer: string | null;
         };
-        DashboardSummaryResponseDto: Record<string, never>;
+        DashboardSummaryResponseDto: {
+            /**
+             * @description All customers (not date-bound)
+             * @example 100
+             */
+            totalCustomers: number;
+            /**
+             * @description Active customers (not date-bound)
+             * @example 80
+             */
+            totalActiveCustomers: number;
+            /**
+             * @description Customers created in the date range
+             * @example 10
+             */
+            totalNewCustomers: number;
+            /**
+             * @description Customer notifications pushed in the date range
+             * @example 25
+             */
+            totalNotificationsSent: number;
+            /**
+             * @description Push messages sent successfully in the date range
+             * @example 40
+             */
+            totalPushesSent: number;
+        };
         DashboardDataResponseDto: Record<string, never>;
         /** @enum {string} */
         EnumApiKeyType: "SYSTEM" | "CLIENT" | "DEFAULT";
@@ -2132,23 +1604,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-02-10T20:06:30.077Z
+             * @example 2026-11-24T14:46:29.194Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-02-12T03:06:30.077Z
+             * @example 2026-11-25T21:46:29.194Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.077Z
+             * @example 2026-11-23T09:46:29.194Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.077Z
+             * @example 2026-11-24T14:46:29.194Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2183,23 +1655,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-02-10T20:06:30.077Z
+             * @example 2026-11-24T14:46:29.194Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-02-12T03:06:30.077Z
+             * @example 2026-11-25T21:46:29.194Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.077Z
+             * @example 2026-11-23T09:46:29.194Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.077Z
+             * @example 2026-11-24T14:46:29.194Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2218,13 +1690,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-02-10T20:06:30.075Z
+             * @example 2026-11-24T14:46:29.192Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-02-12T03:06:30.075Z
+             * @example 2026-11-25T21:46:29.192Z
              */
             untilDate?: string;
         };
@@ -2237,13 +1709,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-02-10T20:06:30.075Z
+             * @example 2026-11-24T14:46:29.192Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-02-12T03:06:30.075Z
+             * @example 2026-11-25T21:46:29.192Z
              */
             untilDate?: string;
         };
@@ -2251,13 +1723,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-02-10T20:06:30.075Z
+             * @example 2026-11-24T14:46:29.193Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-02-12T03:06:30.075Z
+             * @example 2026-11-25T21:46:29.193Z
              */
             untilDate?: string;
         };
@@ -2280,12 +1752,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.086Z
+             * @example 2026-11-23T09:46:29.204Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.086Z
+             * @example 2026-11-24T14:46:29.204Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2310,12 +1782,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.086Z
+             * @example 2026-11-23T09:46:29.204Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.086Z
+             * @example 2026-11-24T14:46:29.204Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2359,6 +1831,8 @@ export interface components {
         RoleResponseListDto: {
             /** @example 1 */
             id: number;
+            /** @enum {string} */
+            type: "SUPER_ADMIN" | "ADMIN" | "USER";
             createdBy: string;
             updatedBy: string;
             deletedBy: string;
@@ -2368,6 +1842,8 @@ export interface components {
         RoleResponseDetailDto: {
             /** @example 1 */
             id: number;
+            /** @enum {string} */
+            type: "SUPER_ADMIN" | "ADMIN" | "USER";
             createdBy: string;
             updatedBy: string;
             deletedBy: string;
@@ -2375,28 +1851,38 @@ export interface components {
         };
         /** @enum {string} */
         EnumAuthAbilityAction: "read" | "create" | "update" | "delete" | "export" | "import";
-        RolePermissionRequestCreateDto: {
+        RolePolicyRequestCreateDto: {
             /** @enum {string} */
-            subject: "DASHBOARD" | "SETTING" | "MEDIA" | "API_KEY" | "APP_VERSION" | "ROLE" | "PERMISSION" | "USER" | "PAGE" | "COUNTRY" | "DISTRICT" | "PUSH" | "PUSH_GROUP" | "NOTIFICATION" | "POINT_SCHEMA" | "MEMBER" | "MEMBER_TIER" | "MEMBER_POINT" | "MEMBER_PUSH" | "MEMBER_NOTIFICATION" | "MEMBER_REDEMPTION" | "PRODUCT" | "PRODUCT_BRAND" | "PRODUCT_CATEGORY" | "PRODUCT_REVIEW" | "CART" | "ORDER" | "INVOICE" | "PAYMENT" | "TIER";
+            subject: "DASHBOARD" | "SETTING" | "API_KEY" | "APP_VERSION" | "ROLE" | "POLICY" | "USER" | "CONTENT" | "COUNTRY" | "DISTRICT" | "PUSH" | "PUSH_GROUP" | "NOTIFICATION" | "CUSTOMER" | "CUSTOMER_PUSH" | "CUSTOMER_NOTIFICATION" | "ACTIVITY_LOG";
             actions: components["schemas"]["EnumAuthAbilityAction"][];
         };
         RoleRequestUpdateDto: {
             /** @example ADMIN */
-            title: string;
-            description?: string;
+            name: string;
+            /**
+             * @example USER
+             * @enum {string}
+             */
+            type?: "SUPER_ADMIN" | "ADMIN" | "USER";
+            description?: Record<string, never>;
             /** @example true */
             isActive: boolean;
-            permissions: components["schemas"]["RolePermissionRequestCreateDto"][];
+            policies: components["schemas"]["RolePolicyRequestCreateDto"][];
         };
         RoleRequestCreateDto: {
             /** @example ADMIN */
-            title: string;
-            description?: string;
+            name: string;
+            /**
+             * @example USER
+             * @enum {string}
+             */
+            type?: "SUPER_ADMIN" | "ADMIN" | "USER";
+            description?: Record<string, never>;
             /** @example true */
             isActive: boolean;
-            permissions: components["schemas"]["RolePermissionRequestCreateDto"][];
+            policies: components["schemas"]["RolePolicyRequestCreateDto"][];
         };
-        PermissionResponseListDto: {
+        PolicyResponseListDto: {
             /** @example 1 */
             id: number;
             createdBy: string;
@@ -2404,7 +1890,7 @@ export interface components {
             deletedBy: string;
             assignedBy: string;
         };
-        PermissionResponseDetailDto: {
+        PolicyResponseDetailDto: {
             /** @example 1 */
             id: number;
             createdBy: string;
@@ -2413,16 +1899,16 @@ export interface components {
             assignedBy: string;
         };
         /** @enum {string} */
-        EnumAuthAbilityContext: "DASHBOARD" | "SETTING_MANAGEMENT" | "USER_MANAGEMENT" | "MEMBER_MANAGEMENT" | "CATALOG_MANAGEMENT" | "SALES_MANAGEMENT" | "LOCATION_MANAGEMENT" | "MARKETING_MANAGEMENT" | "MEDIA_MANAGEMENT";
+        EnumAuthAbilityContext: "DASHBOARD" | "SETTING_MANAGEMENT" | "USER_MANAGEMENT" | "CUSTOMER_MANAGEMENT" | "LOCATION_MANAGEMENT" | "MARKETING_MANAGEMENT";
         /** @enum {string} */
-        EnumAuthAbilitySubject: "DASHBOARD" | "SETTING" | "MEDIA" | "API_KEY" | "APP_VERSION" | "ROLE" | "PERMISSION" | "USER" | "PAGE" | "COUNTRY" | "DISTRICT" | "PUSH" | "PUSH_GROUP" | "NOTIFICATION" | "POINT_SCHEMA" | "MEMBER" | "MEMBER_TIER" | "MEMBER_POINT" | "MEMBER_PUSH" | "MEMBER_NOTIFICATION" | "MEMBER_REDEMPTION" | "PRODUCT" | "PRODUCT_BRAND" | "PRODUCT_CATEGORY" | "PRODUCT_REVIEW" | "CART" | "ORDER" | "INVOICE" | "PAYMENT" | "TIER";
+        EnumAuthAbilitySubject: "DASHBOARD" | "SETTING" | "API_KEY" | "APP_VERSION" | "ROLE" | "POLICY" | "USER" | "CONTENT" | "COUNTRY" | "DISTRICT" | "PUSH" | "PUSH_GROUP" | "NOTIFICATION" | "CUSTOMER" | "CUSTOMER_PUSH" | "CUSTOMER_NOTIFICATION" | "ACTIVITY_LOG";
         RequestSentenceDto: {
             /** @example Lorem ipsum dolor sit amet, consectetur adipiscing elit... */
             en: string;
             /** @example Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi u.... */
             vi: string;
         };
-        PermissionRequestUpdateDto: {
+        PolicyRequestUpdateDto: {
             context?: components["schemas"]["EnumAuthAbilityContext"];
             subject: components["schemas"]["EnumAuthAbilitySubject"];
             actions: components["schemas"]["EnumAuthAbilityAction"][];
@@ -2436,7 +1922,7 @@ export interface components {
             /** @example true */
             isActive: boolean;
         };
-        PermissionRequestCreateDto: {
+        PolicyRequestCreateDto: {
             context?: components["schemas"]["EnumAuthAbilityContext"];
             subject: components["schemas"]["EnumAuthAbilitySubject"];
             actions: components["schemas"]["EnumAuthAbilityAction"][];
@@ -2449,1554 +1935,157 @@ export interface components {
             isVisible: boolean;
             /** @example true */
             isActive: boolean;
+        };
+        CustomerResponseListDto: {
+            /** @example 1 */
+            id: number;
+            /** @example payx@email.cc.co */
+            email: string;
+            /** @example PayPay */
+            name: string;
+            /** @example  */
+            phone: string;
+            /** @example en */
+            locale: string;
+            /** @example home #01 */
+            address: string;
+            /**
+             * Format: date-time
+             * @example null
+             */
+            birthDate: string;
+            /** @example true */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @example 2026-11-23T09:46:29.175Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-11-24T14:46:29.175Z
+             */
+            updatedAt: string;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
+        };
+        CustomerResponseDetailDto: {
+            /** @example 1 */
+            id: number;
+            /** @example payx@email.cc.co */
+            email: string;
+            /** @example PayPay */
+            name: string;
+            /** @example  */
+            phone: string;
+            /** @example en */
+            locale: string;
+            /** @example home #01 */
+            address: string;
+            /**
+             * Format: date-time
+             * @example null
+             */
+            birthDate: string;
+            /** @example true */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @example 2026-11-23T09:46:29.175Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-11-24T14:46:29.175Z
+             */
+            updatedAt: string;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
+        };
+        CustomerRequestCreateDto: {
+            /** @example Payx */
+            name: string;
+            phone: string;
+            email?: string;
+            citizenId?: string;
+            /** @example home #01 */
+            address?: string;
+            /**
+             * Format: date-time
+             * @example 2025-05-18T15:46:29.209Z
+             */
+            birthDate?: string;
+            /** Format: binary */
+            avatar?: string;
+            /** @example en */
+            locale?: components["schemas"]["EnumAppLanguage"];
+            /** @example true */
+            isActive: boolean;
+            password: string;
+        };
+        CustomerRequestUpdateDto: {
+            /** @example Payx */
+            name: string;
+            phone: string;
+            email?: string;
+            citizenId?: string;
+            /** @example home #01 */
+            address?: string;
+            /**
+             * Format: date-time
+             * @example 2025-05-18T15:46:29.209Z
+             */
+            birthDate?: string;
+            /** @example en */
+            locale?: components["schemas"]["EnumAppLanguage"];
+            /** @example true */
+            isActive: boolean;
+            password: string;
+        };
+        CustomerChangeAvatarRequestDto: {
+            /** Format: binary */
+            avatar?: string;
+        };
+        ContentResponseListDto: {
+            /** @example 1 */
+            id: number;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
         };
         /** @enum {string} */
-        EnumMemberType: "VIP" | "STAFF" | "NORMAL" | "PARTNER";
+        EnumContentType: "ABOUT_US" | "PRIVACY" | "TERM_AND_CONDITION";
+        ContentResponseDetailDto: {
+            /** @example 1 */
+            id: number;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
+        };
+        ContentRequestCreateDto: {
+            title: components["schemas"]["RequestSentenceDto"];
+            content: components["schemas"]["RequestSentenceDto"];
+            type: components["schemas"]["EnumContentType"];
+            /** Format: binary */
+            thumbnail?: string;
+        };
+        ContentRequestUpdateDto: {
+            title: components["schemas"]["RequestSentenceDto"];
+            content: components["schemas"]["RequestSentenceDto"];
+            /** Format: binary */
+            thumbnail?: string;
+        };
         ResponseLocaleDto: {
             /** @example Lorem ipsum dolor sit amet consectetur adipiscing elit. */
             en: string;
             /** @example Lorem ipsum dolor sit amet consectetur adipiscing elit. */
             vi: string;
-        };
-        /** @enum {string} */
-        EnumTransitionRule: "AMOUNT";
-        ResponseDataTransitionDto: {
-            /** @example 1 */
-            id: number;
-            /** @example AMOUNT */
-            rule: components["schemas"]["EnumTransitionRule"];
-            /** @example 0 */
-            value: number;
-            /** @example true */
-            isEnabled: boolean;
-            /** @example 1 */
-            prevTierId: number;
-            /** @example 1 */
-            nextTierId: number;
-        };
-        /** @enum {string} */
-        EnumRateRule: "PERSONAL" | "REFERRAL" | "FIRST_PURCHASE";
-        ResponseDataRateDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example PERSONAL */
-            rule: components["schemas"]["EnumRateRule"];
-            /** @example 0 */
-            value: number;
-        };
-        TierResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            /** @example NORMAL */
-            code: string;
-            name: components["schemas"]["ResponseLocaleDto"];
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            transitions: components["schemas"]["ResponseDataTransitionDto"];
-            rates: components["schemas"]["ResponseDataRateDto"];
-        };
-        MemberResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example  */
-            code: string;
-            /** @example NORMAL */
-            type: components["schemas"]["EnumMemberType"];
-            /** @example  */
-            cardId: string;
-            /** @example payx@email.cc.co */
-            email: string;
-            /** @example PayPay */
-            name: string;
-            /** @example  */
-            phone: string;
-            /** @example en */
-            locale: string;
-            /** @example home #01 */
-            address: string;
-            /** @example  */
-            referralCode: string;
-            /**
-             * Format: date-time
-             * @example null
-             */
-            birthDate: string;
-            /**
-             * Format: date-time
-             * @example null
-             */
-            expiryDate: string;
-            /** @example 0 */
-            pointBalance: number;
-            /** @example 0 */
-            maximumAmount: number;
-            /** @example 0 */
-            personalAmount: number;
-            /** @example 0 */
-            referralAmount: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.050Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.050Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            tier: components["schemas"]["TierResponseBelongDto"];
-        };
-        MemberResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example  */
-            code: string;
-            /** @example NORMAL */
-            type: components["schemas"]["EnumMemberType"];
-            /** @example  */
-            cardId: string;
-            /** @example payx@email.cc.co */
-            email: string;
-            /** @example PayPay */
-            name: string;
-            /** @example  */
-            phone: string;
-            /** @example en */
-            locale: string;
-            /** @example home #01 */
-            address: string;
-            /** @example  */
-            referralCode: string;
-            /**
-             * Format: date-time
-             * @example null
-             */
-            birthDate: string;
-            /**
-             * Format: date-time
-             * @example null
-             */
-            expiryDate: string;
-            /** @example 0 */
-            pointBalance: number;
-            /** @example 0 */
-            maximumAmount: number;
-            /** @example 0 */
-            personalAmount: number;
-            /** @example 0 */
-            referralAmount: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.050Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.050Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            tier: components["schemas"]["TierResponseBelongDto"];
-        };
-        MemberRequestCreateDto: {
-            /** @example Payx */
-            name: string;
-            /** @example 84332170915 */
-            phone: string;
-            /** @example nam.dinh@example.com */
-            email?: string;
-            /** @example X5785184 */
-            citizenId?: string;
-            /** @example home #01 */
-            address?: string;
-            /**
-             * Format: date-time
-             * @example 2024-08-04T21:06:30.132Z
-             */
-            birthDate?: string;
-            /** Format: binary */
-            avatar?: string;
-            /** @example en */
-            locale?: components["schemas"]["EnumAppLanguage"];
-            /** @example true */
-            isActive: boolean;
-            /** @example admin123 */
-            password: string;
-        };
-        MemberRequestUpdateDto: {
-            /** @example Payx */
-            name: string;
-            /** @example 84332170915 */
-            phone: string;
-            /** @example nam.dinh@example.com */
-            email?: string;
-            /** @example X5785184 */
-            citizenId?: string;
-            /** @example home #01 */
-            address?: string;
-            /**
-             * Format: date-time
-             * @example 2024-08-04T21:06:30.132Z
-             */
-            birthDate?: string;
-            /** @example en */
-            locale?: components["schemas"]["EnumAppLanguage"];
-            /** @example true */
-            isActive: boolean;
-            /** @example admin123 */
-            password: string;
-        };
-        MemberChangeAvatarRequestDto: {
-            /** Format: binary */
-            avatar?: string;
-        };
-        MemberAddPointRequestDto: {
-            /** @example 1 */
-            point: number;
-        };
-        MemberResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example PayPay */
-            name: string;
-            /** @example  */
-            phone: string;
-        };
-        ProductBrandResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example true */
-            isActive: boolean;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductCategoryResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example true */
-            isActive: boolean;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example 0 */
-            salePoint: number;
-            /** @example 100 */
-            salePrice: number;
-            /** @example 99 */
-            stockQty: number;
-            /** @example true */
-            isActive: boolean;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            brand: components["schemas"]["ProductBrandResponseBelongDto"];
-            category: components["schemas"]["ProductCategoryResponseBelongDto"];
-        };
-        ResponseDataItemDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            orderId: number;
-            /** @example 1 */
-            productId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example 0 */
-            quantity: number;
-            /** @example 0 */
-            unitPrice: number;
-            /** @example 0 */
-            unitPoint: number;
-            /** @example 0 */
-            finalPrice: number;
-            /** @example 0 */
-            finalPoint: number;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            expiryDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.102Z
-             */
-            updatedAt: string;
-            product: components["schemas"]["ProductResponseBelongDto"];
-        };
-        OrderResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example  */
-            totalPrice: number;
-            /** @example 10 */
-            totalPoint: number;
-            /** @example  */
-            discPrice: number;
-            /** @example 10 */
-            discPoint: number;
-            /** @example 10 */
-            finalPrice: number;
-            /** @example 10 */
-            finalPoint: number;
-            /** @example SYSTEM */
-            source: string;
-            /** @example DELIVERED */
-            status: string;
-            /** @example true */
-            isBirth: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            issueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.102Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            items: components["schemas"]["ResponseDataItemDto"];
-        };
-        InvoiceResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example 20 */
-            finalPrice: number;
-            /** @example 20 */
-            finalPoint: number;
-            /** @example FULLY_PAID */
-            status: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T11:06:30.104Z
-             */
-            issueDate: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            order: components["schemas"]["OrderResponseDetailDto"];
-            member: components["schemas"]["MemberResponseBelongDto"];
-        };
-        MemberTierResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example 1 */
-            invoiceId: number;
-            /** @example SYSTEM */
-            source: string;
-            /** @example IMPORT */
-            action: string;
-            /** @example 20 */
-            personalAmount: number;
-            /** @example 20 */
-            referralAmount: number;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.128Z
-             */
-            expiryDate: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.128Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.128Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            invoice: components["schemas"]["InvoiceResponseBelongDto"];
-            prevTier: components["schemas"]["TierResponseBelongDto"];
-            currTier: components["schemas"]["TierResponseBelongDto"];
-        };
-        MemberTierResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example 1 */
-            invoiceId: number;
-            /** @example SYSTEM */
-            source: string;
-            /** @example IMPORT */
-            action: string;
-            /** @example 20 */
-            personalAmount: number;
-            /** @example 20 */
-            referralAmount: number;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.128Z
-             */
-            expiryDate: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.128Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.128Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            invoice: components["schemas"]["InvoiceResponseBelongDto"];
-            prevTier: components["schemas"]["TierResponseBelongDto"];
-            currTier: components["schemas"]["TierResponseBelongDto"];
-        };
-        MemberTierRequestCreateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            tierId: number;
-        };
-        MemberTierRequestUpdateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            tierId: number;
-        };
-        MemberPointResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            refereeId: number;
-            /** @example 1 */
-            invoiceId: number;
-            /** @example 10000 */
-            invoiceAmount: number;
-            /** @example ADMIN */
-            origin: string;
-            /** @example ADJUST */
-            reason: string;
-            /** @example PLUS */
-            action: string;
-            /** @example 1000 */
-            point: number;
-            /** @example 1.6 */
-            pointBalance: number;
-            /** @example false */
-            isPending: boolean;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            expiryDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            releaseDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            createdAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            tier: components["schemas"]["TierResponseBelongDto"];
-            member: components["schemas"]["MemberResponseBelongDto"];
-            referee: components["schemas"]["MemberResponseBelongDto"];
-            invoice: components["schemas"]["InvoiceResponseBelongDto"];
-        };
-        MemberPointResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            tierId: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            refereeId: number;
-            /** @example 1 */
-            invoiceId: number;
-            /** @example 10000 */
-            invoiceAmount: number;
-            /** @example ADMIN */
-            origin: string;
-            /** @example ADJUST */
-            reason: string;
-            /** @example PLUS */
-            action: string;
-            /** @example 1000 */
-            point: number;
-            /** @example 1.6 */
-            pointBalance: number;
-            /** @example false */
-            isPending: boolean;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            expiryDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            releaseDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.117Z
-             */
-            createdAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            tier: components["schemas"]["TierResponseBelongDto"];
-            member: components["schemas"]["MemberResponseBelongDto"];
-            referee: components["schemas"]["MemberResponseBelongDto"];
-            invoice: components["schemas"]["InvoiceResponseBelongDto"];
-        };
-        /** @enum {string} */
-        EnumPointReason: "IMPORT" | "PURCHASE" | "REFER" | "SHARE" | "REWARD" | "WELCOME" | "REGISTER" | "UPGRADE" | "RENEWAL" | "ADJUST" | "EXPIRE";
-        /** @enum {string} */
-        EnumPointAction: "PLUS" | "DEDUCT";
-        MemberPointRequestCreateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            point: number;
-            /** @example ADJUST */
-            reason: components["schemas"]["EnumPointReason"];
-            /** @example PLUS */
-            action: components["schemas"]["EnumPointAction"];
-        };
-        MemberPointRequestUpdateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            point: number;
-            /** @example ADJUST */
-            reason: components["schemas"]["EnumPointReason"];
-            /** @example PLUS */
-            action: components["schemas"]["EnumPointAction"];
-        };
-        OrderResponseBelongDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example  */
-            totalPrice: number;
-            /** @example 10 */
-            totalPoint: number;
-            /** @example  */
-            discPrice: number;
-            /** @example 10 */
-            discPoint: number;
-            /** @example 10 */
-            finalPrice: number;
-            /** @example 10 */
-            finalPoint: number;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            items: components["schemas"]["ResponseDataItemDto"];
-        };
-        MemberRedemptionResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            productId: number;
-            /** @example 1 */
-            orderId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example 500 */
-            redeemPrice: number;
-            /** @example 100 */
-            redeemPoint: number;
-            /** @example ORDER */
-            source: string;
-            /** @example APPROVED */
-            status: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            startDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.123Z
-             */
-            untilDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.123Z
-             */
-            expiryDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            issuedDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            usedDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            usedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.123Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            product: components["schemas"]["ProductResponseBelongDto"];
-            order: components["schemas"]["OrderResponseBelongDto"];
-        };
-        MemberRedemptionResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            productId: number;
-            /** @example 1 */
-            orderId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example 500 */
-            redeemPrice: number;
-            /** @example 100 */
-            redeemPoint: number;
-            /** @example ORDER */
-            source: string;
-            /** @example APPROVED */
-            status: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            startDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.123Z
-             */
-            untilDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.123Z
-             */
-            expiryDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            issuedDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            usedDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            usedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.123Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.123Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            product: components["schemas"]["ProductResponseBelongDto"];
-            order: components["schemas"]["OrderResponseBelongDto"];
-        };
-        MemberRedemptionRequestCreateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            productId: number;
-        };
-        MemberRedemptionRequestUpdateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            productId: number;
-        };
-        /** @enum {string} */
-        EnumExpiryType: "STATIC" | "DYNAMIC";
-        ProductResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            brandId: number;
-            /** @example 1 */
-            categoryId: number;
-            /** @example P01 */
-            sku: string;
-            /** @example  */
-            thumbnail: string;
-            name: components["schemas"]["ResponseLocaleDto"];
-            content: components["schemas"]["ResponseLocaleDto"][];
-            termAndCond: components["schemas"]["ResponseLocaleDto"][];
-            /** @example 0 */
-            salePoint: number;
-            /** @example 100 */
-            salePrice: number;
-            /** @example 100 */
-            costPrice: number;
-            /** @example 99 */
-            stockQty: number;
-            /** @example 0 */
-            paidQty: number;
-            /** @example 0 */
-            unpaidQty: number;
-            /** @example 10 */
-            salePerPerson: number;
-            /** @example 0 */
-            sorting: number;
-            /** @example 0 */
-            duePaidDays: number;
-            /** @example STATIC */
-            expiryType: components["schemas"]["EnumExpiryType"];
-            /** @example 0 */
-            dynamicExpiryDays: number;
-            /** @example 2026-02-12T03:06:30.099Z */
-            dynamicExpiryDate: string;
-            /** @example 2026-02-12T03:06:30.099Z */
-            staticExpiryDate: string;
-            /** @example true */
-            hasShipment: boolean;
-            /** @example true */
-            hasInventory: boolean;
-            /** @example true */
-            hasExpiration: boolean;
-            /** @example true */
-            hasDuePayment: boolean;
-            /** @example true */
-            hasLimitPerson: boolean;
-            /** @example true */
-            isPopular: boolean;
-            /** @example true */
-            isBestSale: boolean;
-            /** @example true */
-            isFlashSale: boolean;
-            /** @example true */
-            isComingSoon: boolean;
-            /** @example true */
-            isNewArrival: boolean;
-            /** @example true */
-            isWishlisted: boolean;
-            /** @example true */
-            isActive: boolean;
-            /** @example false */
-            isDeleted: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.100Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.100Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            brand: components["schemas"]["ProductBrandResponseBelongDto"];
-            category: components["schemas"]["ProductCategoryResponseBelongDto"];
-        };
-        ProductResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example 1 */
-            brandId: number;
-            /** @example 1 */
-            categoryId: number;
-            /** @example P01 */
-            sku: string;
-            /** @example  */
-            thumbnail: string;
-            name: components["schemas"]["ResponseLocaleDto"];
-            content: components["schemas"]["ResponseLocaleDto"][];
-            termAndCond: components["schemas"]["ResponseLocaleDto"][];
-            /** @example 0 */
-            salePoint: number;
-            /** @example 100 */
-            salePrice: number;
-            /** @example 100 */
-            costPrice: number;
-            /** @example 99 */
-            stockQty: number;
-            /** @example 0 */
-            paidQty: number;
-            /** @example 0 */
-            unpaidQty: number;
-            /** @example 10 */
-            salePerPerson: number;
-            /** @example 0 */
-            sorting: number;
-            /** @example 0 */
-            duePaidDays: number;
-            /** @example STATIC */
-            expiryType: components["schemas"]["EnumExpiryType"];
-            /** @example 0 */
-            dynamicExpiryDays: number;
-            /** @example 2026-02-12T03:06:30.099Z */
-            dynamicExpiryDate: string;
-            /** @example 2026-02-12T03:06:30.099Z */
-            staticExpiryDate: string;
-            /** @example true */
-            hasShipment: boolean;
-            /** @example true */
-            hasInventory: boolean;
-            /** @example true */
-            hasExpiration: boolean;
-            /** @example true */
-            hasDuePayment: boolean;
-            /** @example true */
-            hasLimitPerson: boolean;
-            /** @example true */
-            isPopular: boolean;
-            /** @example true */
-            isBestSale: boolean;
-            /** @example true */
-            isFlashSale: boolean;
-            /** @example true */
-            isComingSoon: boolean;
-            /** @example true */
-            isNewArrival: boolean;
-            /** @example true */
-            isWishlisted: boolean;
-            /** @example true */
-            isActive: boolean;
-            /** @example false */
-            isDeleted: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.100Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.100Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            brand: components["schemas"]["ProductBrandResponseBelongDto"];
-            category: components["schemas"]["ProductCategoryResponseBelongDto"];
-        };
-        RequestParagraphDto: {
-            /** @example Lorem ipsum dolor sit amet c */
-            en: string;
-            /** @example Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fri */
-            vi: string;
-        };
-        ProductRequestUpdateDto: {
-            /** @example 1 */
-            brandId: number;
-            /** @example 1 */
-            categoryId: number;
-            name: components["schemas"]["RequestSentenceDto"];
-            /** Format: html */
-            termAndCond: components["schemas"]["RequestParagraphDto"];
-            /** Format: html */
-            content: components["schemas"]["RequestParagraphDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example 100 */
-            salePoint: number;
-            /** @example 100 */
-            salePrice: number;
-            /** @example 100 */
-            costPrice: number;
-            /** @example 99 */
-            stockQty: number;
-            /** @example 0 */
-            salePerPerson: number;
-            /** @example 1 */
-            duePaidDays: number;
-            /** @example STATIC */
-            expiryType: components["schemas"]["EnumExpiryType"];
-            /** @example 7 */
-            dynamicExpiryDays?: number;
-            /** Format: date-time */
-            staticExpiryDate?: string;
-            /** @example false */
-            hasShipment?: boolean;
-            /** @example false */
-            hasInventory?: boolean;
-            /** @example false */
-            hasExpiration?: boolean;
-            /** @example false */
-            hasDuePayment?: boolean;
-            /** @example false */
-            hasLimitPerson?: boolean;
-            /** @example false */
-            isPopular?: boolean;
-            /** @example false */
-            isBestSale?: boolean;
-            /** @example false */
-            isFlashSale?: boolean;
-            /** @example false */
-            isComingSoon?: boolean;
-            /** @example false */
-            isNewArrival?: boolean;
-            /** @example false */
-            isActive?: boolean;
-            /** Format: binary */
-            thumbnail?: string;
-        };
-        ProductRequestCreateDto: {
-            /** @example 1 */
-            brandId: number;
-            /** @example 1 */
-            categoryId: number;
-            /** @example P0000005 */
-            sku: string;
-            name: components["schemas"]["RequestSentenceDto"];
-            /** Format: html */
-            termAndCond: components["schemas"]["RequestParagraphDto"];
-            /** Format: html */
-            content: components["schemas"]["RequestParagraphDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example 100 */
-            salePoint: number;
-            /** @example 100 */
-            salePrice: number;
-            /** @example 100 */
-            costPrice: number;
-            /** @example 99 */
-            stockQty: number;
-            /** @example 0 */
-            salePerPerson: number;
-            /** @example 1 */
-            duePaidDays: number;
-            /** @example STATIC */
-            expiryType: components["schemas"]["EnumExpiryType"];
-            /** @example 7 */
-            dynamicExpiryDays?: number;
-            /** Format: date-time */
-            staticExpiryDate?: string;
-            /** @example false */
-            hasShipment?: boolean;
-            /** @example false */
-            hasInventory?: boolean;
-            /** @example false */
-            hasExpiration?: boolean;
-            /** @example false */
-            hasDuePayment?: boolean;
-            /** @example false */
-            hasLimitPerson?: boolean;
-            /** @example false */
-            isPopular?: boolean;
-            /** @example false */
-            isBestSale?: boolean;
-            /** @example false */
-            isFlashSale?: boolean;
-            /** @example false */
-            isComingSoon?: boolean;
-            /** @example false */
-            isNewArrival?: boolean;
-            /** @example false */
-            isActive?: boolean;
-            /** Format: binary */
-            thumbnail?: string;
-        };
-        ProductBrandResponseListDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example  */
-            thumbnail: string;
-            /** @example  */
-            address: string;
-            /** @example 0 */
-            latitude: number;
-            /** @example 0 */
-            longitude: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.095Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.095Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductBrandResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example  */
-            thumbnail: string;
-            /** @example  */
-            address: string;
-            /** @example 0 */
-            latitude: number;
-            /** @example 0 */
-            longitude: string;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.095Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.095Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductBrandRequestCreateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            /** @example false */
-            isActive?: boolean;
-        };
-        ProductBrandRequestUpdateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            /** @example false */
-            isActive?: boolean;
-        };
-        ProductCategoryResponseListDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.097Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.097Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductCategoryResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            name: components["schemas"]["ResponseLocaleDto"];
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.097Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.097Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductCategoryRequestCreateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            /** @example false */
-            isActive?: boolean;
-        };
-        ProductCategoryRequestUpdateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            /** @example false */
-            isActive?: boolean;
-        };
-        ProductReviewResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.160Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T21:00:30.160Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductReviewResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.160Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T21:00:30.160Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        ProductReviewRequestCreateDto: {
-            /** @example 1 */
-            productId: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example  */
-            comment: string;
-        };
-        ProductReviewRequestUpdateDto: {
-            /** @example 1 */
-            productId: number;
-            /** @example 1 */
-            memberId: number;
-            /** @example  */
-            comment: string;
-        };
-        PageResponseListDto: {
-            /** @example 1 */
-            id: number;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        /** @enum {string} */
-        EnumPageType: "ABOUT_US" | "PRIVACY" | "TERM_AND_CONDITION";
-        PageResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        PageRequestCreateDto: {
-            title: components["schemas"]["RequestSentenceDto"];
-            content: components["schemas"]["RequestSentenceDto"];
-            type: components["schemas"]["EnumPageType"];
-            /** Format: binary */
-            thumbnail?: string;
-        };
-        PageRequestUpdateDto: {
-            title: components["schemas"]["RequestSentenceDto"];
-            content: components["schemas"]["RequestSentenceDto"];
-            /** Format: binary */
-            thumbnail?: string;
-        };
-        TierResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example NORMAL */
-            code: string;
-            name: components["schemas"]["ResponseLocaleDto"];
-            description: components["schemas"]["ResponseLocaleDto"][];
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            transitions: components["schemas"]["ResponseDataTransitionDto"];
-            rates: components["schemas"]["ResponseDataRateDto"];
-        };
-        TierResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example NORMAL */
-            code: string;
-            name: components["schemas"]["ResponseLocaleDto"];
-            description: components["schemas"]["ResponseLocaleDto"][];
-            /** @example null */
-            cardIcon: string;
-            /** @example null */
-            cardImage: string;
-            /** @example null */
-            cardCover: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.047Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.047Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            transitions: components["schemas"]["ResponseDataTransitionDto"];
-            rates: components["schemas"]["ResponseDataRateDto"];
-        };
-        /** @enum {string} */
-        EnumTierCode: "NORMAL" | "BRONZE" | "SILVER" | "GOLD" | "BLACK" | "PLATINUM" | "DIAMOND";
-        TierRequestCreateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            /** @example NORMAL */
-            code: components["schemas"]["EnumTierCode"];
-            description: components["schemas"]["RequestSentenceDto"];
-        };
-        TierRequestUpdateDto: {
-            name: components["schemas"]["RequestSentenceDto"];
-            description: components["schemas"]["RequestSentenceDto"];
-        };
-        OrderResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example  */
-            totalPrice: number;
-            /** @example 10 */
-            totalPoint: number;
-            /** @example  */
-            discPrice: number;
-            /** @example 10 */
-            discPoint: number;
-            /** @example 10 */
-            finalPrice: number;
-            /** @example 10 */
-            finalPoint: number;
-            /** @example SYSTEM */
-            source: string;
-            /** @example DELIVERED */
-            status: string;
-            /** @example true */
-            isBirth: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            issueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.102Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.102Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            member: components["schemas"]["MemberResponseBelongDto"];
-            items: components["schemas"]["ResponseDataItemDto"];
-        };
-        OrderRequestCreateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
-        };
-        OrderRequestUpdateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
-        };
-        InvoiceResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example  */
-            invoiceRef: string;
-            /** @example  */
-            invoicePath: string;
-            /** @example 10 */
-            paidPrice: number;
-            /** @example 50 */
-            paidPoint: number;
-            /** @example 20 */
-            finalPrice: number;
-            /** @example 20 */
-            finalPoint: number;
-            /** @example FULLY_PAID */
-            status: string;
-            /** @example true */
-            isBirth: boolean;
-            /** @example true */
-            isEarned: boolean;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.104Z
-             */
-            dueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T11:06:30.104Z
-             */
-            issueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T11:06:30.104Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.104Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.104Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            order: components["schemas"]["OrderResponseDetailDto"];
-            member: components["schemas"]["MemberResponseBelongDto"];
-        };
-        InvoiceResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            code: string;
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
-            /** @example 1 */
-            promotionId: number;
-            /** @example  */
-            invoiceRef: string;
-            /** @example  */
-            invoicePath: string;
-            /** @example 10 */
-            paidPrice: number;
-            /** @example 50 */
-            paidPoint: number;
-            /** @example 20 */
-            finalPrice: number;
-            /** @example 20 */
-            finalPoint: number;
-            /** @example FULLY_PAID */
-            status: string;
-            /** @example true */
-            isBirth: boolean;
-            /** @example true */
-            isEarned: boolean;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-12T03:06:30.104Z
-             */
-            dueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T11:06:30.104Z
-             */
-            issueDate: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T11:06:30.104Z
-             */
-            issuedAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.104Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.104Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-            order: components["schemas"]["OrderResponseDetailDto"];
-            member: components["schemas"]["MemberResponseBelongDto"];
-        };
-        InvoiceRequestCreateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
-        };
-        InvoiceRequestUpdateDto: {
-            /** @example 1 */
-            memberId: number;
-            /** @example 1 */
-            orderId: number;
         };
         ResponsePushDetailDto: {
             /** @example 1 */
@@ -4009,7 +2098,7 @@ export interface components {
             status: string;
             /** @example 08:30 */
             executeTime: string;
-            /** @example 2026-02-09T15:06:30.137Z */
+            /** @example 2026-11-23T09:46:29.214Z */
             executeDate: string;
             /** @example 1 */
             weekday: number;
@@ -4019,41 +2108,26 @@ export interface components {
             month: number;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.138Z
+             * @example 2026-11-23T09:46:29.214Z
              */
             startDate: string;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.138Z
+             * @example 2026-11-23T09:46:29.214Z
              */
             untilDate: string;
             /** @example true */
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.138Z
+             * @example 2026-11-23T09:46:29.214Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.138Z
+             * @example 2026-11-24T14:46:29.214Z
              */
             updatedAt: string;
-        };
-        ResponseGroupRelationDto: {
-            /** @example 1 */
-            id: number;
-            title: components["schemas"]["ResponseLocaleDto"];
-            /** @example [] */
-            tierIds: string[];
-            /** @example [] */
-            emails: string[];
-            /** @example [] */
-            phones: string[];
-            /** @example 2026-02-09T15:06:30.138Z */
-            joinSinceDate: string[];
-            /** @example 2026-02-12T03:06:30.138Z */
-            joinUntilDate: string[];
         };
         NotificationResponseListDto: {
             /** @example 1 */
@@ -4073,12 +2147,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.138Z
+             * @example 2026-11-23T09:46:29.214Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.138Z
+             * @example 2026-11-24T14:46:29.214Z
              */
             updatedAt: string;
             createdBy: string;
@@ -4086,7 +2160,6 @@ export interface components {
             deletedBy: string;
             assignedBy: string;
             pushes: components["schemas"]["ResponsePushDetailDto"];
-            groups: components["schemas"]["ResponseGroupRelationDto"];
         };
         NotificationResponseDetailDto: {
             /** @example 1 */
@@ -4106,12 +2179,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-02-09T15:06:30.138Z
+             * @example 2026-11-23T09:46:29.214Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-02-10T20:06:30.138Z
+             * @example 2026-11-24T14:46:29.214Z
              */
             updatedAt: string;
             createdBy: string;
@@ -4119,14 +2192,19 @@ export interface components {
             deletedBy: string;
             assignedBy: string;
             pushes: components["schemas"]["ResponsePushDetailDto"];
-            groups: components["schemas"]["ResponseGroupRelationDto"];
         };
         /** @enum {string} */
-        EnumNotificationChannel: "SMS" | "EMAIL" | "WHATAPP";
+        EnumNotificationChannel: "SMS" | "EMAIL" | "WHATSAPP";
         /** @enum {string} */
-        EnumNotificationMethod: "TEXT" | "REFERRENCE";
+        EnumNotificationMethod: "TEXT" | "REFERENCE";
         /** @enum {string} */
         EnumNotificationRefType: "text";
+        RequestParagraphDto: {
+            /** @example Lorem ipsum dolor sit amet c */
+            en: string;
+            /** @example Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fri */
+            vi: string;
+        };
         RequestContentDto: {
             /**
              * @example <p>
@@ -4150,9 +2228,9 @@ export interface components {
         NotificationPushDto: {
             /** @example ONCE */
             type: components["schemas"]["EnumPushType"];
-            /** @example  */
+            /** @example 2026-11-24T15:46:29.212Z */
             executeTime: string;
-            /** @example 2026-02-09T15:06:30.136Z */
+            /** @example 2026-11-24T15:46:29.212Z */
             executeDate: string;
             /** @example  */
             weekday?: number;
@@ -4162,12 +2240,12 @@ export interface components {
             month?: number;
             /**
              * Format: date-time
-             * @example 2026-02-12T03:06:30.136Z
+             * @example 2026-11-25T21:46:29.213Z
              */
-            startDate?: string;
+            sinceDate?: string;
             /**
              * Format: date-time
-             * @example 2026-02-13T09:06:30.136Z
+             * @example 2026-11-27T03:46:29.213Z
              */
             untilDate?: string;
             /** @example true */
@@ -4190,7 +2268,6 @@ export interface components {
             /** @example true */
             isActive?: boolean;
             pushes?: components["schemas"]["NotificationPushDto"][];
-            groupIds?: number[];
         };
         NotificationRequestUpdateDto: {
             /** @example  */
@@ -4203,111 +2280,6 @@ export interface components {
             /** @example true */
             isActive?: boolean;
             pushes?: components["schemas"]["NotificationPushDto"][];
-            groupIds?: number[];
-        };
-        /** @enum {string} */
-        EnumMediaType: "BANNER" | "SLIDER";
-        MediaResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example BANNER */
-            type: components["schemas"]["EnumMediaType"];
-            /** @example  */
-            url: string;
-            /** @example  */
-            mime: string;
-            title: components["schemas"]["ResponseLocaleDto"];
-            brief: components["schemas"]["ResponseLocaleDto"];
-            /** @example  */
-            refType: string;
-            /** @example  */
-            refValue: string;
-            /** @example 0 */
-            sorting: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.112Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.112Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        MediaResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example BANNER */
-            type: components["schemas"]["EnumMediaType"];
-            /** @example  */
-            url: string;
-            /** @example  */
-            mime: string;
-            title: components["schemas"]["ResponseLocaleDto"];
-            brief: components["schemas"]["ResponseLocaleDto"];
-            /** @example  */
-            refType: string;
-            /** @example  */
-            refValue: string;
-            /** @example 0 */
-            sorting: number;
-            /** @example true */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @example 2026-02-09T15:06:30.112Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-10T20:06:30.112Z
-             */
-            updatedAt: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        /** @enum {string} */
-        EnumMediaRefType: "text";
-        MediaRequestCreateDto: {
-            /** @example BANNER */
-            type: components["schemas"]["EnumMediaType"];
-            title: components["schemas"]["RequestSentenceDto"];
-            brief: components["schemas"]["RequestSentenceDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example text */
-            refType?: components["schemas"]["EnumMediaRefType"];
-            /** @example  */
-            refValue?: string;
-            /** @example true */
-            isActive?: boolean;
-            /** Format: binary */
-            url?: string;
-        };
-        MediaRequestUpdateDto: {
-            /** @example BANNER */
-            type: components["schemas"]["EnumMediaType"];
-            title: components["schemas"]["RequestSentenceDto"];
-            brief: components["schemas"]["RequestSentenceDto"];
-            /** @example 0 */
-            sorting: number;
-            /** @example text */
-            refType?: components["schemas"]["EnumMediaRefType"];
-            /** @example  */
-            refValue?: string;
-            /** @example true */
-            isActive?: boolean;
-            /** Format: binary */
-            url?: string;
         };
     };
     responses: never;
@@ -4807,36 +2779,6 @@ export interface operations {
             };
         };
     };
-    UserAdminController_getLoginHistories: {
-        parameters: {
-            query: {
-                month: number;
-                year: number;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseLoginHistoryDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
     UserAdminController_changeAvatar: {
         parameters: {
             query?: never;
@@ -4864,6 +2806,109 @@ export interface operations {
                     "application/json": {
                         data?: components["schemas"]["UserResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    ActivityLogAdminController_listMine: {
+        parameters: {
+            query?: {
+                action?: components["schemas"]["EnumActivityLogAction"];
+                /** @description Data per page */
+                perPage?: number;
+                /** @description Page number */
+                page?: number;
+                /** @description Order by base on metadata.availableOrderBy */
+                orderBy?: string;
+            };
+            header?: {
+                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ActivityLogResponseDetailDto"][];
+                    } & components["schemas"]["ResponsePagingDto"];
+                };
+            };
+        };
+    };
+    ActivityLogAdminController_listByUser: {
+        parameters: {
+            query?: {
+                action?: components["schemas"]["EnumActivityLogAction"];
+                /** @description Data per page */
+                perPage?: number;
+                /** @description Page number */
+                page?: number;
+                /** @description Order by base on metadata.availableOrderBy */
+                orderBy?: string;
+            };
+            header?: {
+                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+            };
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ActivityLogResponseDetailDto"][];
+                    } & components["schemas"]["ResponsePagingDto"];
+                };
+            };
+        };
+    };
+    ActivityLogAdminController_listByCustomer: {
+        parameters: {
+            query?: {
+                action?: components["schemas"]["EnumActivityLogAction"];
+                /** @description Data per page */
+                perPage?: number;
+                /** @description Page number */
+                page?: number;
+                /** @description Order by base on metadata.availableOrderBy */
+                orderBy?: string;
+            };
+            header?: {
+                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+            };
+            path: {
+                customerId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ActivityLogResponseDetailDto"][];
+                    } & components["schemas"]["ResponsePagingDto"];
                 };
             };
         };
@@ -5870,7 +3915,7 @@ export interface operations {
             };
         };
     };
-    PermissionAdminController_list: {
+    PolicyAdminController_list: {
         parameters: {
             query?: {
                 isActive?: boolean;
@@ -5892,13 +3937,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["PermissionResponseListDto"][];
+                        data?: components["schemas"]["PolicyResponseListDto"][];
                     } & components["schemas"]["ResponseListDto"];
                 };
             };
         };
     };
-    PermissionAdminController_create: {
+    PolicyAdminController_create: {
         parameters: {
             query?: never;
             header?: {
@@ -5911,8 +3956,8 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PermissionRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PermissionRequestCreateDto"];
+                "application/json": components["schemas"]["PolicyRequestCreateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["PolicyRequestCreateDto"];
             };
         };
         responses: {
@@ -5922,13 +3967,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["PermissionResponseDetailDto"];
+                        data?: components["schemas"]["PolicyResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    PermissionAdminController_get: {
+    PolicyAdminController_get: {
         parameters: {
             query?: never;
             header?: {
@@ -5949,13 +3994,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["PermissionResponseDetailDto"];
+                        data?: components["schemas"]["PolicyResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    PermissionAdminController_update: {
+    PolicyAdminController_update: {
         parameters: {
             query?: never;
             header?: {
@@ -5970,8 +4015,8 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PermissionRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PermissionRequestUpdateDto"];
+                "application/json": components["schemas"]["PolicyRequestUpdateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["PolicyRequestUpdateDto"];
             };
         };
         responses: {
@@ -5981,13 +4026,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["PermissionResponseDetailDto"];
+                        data?: components["schemas"]["PolicyResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_list: {
+    CustomerAdminController_list: {
         parameters: {
             query?: {
                 phone?: string;
@@ -6019,13 +4064,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseListDto"][];
+                        data?: components["schemas"]["CustomerResponseListDto"][];
                     } & components["schemas"]["ResponsePagingDto"];
                 };
             };
         };
     };
-    MemberAdminController_create: {
+    CustomerAdminController_create: {
         parameters: {
             query?: never;
             header?: {
@@ -6038,7 +4083,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["MemberRequestCreateDto"];
+                "multipart/form-data": components["schemas"]["CustomerRequestCreateDto"];
             };
         };
         responses: {
@@ -6048,13 +4093,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_mapShorted: {
+    CustomerAdminController_mapShorted: {
         parameters: {
             query?: never;
             header?: {
@@ -6073,13 +4118,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseListDto"][];
+                        data?: components["schemas"]["CustomerResponseListDto"][];
                     } & components["schemas"]["ResponseListDto"];
                 };
             };
         };
     };
-    MemberAdminController_get: {
+    CustomerAdminController_get: {
         parameters: {
             query?: never;
             header?: {
@@ -6100,13 +4145,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_put: {
+    CustomerAdminController_put: {
         parameters: {
             query?: never;
             header?: {
@@ -6121,8 +4166,8 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MemberRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberRequestUpdateDto"];
+                "application/json": components["schemas"]["CustomerRequestUpdateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["CustomerRequestUpdateDto"];
             };
         };
         responses: {
@@ -6132,13 +4177,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_inactive: {
+    CustomerAdminController_inactive: {
         parameters: {
             query?: never;
             header?: {
@@ -6159,13 +4204,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_active: {
+    CustomerAdminController_active: {
         parameters: {
             query?: never;
             header?: {
@@ -6186,13 +4231,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_update: {
+    CustomerAdminController_update: {
         parameters: {
             query?: never;
             header?: {
@@ -6207,7 +4252,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["MemberChangeAvatarRequestDto"];
+                "multipart/form-data": components["schemas"]["CustomerChangeAvatarRequestDto"];
             };
         };
         responses: {
@@ -6217,53 +4262,20 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
+                        data?: components["schemas"]["CustomerResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberAdminController_addPoint: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MemberAddPointRequestDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberAddPointRequestDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MemberTierAdminController_list: {
+    ContentAdminController_list: {
         parameters: {
             query?: {
+                type?: components["schemas"]["EnumContentType"];
                 /** @description Data per page */
                 perPage?: number;
                 /** @description Page number */
                 page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
             };
             header?: {
                 "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
@@ -6281,13 +4293,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberTierResponseListDto"][];
+                        data?: components["schemas"]["ContentResponseListDto"][];
                     } & components["schemas"]["ResponsePagingDto"];
                 };
             };
         };
     };
-    MemberTierAdminController_create: {
+    ContentAdminController_create: {
         parameters: {
             query?: never;
             header?: {
@@ -6300,8 +4312,8 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MemberTierRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberTierRequestCreateDto"];
+                "application/json": components["schemas"]["ContentRequestCreateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["ContentRequestCreateDto"];
             };
         };
         responses: {
@@ -6311,38 +4323,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberTierResponseDetailDto"];
+                        data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberTierAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberTierResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    MemberTierAdminController_get: {
+    ContentAdminController_get: {
         parameters: {
             query?: never;
             header?: {
@@ -6363,13 +4350,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberTierResponseDetailDto"];
+                        data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberTierAdminController_update: {
+    ContentAdminController_update: {
         parameters: {
             query?: never;
             header?: {
@@ -6384,8 +4371,8 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MemberTierRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberTierRequestUpdateDto"];
+                "application/json": components["schemas"]["ContentRequestUpdateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["ContentRequestUpdateDto"];
             };
         };
         responses: {
@@ -6395,13 +4382,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberTierResponseDetailDto"];
+                        data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberTierAdminController_delete: {
+    ContentAdminController_delete: {
         parameters: {
             query?: never;
             header?: {
@@ -6424,97 +4411,7 @@ export interface operations {
             };
         };
     };
-    MemberPointAdminController_list: {
-        parameters: {
-            query?: {
-                memberCode?: string;
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberPointResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    MemberPointAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MemberPointRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberPointRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberPointResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MemberPointAdminController_mapShorted: {
-        parameters: {
-            query?: {
-                memberCode?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberPointResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    MemberPointAdminController_get: {
+    ContentAdminController_active: {
         parameters: {
             query?: never;
             header?: {
@@ -6535,155 +4432,13 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberPointResponseDetailDto"];
+                        data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
             };
         };
     };
-    MemberPointAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MemberPointRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberPointRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberPointResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MemberPointAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MemberRedemptionAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberRedemptionResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    MemberRedemptionAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MemberRedemptionRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberRedemptionRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberRedemptionResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MemberRedemptionAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberRedemptionResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    MemberRedemptionAdminController_get: {
+    ContentAdminController_inactive: {
         parameters: {
             query?: never;
             header?: {
@@ -6704,1440 +4459,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: components["schemas"]["MemberRedemptionResponseDetailDto"];
+                        data?: components["schemas"]["ContentResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
-            };
-        };
-    };
-    MemberRedemptionAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MemberRedemptionRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MemberRedemptionRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MemberRedemptionResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MemberRedemptionAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductAdminController_list: {
-        parameters: {
-            query?: {
-                isActive?: boolean;
-                price?: string;
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    ProductAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["ProductRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    ProductAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["ProductRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductBrandAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductBrandResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    ProductBrandAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductBrandRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductBrandRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductBrandResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductBrandAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductBrandResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    ProductBrandAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductBrandResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductBrandAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductBrandRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductBrandRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductBrandResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductBrandAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductCategoryAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductCategoryResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    ProductCategoryAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductCategoryRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductCategoryRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductCategoryResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductCategoryAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductCategoryResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    ProductCategoryAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductCategoryResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductCategoryAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductCategoryRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductCategoryRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductCategoryResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductCategoryAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductReviewAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductReviewResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    ProductReviewAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductReviewRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductReviewRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductReviewResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductReviewAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductReviewResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    ProductReviewAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductReviewResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductReviewAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProductReviewRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProductReviewRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["ProductReviewResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    ProductReviewAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PageAdminController_list: {
-        parameters: {
-            query?: {
-                type?: components["schemas"]["EnumPageType"];
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    PageAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PageRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PageRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PageAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PageAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PageRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["PageRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PageAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PageAdminController_active: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    PageAdminController_inactive: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["PageResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["TierResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TierRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["TierRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["TierResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["TierResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["TierResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TierRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["TierRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["TierResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    TierAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["OrderResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    OrderAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrderRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrderRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["OrderResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    OrderAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["OrderResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    OrderAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["OrderResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    OrderAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrderRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrderRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["OrderResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    OrderAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    InvoiceAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["InvoiceResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    InvoiceAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["InvoiceRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["InvoiceRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["InvoiceResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    InvoiceAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["InvoiceResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    InvoiceAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["InvoiceResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    InvoiceAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["InvoiceRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["InvoiceRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["InvoiceResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    InvoiceAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
@@ -8361,174 +4685,6 @@ export interface operations {
                         data?: components["schemas"]["NotificationResponseDetailDto"];
                     } & components["schemas"]["ResponseDataDto"];
                 };
-            };
-        };
-    };
-    MediaAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MediaResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    MediaAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["MediaRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MediaResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MediaAdminController_mapShorted: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MediaResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    MediaAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MediaResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MediaAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MediaRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["MediaRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["MediaResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    MediaAdminController_delete: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

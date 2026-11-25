@@ -71,7 +71,7 @@ export function Layout() {
       <div style={mainContentStyle}>
         <header style={headerStyle}>
           <div>
-            <span>Welcome, {user?.name || user?.email}</span>
+            <span>Welcome, {String(user?.name || user?.email || "")}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <LangSwitcher />

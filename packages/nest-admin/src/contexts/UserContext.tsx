@@ -84,9 +84,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }
 
   const hasPermission = (subject: string, action: string): boolean => {
-    if (!user?.permissions) return false
+    if (!user?.policies) return false
 
-    return user.permissions.some((permission) =>
+    return user.policies.some((permission) =>
       permission.subjects.some(
         (subjectItem) => subjectItem.subject === subject && subjectItem.actions.includes(action),
       ),

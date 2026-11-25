@@ -11,13 +11,13 @@ export interface MenuItem {
 }
 
 export function generateMenuItems(
-  permissions: UserProfile['permissions']
+  policies: UserProfile['policies']
 ): MenuItem[] {
-  if (!permissions) return []
+  if (!policies) return []
 
   const items: MenuItem[] = []
 
-  permissions.forEach((permission) => {
+  policies.forEach((permission) => {
     const key = `${permission.context}::${permission.title}`
 
     const visibleSubjects = (permission.subjects || []).filter(

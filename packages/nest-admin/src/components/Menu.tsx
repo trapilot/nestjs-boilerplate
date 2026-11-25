@@ -18,8 +18,8 @@ export function Menu() {
   }
 
   const menuItems = useMemo<MenuItem[]>(() => {
-    if (!user?.permissions) return []
-    return generateMenuItems(user.permissions)
+    if (!user?.policies) return []
+    return generateMenuItems(user.policies)
   }, [user])
 
   const toggle = (key: string) => {

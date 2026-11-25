@@ -26,7 +26,7 @@ import { PolicySeed } from './seeds/policy.seed'
       debug: false,
     }),
 
-    DataSeedModule, // NOTE: remove before make a new build, it's used to initialize data
+    DataSeedModule, // seed:* commands; stubbed out by `pnpm build:prod`
   ],
   providers: [PolicySeed],
 })

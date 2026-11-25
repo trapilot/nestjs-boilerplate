@@ -142,7 +142,7 @@ import { RoutesWebModule } from './routes/routes.web.module'
     }),
 
     ActivityLogModule, // global: activity log service + flush interceptor
-    DataMockModule, // NOTE: remove before make a new build, it's used to fake user's behavior
+    DataMockModule, // fakes user behaviour (AUTO_GEN_MODE); stubbed out by `pnpm build:prod`
   ],
 })
 export class AppModule {}

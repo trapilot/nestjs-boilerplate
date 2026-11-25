@@ -6,7 +6,15 @@ import { AppModule } from 'app/app.module'
 import { AppEnvDto } from 'app/dtos/app.env.dto'
 import { useContainer } from 'class-validator'
 import compression from 'compression'
-import { AppUtil, FileUtil, INextFunction, IRequestApp, IResponseApp, StrUtil } from 'lib/nest-core'
+import {
+  AppUtil,
+  EnumAppEnvironment,
+  FileUtil,
+  INextFunction,
+  IRequestApp,
+  IResponseApp,
+  StrUtil,
+} from 'lib/nest-core'
 import docSetup from 'tools/swagger'
 
 async function bootstrap(): Promise<void> {
@@ -114,8 +122,11 @@ async function bootstrap(): Promise<void> {
     next()
   })
 
-  // Setup Tools
-  await docSetup(app)
+  // Setup Tools: API docs are public (served at /<prefix>-docs and /public/docs), never
+  // expose them in production
+  if (appEnv !== EnumAppEnvironment.PRODUCTION) {
+    await docSetup(app)
+  }
 
   // Listen
   await app.listen(appPort, appHost)

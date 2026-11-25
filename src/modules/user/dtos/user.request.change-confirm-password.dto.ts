@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 import { ToString } from 'lib/nest-core'
+import { DOC_EXAMPLE } from 'app/constants/app.doc.constant'
 
 export class UserRequestChangeConfirmPasswordDto {
   @IsNotEmpty()
@@ -8,7 +9,7 @@ export class UserRequestChangeConfirmPasswordDto {
   @ApiProperty({
     required: true,
     description: 'new confirm password',
-    example: process.env.MOCK_ADMIN_PASS,
+    example: DOC_EXAMPLE.ADMIN_PASS,
   })
   password: string
 }

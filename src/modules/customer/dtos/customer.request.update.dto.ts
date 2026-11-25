@@ -3,6 +3,7 @@ import { IsOptional } from 'class-validator'
 import { ToString } from 'lib/nest-core'
 import { IsPassword } from 'lib/nest-web'
 import { CustomerRequestCreateDto } from './customer.request.create.dto'
+import { DOC_EXAMPLE } from 'app/constants/app.doc.constant'
 
 export class CustomerRequestUpdateDto extends OmitType(CustomerRequestCreateDto, [
   'password',
@@ -11,6 +12,6 @@ export class CustomerRequestUpdateDto extends OmitType(CustomerRequestCreateDto,
   @IsOptional()
   @IsPassword()
   @ToString()
-  @ApiProperty({ required: true, example: process.env.MOCK_CUSTOMER_PASS })
+  @ApiProperty({ required: true, example: DOC_EXAMPLE.CUSTOMER_PASS })
   password: string
 }

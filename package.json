@@ -19,6 +19,7 @@
     "preinstall": "npx only-allow pnpm",
     "prebuild": "rimraf dist && pnpm db:generate",
     "build": "nest build api cli",
+    "build:prod": "BUILD_EXCLUDE_DATA=true pnpm build",
     "bundle": "ncc build dist/main.js -m -o dist && mv dist/index.js dist/main.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\" --log-level warn",
     "deadcode": "ts-prune --project tsconfig.json --unusedInModule --skip *.json",
@@ -215,7 +216,15 @@
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "diagnostics": false,
+          "tsconfig": {
+            "allowJs": true
+          }
+        }
+      ]
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
@@ -234,7 +243,14 @@
       "^lib/nest-core(|/.*)$": "<rootDir>/libs/nest-core/src/$1",
       "^lib/nest-web(|/.*)$": "<rootDir>/libs/nest-web/src/$1",
       "^lib/nest-prisma(|/.*)$": "<rootDir>/libs/nest-prisma/src/$1",
-      "^src/(.*)$": "<rootDir>/../src/$1"
-    }
+      "^app/(.*)$": "<rootDir>/src/app/$1",
+      "^configs/(.*)$": "<rootDir>/src/configs/$1",
+      "^modules/(.*)$": "<rootDir>/src/modules/$1",
+      "^tools/(.*)$": "<rootDir>/src/tools/$1",
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!\\.pnpm|p-queue|p-timeout|eventemitter3|otplib|@otplib|@scure|@noble)"
+    ]
   }
 }

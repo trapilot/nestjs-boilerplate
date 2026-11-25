@@ -11,19 +11,20 @@ import {
 } from 'class-validator'
 import { ToBoolean, ToNumber, ToString } from 'lib/nest-core'
 import { IsPassword, IsPhone } from 'lib/nest-web'
+import { DOC_EXAMPLE } from 'app/constants/app.doc.constant'
 
 export class UserRequestCreateDto {
   @IsNotEmpty()
   @IsEmail()
   @ToString({ format: 'lowercase' })
   @MaxLength(100)
-  @ApiProperty({ required: true, example: process.env.MOCK_ADMIN_EMAIL })
+  @ApiProperty({ required: true, example: DOC_EXAMPLE.ADMIN_EMAIL })
   email: string
 
   @IsNotEmpty()
   @IsPhone()
   @ToString()
-  @ApiProperty({ required: false, example: process.env.MOCK_ADMIN_PHONE })
+  @ApiProperty({ required: false, example: DOC_EXAMPLE.ADMIN_PHONE })
   phone: string
 
   @IsNotEmpty()
@@ -47,7 +48,7 @@ export class UserRequestCreateDto {
   @IsNotEmpty()
   @IsPassword()
   @ToString()
-  @ApiProperty({ required: true, example: process.env.MOCK_ADMIN_PASS })
+  @ApiProperty({ required: true, example: DOC_EXAMPLE.ADMIN_PASS })
   password: string
 
   @IsOptional()

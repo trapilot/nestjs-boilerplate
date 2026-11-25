@@ -26,7 +26,7 @@ RUN pnpm install --production --frozen-lockfile --ignore-scripts
 FROM base AS build
 COPY --from=build-deps /app/node_modules /app/node_modules
 COPY . .
-RUN pnpm build
+RUN pnpm build:prod
 RUN pnpm bundle \
   && cp /app/node_modules/swagger-ui-dist/swagger-ui.css /app/dist \
   && cp /app/node_modules/swagger-ui-dist/swagger-ui-bundle.js /app/dist \

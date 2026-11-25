@@ -12,6 +12,7 @@ pnpm start:debug                    # same, with inspector
 pnpm start:cli <command>            # nest-commander CLI (src/cli.ts), e.g. seed:role, seed:policy, seed:user
 pnpm start:repl                     # Nest REPL (src/repl.ts)
 pnpm build                          # prebuild runs `prisma generate`; builds both "api" and "cli" with webpack
+pnpm build:prod                     # same, without src/app/data (seed + mock modules); used by ci/Dockerfile
 pnpm bundle                         # ncc single-file bundle of dist/main.js
 
 pnpm lint                           # eslint --fix, then lint-staged
@@ -25,7 +26,7 @@ npx jest path/to/file.spec.ts       # single test file
 npx jest -t "test name"             # single test by name
 ```
 
-There are currently no `*.spec.ts` files; tests pass via `--passWithNoTests`.
+The Husky pre-commit hook runs `pnpm test` (e2e, then unit with coverage). There are no unit `*.spec.ts` files yet; `test/app.e2e-spec.ts` boots the full `AppModule`, so PostgreSQL and Redis from `.env` must be running to commit. Jest uses `ts-jest` with `allowJs` and transforms ESM-only packages listed in `transformIgnorePatterns` (`p-queue`, `p-timeout`, `eventemitter3`, `otplib`, `@otplib/*`, `@scure/*`, `@noble/*`) in both `package.json` and `test/jest-e2e.json`; add a package there when Jest fails with `Cannot use import statement outside a module` / `Unexpected token 'export'`.
 
 ### Database (Prisma 7, PostgreSQL 18 + pgvector)
 
@@ -131,7 +132,7 @@ Session naming: one value identifies a login session, named by the family of fie
 
 ### CLI and seeds
 
-`src/cli.ts` boots `CliModule` with nest-commander. Seed commands (`@Command`) live in `src/app/data/seeds/` (loaded through `DataSeedModule`) and `src/app/seeds/`. Mock data for development is in `src/app/data/mocks/` (`DataMockModule`).
+`src/cli.ts` boots `CliModule` with nest-commander. Seed commands (`@Command`) live in `src/app/data/seeds/` (loaded through `DataSeedModule`) and `src/app/seeds/`. Mock data for development is in `src/app/data/mocks/` (`DataMockModule`). `pnpm build:prod` (`BUILD_EXCLUDE_DATA=true`) makes webpack replace `data.mock.module` / `data.seed.module` with the empty stubs in `data.stub.module.ts`, so keep the imports in `app.module.ts` / `cli.module.ts` and never import anything else from `src/app/data` outside it.
 
 ### Resources
 

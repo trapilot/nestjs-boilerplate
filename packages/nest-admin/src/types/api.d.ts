@@ -1174,7 +1174,7 @@ export interface components {
             address: string;
             /** Format: binary */
             avatar?: string;
-            /** @example Admin@123456 */
+            /** @example Example@Pass1 */
             password: string;
         };
         AuthResponseTokenDto: {
@@ -1237,7 +1237,7 @@ export interface components {
         UserRequestSignInDto: {
             /** @example admin@example.com */
             email: string;
-            /** @example Admin@123456 */
+            /** @example Example@Pass1 */
             password: string;
         };
         UserEditProfileRequestDto: {
@@ -1255,12 +1255,12 @@ export interface components {
         UserRequestChangePasswordDto: {
             /**
              * @description new string password, newPassword can't same with oldPassword
-             * @example Admin@123456
+             * @example Example@Pass1
              */
             newPassword: string;
             /**
              * @description old string password
-             * @example Admin@123456
+             * @example Example@Pass1
              */
             oldPassword: string;
         };
@@ -1269,13 +1269,13 @@ export interface components {
             avatar?: string;
         };
         UserVerifyPasswordRequestDto: {
-            /** @example Admin@123456 */
+            /** @example Example@Pass1 */
             password: string;
         };
         UserRequestChangeConfirmPasswordDto: {
             /**
              * @description new confirm password
-             * @example Admin@123456
+             * @example Example@Pass1
              */
             password: string;
         };
@@ -1341,7 +1341,7 @@ export interface components {
             address: string;
             /** Format: binary */
             avatar?: string;
-            /** @example Admin@123456 */
+            /** @example Example@Pass1 */
             password: string;
             /** @example true */
             isActive: boolean;
@@ -1361,7 +1361,7 @@ export interface components {
             isActive?: boolean;
             /** @example 1 */
             roleId: number;
-            /** @example Admin@123456 */
+            /** @example Example@Pass1 */
             password?: string;
         };
         /** @enum {string} */

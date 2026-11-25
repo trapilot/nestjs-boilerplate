@@ -9,19 +9,11 @@ export enum EnumAppEnvironment {
 export enum EnumAppLanguage {
   EN = 'en',
   VI = 'vi',
-  CN = 'cn',
-  HK = 'hk',
-  TW = 'tw',
-  MO = 'mo',
 }
 
 export enum EnumAppLocale {
   EN = 'en_US',
   VI = 'vi_VN',
-  CN = 'zh_CN',
-  HK = 'zh_HK',
-  TW = 'zh_TW',
-  MO = 'zh_MO',
 }
 
 export enum EnumAppTimezone {
@@ -35,10 +27,6 @@ export enum EnumAppTimezone {
 export enum EnumNumberLocale {
   EN = 'en-US',
   VI = 'vi-VN',
-  CN = 'zh-CN',
-  HK = 'zh-HK',
-  TW = 'zh-TW',
-  MO = 'zh-MO',
 }
 
 export enum EnumNumberCurrency {

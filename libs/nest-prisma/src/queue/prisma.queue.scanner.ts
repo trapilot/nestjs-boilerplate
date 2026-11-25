@@ -21,14 +21,7 @@ export class PrismaWorkerScanner extends WorkerScanner {
   }
 
   async scans<T>(name: string): Promise<T[]> {
-    const exists = await this.prisma.queueCursor.exists({ where: { name } })
-    if (exists) {
-      const items = this.prisma.queueCursor.findMany({
-        where: { name },
-      })
-      return items as unknown as T[]
-    }
-    return []
+    return (await this.prisma.queueCursor.findMany({ where: { name } })) as unknown as T[]
   }
 
   async reset(name: string, version: number): Promise<void> {
@@ -83,24 +76,12 @@ export class PrismaWorkerScanner extends WorkerScanner {
       return
     }
 
-    let lastId = null
-    if (chunking && chunking > 0) {
-      let _items = []
-      for (const item of items) {
-        _items.push(item)
-
-        if (_items.length === chunking) {
-          lastId = await process(_items)
-          _items = []
-        }
-      }
-
-      if (_items.length) {
-        lastId = await process(_items)
-        _items = []
-      }
-    } else {
-      lastId = await process(items)
+    // Process in chunks of `chunking` items (all at once without it); the cursor moves to the
+    // last id returned by the last chunk
+    const size = chunking > 0 ? chunking : items.length
+    let lastId: number | null = null
+    for (let i = 0; i < items.length; i += size) {
+      lastId = await process(items.slice(i, i + size))
     }
 
     await this.commit(childTopic, {

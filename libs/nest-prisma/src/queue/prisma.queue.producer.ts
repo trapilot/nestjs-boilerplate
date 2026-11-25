@@ -9,15 +9,19 @@ import {
 } from 'lib/nest-core'
 import { PrismaService } from '../services'
 import { PrismaUtil } from '../utils'
+import { PrismaQueueStore } from './prisma.queue.store'
 
 @Injectable()
 export class PrismaWorkerProducer extends WorkerProducer {
+  private readonly store: PrismaQueueStore
+
   constructor(
-    private readonly prisma: PrismaService,
+    prisma: PrismaService,
     private readonly runner: RunnerService,
     private readonly helperService: HelperService,
   ) {
     super()
+    this.store = new PrismaQueueStore(prisma)
   }
 
   async publish<T>(topic: string, options: IWorkerPublishOptions<T>): Promise<void> {
@@ -29,25 +33,30 @@ export class PrismaWorkerProducer extends WorkerProducer {
       minutes: options?.threshold ?? 30, // Failed after 30 minutes running
     })
 
-    const exclusive = options.exclusive === true
-    const hashName = exclusive ? this.buildJobHash(topic, options.version, options.message) : null
+    // A dedupe key implies exclusive: the job is skipped while one with the same hash is queued
+    const exclusive = options.exclusive === true || !!options.dedupeKey
+    const hashName = exclusive
+      ? this.buildJobHash(
+          topic,
+          options.dedupeKey ??
+            JSON.stringify({ version: options.version, payload: options.message }),
+        )
+      : null
 
     await this.runner.retry(
       () =>
-        this.prisma.queueJob.create({
-          data: {
-            jobName: topic,
-            jobHash: hashName,
-            version: options.version,
-            priority: options.priority,
-            startAt: options?.startDate ?? runDate,
-            thresholdAt: thresholdDate,
-            payload: options?.message as Prisma.JsonValue,
-            retryCount: 0,
-            persistent: options?.persistent,
-            maxRetries: options?.attempts,
-            status: EnumJobStatus.PENDING,
-          },
+        this.store.insert({
+          jobName: topic,
+          jobHash: hashName,
+          version: options.version,
+          priority: options.priority,
+          startAt: options?.startDate ?? runDate,
+          thresholdAt: thresholdDate,
+          payload: options?.message as Prisma.InputJsonValue,
+          retryCount: 0,
+          persistent: options?.persistent,
+          maxRetries: options?.attempts,
+          status: EnumJobStatus.PENDING,
         }),
       {
         retries: 5,
@@ -71,12 +80,15 @@ export class PrismaWorkerProducer extends WorkerProducer {
       ...options,
       delayMs: options?.delayMs ?? 1000, // default delay 1s
       exclusive: false,
+      dedupeKey: undefined,
     })
   }
 
-  private buildJobHash<T>(jobName: string, version: number, payload?: T): string {
-    return this.helperService.hashCreate(JSON.stringify({ jobName, version, payload }), {
-      algorithm: 'sha256',
-    })
+  /**
+   * Deterministic job hash (queue_jobs.jobHash is unique), scoped by topic so the same key of
+   * different job types never collides
+   */
+  private buildJobHash(jobName: string, key: string): string {
+    return this.helperService.hashCreate(`${jobName}|${key}`, { algorithm: 'sha256' })
   }
 }

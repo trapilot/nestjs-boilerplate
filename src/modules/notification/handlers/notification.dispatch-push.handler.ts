@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common'
 import {
   EnumQueuePriority,
   HelperService,
-  IWorkerHandler,
+  IWorkerJobResult,
   LoggerService,
+  WorkerHandlerBase,
   WorkerProducer,
   WorkerScanner,
 } from 'lib/nest-core'
@@ -16,7 +17,7 @@ import {
 import { NotificationService } from '../services/notification.service'
 
 @Injectable()
-export class NotificationDispatchPushHandler implements IWorkerHandler {
+export class NotificationDispatchPushHandler extends WorkerHandlerBase<INotificationDispatchPushPayload> {
   topic = EnumNotificationQueue.PUSH_DISPATCH
   version: number = NOTIFICATION_QUEUE_PROC_VERSION[EnumNotificationQueue.PUSH_DISPATCH]
 
@@ -26,13 +27,18 @@ export class NotificationDispatchPushHandler implements IWorkerHandler {
     private readonly producer: WorkerProducer,
     private readonly helperService: HelperService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) {
+    super()
+  }
 
-  async handle(version: number, payload: INotificationDispatchPushPayload): Promise<void> {
+  async handle(
+    version: number,
+    payload: INotificationDispatchPushPayload,
+  ): Promise<IWorkerJobResult> {
     this.logger.log(`${this.topic}:v${version} is handling...`)
 
     if (await this.notificationService.isPushFinished(payload.pushId)) {
-      return
+      return this.ok({ skipped: true })
     }
 
     const nowDate = this.helperService.dateNow()
@@ -71,5 +77,7 @@ export class NotificationDispatchPushHandler implements IWorkerHandler {
         return await this.notificationService.isPushRunning(payload.pushId)
       },
     })
+
+    return this.ok()
   }
 }

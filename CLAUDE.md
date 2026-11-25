@@ -95,6 +95,12 @@ Jobs are rows in the `QueueJob` table, with cursor state in `QueueCursor`. The f
 
 Topics are enums in the module (e.g. `EnumCustomerQueue`); versions are in `*_QUEUE_SCAN_VERSION` / `*_QUEUE_PROC_VERSION` constants. Bump a version to reset the cursor or invalidate old jobs. **Every handler must be registered** in the `worker.modules[].handlers` list in `src/app/app.module.ts`. Handlers live in `modules/<x>/handlers/`.
 
+Handler contract (`WorkerHandlerBase` in `lib/nest-core`): `handle(version, payload, signal?)` must return `this.ok(data)` or `this.fail(message, data, retryable)`; a thrown error is retried with backoff (5s, 10s, ... up to `maxRetries` attempts) unless it has `retryable = false` (`WorkerDataValidationException`, `WorkerUnsupportedVersionException`, `WorkerTimeoutException`). `addMetadata()` stores per-job metadata. Each attempt is bounded by `timeoutMs` (handler) or `jobTimeoutMs` (config) and the `signal` is aborted on timeout. Job states: PENDING → RUNNING → SUCCESS / FAILED; then `onSuccess` / `onFailure` runs, and only when it returns true is the job removed (archived to `queue_job_archives` if `persistent`, or recorded in `queue_job_failures`); otherwise the maintain loop calls it again later, so callbacks must be idempotent. Pass `dedupeKey` to `publish` to skip a job while one with the same topic + key is queued.
+
+Batches: a handler can return `this.batches(payloads, { mode, topic?, data? })` to split its job into one child job per payload (`parentId`, `batchNo`). The parent moves to WAITING (no lock); `SEQUENTIAL` runs batch N+1 only after batch N is finalized, `PARALLEL` lets any node run them at once. Every batch runs even if one fails; the batch that settles the last one closes the parent (SUCCESS, or FAILED with `"n of N batches failed"`) and its `onSuccess` / `onFailure` then gets `options.batches = { mode, total, done, failed }`. Children run on the parent's topic by default; tell them apart with `this.getBatch()` (null on the parent). Children inherit priority, maxRetries and persistent.
+
+Code lives in `libs/nest-prisma/src/queue/`: `prisma.queue.store.ts` holds all SQL (raw SQL with `FOR UPDATE SKIP LOCKED`, DB clock in UTC for heartbeats, batch counters updated in the same transaction as the child's removal); `prisma.queue.consumer.ts` is the worker loop; the producer and scanner are thin. Every write after a claim is conditional on `lockedBy`.
+
 ### Domain
 
 Two kinds of account, kept fully separate (own tables, sessions, 2FA, auth scope):

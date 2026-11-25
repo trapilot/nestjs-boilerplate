@@ -117,9 +117,13 @@ import { RoutesWebModule } from './routes/routes.web.module'
         enabled: StrUtil.isTrue(process.env.APP_WORKER),
         config: {
           concurrency: 50,
+          maxRunningJobs: 50, // locked per node (running + waiting); keep close to concurrency
           pollIntervalMs: 2000,
-          archiveIntervalMs: 10000,
-          recoveryIntervalMs: 10000,
+          maintainIntervalMs: 10_000,
+          recoveryIntervalMs: 10_000,
+          heartbeatIntervalMs: 5000,
+          shutdownTimeoutMs: 25_000, // platform grace period must be longer
+          jobTimeoutMs: 5 * 60_000, // per attempt; a handler's timeoutMs overrides it
         },
         producer: PrismaWorkerProducer,
         consumer: PrismaWorkerConsumer,

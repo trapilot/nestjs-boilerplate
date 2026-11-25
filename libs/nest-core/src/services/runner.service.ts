@@ -470,6 +470,13 @@ export class RunnerService implements OnModuleDestroy {
     this.queues.get(name)?.start()
   }
 
+  /**
+   * Drop tasks waiting in the queue (running tasks are not affected)
+   */
+  clear(name: string): void {
+    this.queues.get(name)?.clear()
+  }
+
   // =========================
   // Lifecycle
   // =========================

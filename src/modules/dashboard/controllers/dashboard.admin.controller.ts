@@ -19,7 +19,7 @@ export class DashboardAdminController {
   ) {}
 
   private getDates(): IDashboardDateRange {
-    const dataInYears = 5
+    const dataInYears = 1
     const nowDate = this.helperService.dateNow()
     const dateRange = this.helperService.dateRange(nowDate)
 

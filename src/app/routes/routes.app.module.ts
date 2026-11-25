@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { ActivityLogAppController } from 'modules/activity-log/controllers/activity-log.app.controller'
 import { CountryAppController } from 'modules/country/controllers/country.app.controller'
 import { CountryModule } from 'modules/country/country.module'
 import { DistrictAppController } from 'modules/district/controllers/district.app.controller'
@@ -14,7 +13,6 @@ import { ContentModule } from 'modules/content/content.module'
   controllers: [
     CustomerAuthController,
     CustomerAppController,
-    ActivityLogAppController,
     ContentAppController,
     CountryAppController,
     DistrictAppController,

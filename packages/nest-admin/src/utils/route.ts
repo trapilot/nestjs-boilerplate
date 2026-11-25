@@ -6,13 +6,13 @@ export interface MenuItem {
   key: string
   title: string
   path: string
+  /** Ability subject of the menu entry (children only). */
+  subject?: string
   group: boolean
   children?: MenuItem[]
 }
 
-export function generateMenuItems(
-  policies: UserProfile['policies']
-): MenuItem[] {
+export function generateMenuItems(policies: UserProfile['policies']): MenuItem[] {
   if (!policies) return []
 
   const items: MenuItem[] = []
@@ -21,18 +21,15 @@ export function generateMenuItems(
     const key = `${permission.context}::${permission.title}`
 
     const visibleSubjects = (permission.subjects || []).filter(
-      (s) =>
-        s.isVisible &&
-        Array.isArray(s.actions) &&
-        s.actions.includes('read') &&
-        s.path
+      (s) => s.isVisible && Array.isArray(s.actions) && s.actions.includes('read') && s.path,
     )
 
     if (visibleSubjects.length === 0) return
     const children: MenuItem[] = visibleSubjects.map((s) => ({
       key: `${key}::${s.subject}`,
       title: s.title,
-      path: '/' + s.path.replace(/^\/+/, '') + (s.subject === 'DASHBOARD' ? '' : '/list'),
+      path: '/' + s.path.replace(/^\/+/, ''),
+      subject: s.subject,
       group: false,
     }))
 
@@ -49,6 +46,7 @@ export function generateMenuItems(
         key,
         title: permission.title,
         path: children[0].path,
+        subject: children[0].subject,
         group: false,
       })
     }

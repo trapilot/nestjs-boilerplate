@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { LANGUAGES } from '../i18n'
 
 export function LangSwitcher() {
   const { i18n } = useTranslation()
@@ -13,14 +14,21 @@ export function LangSwitcher() {
     }
   }
 
+  const current = (i18n.language || LANGUAGES[0]).split('-')[0]
+
   return (
-    <div>
-      <button onClick={() => changeLanguage('en')} disabled={i18n.language === 'en'}>
-        EN
-      </button>
-      <button onClick={() => changeLanguage('vi')} disabled={i18n.language === 'vi'}>
-        VI
-      </button>
+    <div className="lang-switch" role="group" aria-label="Language">
+      {LANGUAGES.map((lng) => (
+        <button
+          key={lng}
+          type="button"
+          className={current === lng ? 'is-active' : ''}
+          onClick={() => changeLanguage(lng)}
+          disabled={current === lng}
+        >
+          {lng.toUpperCase()}
+        </button>
+      ))}
     </div>
   )
 }

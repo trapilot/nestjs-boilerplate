@@ -124,9 +124,10 @@ export class NotificationAdminController {
   })
   @Get('/map-shorted')
   async mapShorted(
+    // Notifications have no `name`; `title` is a per-language JSON object, so sort by id
     @RequestQueryList({
-      defaultOrderBy: 'name:asc',
-      availableOrderBy: ['name'],
+      defaultOrderBy: 'id:desc',
+      availableOrderBy: ['id'],
     })
     { _search, _kwargs }: RequestListDto,
   ): Promise<IResponseList> {

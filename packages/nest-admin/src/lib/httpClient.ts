@@ -1,8 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { ENV } from '../config/env'
-import { getAccessToken, setAccessToken } from '../hooks/useAuthToken'
+import { getAccessToken, setAccessToken, setRefreshToken } from '../hooks/useAuthToken'
 import i18n, { LANGUAGES } from '../i18n'
-import { authenticationService } from '../services'
 import { createCorrelationId, generateNonce } from '../utils/crypto'
 import { getTimezone, nowUnixTimesstamp } from '../utils/time'
 import { ApiError } from './apiError'
@@ -93,6 +92,14 @@ const publicAxios = axios.create({
 })
 
 // --- Refresh Token Logic ---
+// The refresh call lives in src/api/auth.ts, which imports this module; it registers itself here
+// to keep the dependency one-directional.
+type RefreshHandler = () => Promise<{ accessToken: string; refreshToken?: string }>
+let refreshHandler: RefreshHandler | null = null
+export function registerRefreshHandler(handler: RefreshHandler) {
+  refreshHandler = handler
+}
+
 let isRefreshing = false
 let failedQueue: any[] = []
 function processQueue(error: any, token: string | null = null) {
@@ -136,8 +143,10 @@ privateAxios.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const { accessToken } = await authenticationService.refresh()
+        if (!refreshHandler) throw error
+        const { accessToken, refreshToken } = await refreshHandler()
         setAccessToken(accessToken)
+        if (refreshToken) setRefreshToken(refreshToken)
         processQueue(null, accessToken)
         if (originalRequest && originalRequest.headers) {
           ;(originalRequest as any).headers['Authorization'] = 'Bearer ' + accessToken
@@ -147,7 +156,7 @@ privateAxios.interceptors.response.use(
         processQueue(err, null)
         // Clear tokens and redirect to login on refresh failure
         setAccessToken('')
-        window.location.href = '/login'
+        window.location.href = `${import.meta.env.BASE_URL}login`
         return Promise.reject(err)
       } finally {
         isRefreshing = false

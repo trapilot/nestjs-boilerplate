@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect } from 'react'
 
 type FilePreviewProps = {
   file: File
@@ -13,23 +13,11 @@ export const FilePreview = ({ file }: FilePreviewProps) => {
   }, [url])
 
   if (file.type.startsWith('image/')) {
-    return (
-      <img
-        src={url}
-        alt={file.name}
-        className="file-preview-image"
-      />
-    )
+    return <img src={url} alt={file.name} className="file-preview-image" />
   }
 
   if (file.type === 'application/pdf') {
-    return (
-      <iframe
-        src={url}
-        className="file-preview-pdf"
-        title={file.name}
-      />
-    )
+    return <iframe src={url} className="file-preview-pdf" title={file.name} />
   }
 
   return (

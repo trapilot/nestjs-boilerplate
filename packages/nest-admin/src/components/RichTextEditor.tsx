@@ -40,10 +40,8 @@ export const RichTextEditor = ({ value, className, onChange }: Props) => {
           'undo redo | blocks | ' +
           'bold italic underline | alignleft aligncenter alignright | ' +
           'bullist numlist outdent indent | image link | code',
-        block_formats:
-          'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4',
-        content_style:
-          'body { font-family: Inter, system-ui; font-size: 14px }',
+        block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4',
+        content_style: 'body { font-family: Inter, system-ui; font-size: 14px }',
       }}
     />
   )

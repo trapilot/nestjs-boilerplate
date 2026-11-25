@@ -4,11 +4,7 @@ type PlainTextEditorProps = {
   className?: string
 }
 
-export const PlainTextEditor = ({
-  value,
-  onChange,
-  className,
-}: PlainTextEditorProps) => {
+export const PlainTextEditor = ({ value, onChange, className }: PlainTextEditorProps) => {
   return (
     <textarea
       className={`ml-editor ml-editor--plain ${className ?? ''}`}

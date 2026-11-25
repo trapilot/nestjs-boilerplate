@@ -38,6 +38,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/settings/core": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Setting */
+        get: operations["SettingAdminController_getUserMaxCertificate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/settings/clean": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Setting */
+        get: operations["SettingAdminController_cleanCache"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Setting */
+        get: operations["SettingAdminController_list"];
+        put?: never;
+        /** Setting */
+        post: operations["SettingAdminController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/settings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Setting */
+        get: operations["SettingAdminController_get"];
+        /** Setting */
+        put: operations["SettingAdminController_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/auth/sign-up": {
         parameters: {
             query?: never;
@@ -242,60 +312,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User */
-        get: operations["UserAdminController_list"];
-        put?: never;
-        /** User */
-        post: operations["UserAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/users/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User */
-        get: operations["UserAdminController_get"];
-        /** User */
-        put: operations["UserAdminController_update"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/users/{id}/change-avatar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** User */
-        put: operations["UserAdminController_changeAvatar"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/activity-logs/me": {
+    "/api/admin/activity-logs/_me": {
         parameters: {
             query?: never;
             header?: never;
@@ -338,127 +355,6 @@ export interface paths {
         };
         /** Activity Log */
         get: operations["ActivityLogAdminController_listByCustomer"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/settings/core": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Setting */
-        get: operations["SettingAdminController_getUserMaxCertificate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/settings/clean": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Setting */
-        get: operations["SettingAdminController_cleanCache"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Setting */
-        get: operations["SettingAdminController_list"];
-        put?: never;
-        /** Setting */
-        post: operations["SettingAdminController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/settings/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Setting */
-        get: operations["SettingAdminController_get"];
-        /** Setting */
-        put: operations["SettingAdminController_update"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/dashboard/view-summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Dashboard */
-        get: operations["DashboardAdminController_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/dashboard/refresh-summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Dashboard */
-        get: operations["DashboardAdminController_refresh"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/dashboard/view-data-list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Dashboard */
-        get: operations["DashboardAdminController_viewDataList"];
         put?: never;
         post?: never;
         delete?: never;
@@ -670,6 +566,110 @@ export interface paths {
         get?: never;
         /** App Version */
         put: operations["AppVersionAdminController_active"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User */
+        get: operations["UserAdminController_list"];
+        put?: never;
+        /** User */
+        post: operations["UserAdminController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User */
+        get: operations["UserAdminController_get"];
+        /** User */
+        put: operations["UserAdminController_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}/change-avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** User */
+        put: operations["UserAdminController_changeAvatar"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/dashboard/view-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard */
+        get: operations["DashboardAdminController_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/dashboard/refresh-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard */
+        get: operations["DashboardAdminController_refresh"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/dashboard/view-data-list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard */
+        get: operations["DashboardAdminController_viewDataList"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -1110,294 +1110,8 @@ export interface components {
              */
             metadata: components["schemas"]["ResponseMetadataDto"];
         };
-        ResponseUserPolicySubject: {
-            /** @example  */
-            path: string;
-            /** @example  */
-            title: string;
-            /** @example  */
-            context: string;
-            /** @example  */
-            subject: string;
-            /** @example true */
-            isVisible: boolean;
-            /**
-             * @example [
-             *       "read"
-             *     ]
-             */
-            actions: string[];
-        };
-        ResponseUserPolicy: {
-            /** @example true */
-            group: boolean;
-            /** @example  */
-            path: string;
-            /** @example  */
-            title: string;
-            /** @example  */
-            context: string;
-            subjects: components["schemas"]["ResponseUserPolicySubject"][];
-        };
-        UserProfileResponseDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            email: string;
-            /** @example  */
-            phone: Record<string, never>;
-            /** @example  */
-            name: Record<string, never>;
-            /** @example  */
-            address: Record<string, never>;
-            /** @example  */
-            avatar: Record<string, never>;
-            /** @example 2026-11-24T15:46:29.238Z */
-            loginDate: Record<string, never>;
-            /**
-             * Format: date-time
-             * @example 2026-11-24T15:46:29.238Z
-             */
-            createdAt: string;
-            /** @example 1 */
-            roleId: number;
-            /** @enum {string} */
-            roleType: "SUPER_ADMIN" | "ADMIN" | "USER";
-            policies: components["schemas"]["ResponseUserPolicy"][];
-        };
-        UserRequestSignUpDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** Format: binary */
-            avatar?: string;
-            /** @example Example@Pass1 */
-            password: string;
-        };
-        AuthResponseTokenDto: {
-            /** @example Bearer */
-            tokenType: string;
-            /**
-             * @description Expire in timestamp
-             * @example 1660190937231
-             */
-            expiresIn: number;
-            /**
-             * @description Expire in timestamp
-             * @example 1660190937231
-             */
-            refreshIn: number;
-            /**
-             * @description Will be valid JWT Encode string
-             * @example asjdgh124123jl213aazs
-             */
-            accessToken: string;
-            /**
-             * @description Will be valid JWT Encode string
-             * @example 1iu3ijk23jihyuiasduiasd783y43h4
-             */
-            refreshToken: string;
-        };
-        AuthResponseTwoFactorDto: {
-            /**
-             * @description Indicates whether the user is required to set up 2FA upon next login
-             * @example false
-             */
-            isRequiredSetup: boolean;
-            /**
-             * @description Challenge token to be used for completing 2FA login
-             * @example 2b5b8933f0a44a94b3e1a96f8d2e2f21
-             */
-            challengeToken: string;
-            /**
-             * @description Challenge token TTL in milliseconds
-             * @example 300
-             */
-            challengeExpiresInMs: number;
-            /**
-             * @description Remaining backup codes count for the account
-             * @example 8
-             */
-            backupCodesRemaining?: number;
-        };
-        AuthResponseLoginDto: {
-            /**
-             * @description Indicates whether an additional 2FA verification step is enable
-             * @example false
-             */
-            isTwoFactorEnable: boolean;
-            /** @description Provides access and refresh tokens upon successful login */
-            token?: components["schemas"]["AuthResponseTokenDto"];
-            /** @description Provides details for completing the 2FA verification step */
-            twoFactor?: components["schemas"]["AuthResponseTwoFactorDto"];
-        };
-        UserRequestSignInDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example Example@Pass1 */
-            password: string;
-        };
-        UserEditProfileRequestDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example +84901234567 */
-            phone?: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** @example true */
-            isActive: boolean;
-        };
-        UserRequestChangePasswordDto: {
-            /**
-             * @description new string password, newPassword can't same with oldPassword
-             * @example Example@Pass1
-             */
-            newPassword: string;
-            /**
-             * @description old string password
-             * @example Example@Pass1
-             */
-            oldPassword: string;
-        };
-        UserRequestChangeAvatarDto: {
-            /** Format: binary */
-            avatar?: string;
-        };
-        UserVerifyPasswordRequestDto: {
-            /** @example Example@Pass1 */
-            password: string;
-        };
-        UserRequestChangeConfirmPasswordDto: {
-            /**
-             * @description new confirm password
-             * @example Example@Pass1
-             */
-            password: string;
-        };
-        ResponsePagingMetadataDto: Record<string, never>;
-        ResponsePagingDto: {
-            /**
-             * @description Return specific status code for every endpoints
-             * @example true
-             */
-            success: boolean;
-            /**
-             * @description Contain metadata about API
-             * @example {
-             *       "language": "en",
-             *       "timestamp": 1660190937231,
-             *       "timezone": "Asia/Ho_Chi_Minh",
-             *       "version": "1",
-             *       "path": "/api/v1/test/hello",
-             *       "availableSearch": [],
-             *       "availableOrderBy": [],
-             *       "pagination": {
-             *         "page": 1,
-             *         "perPage": 50,
-             *         "totalRecord": 100,
-             *         "totalPage": 2
-             *       }
-             *     }
-             */
-            metadata: components["schemas"]["ResponsePagingMetadataDto"];
-            /** @default [] */
-            data: unknown[][];
-        };
-        UserResponseListDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            email: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
         /** @enum {string} */
-        EnumStatus: "true" | "false";
-        UserResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            /** @example  */
-            email: string;
-            createdBy: string;
-            updatedBy: string;
-            deletedBy: string;
-            assignedBy: string;
-        };
-        UserRequestCreateDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example +84901234567 */
-            phone?: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** Format: binary */
-            avatar?: string;
-            /** @example Example@Pass1 */
-            password: string;
-            /** @example true */
-            isActive: boolean;
-            /** @example 1 */
-            roleId: number;
-        };
-        UserRequestUpdateDto: {
-            /** @example admin@example.com */
-            email: string;
-            /** @example +84901234567 */
-            phone?: string;
-            /** @example Payx */
-            name: string;
-            /** @example home #01 */
-            address: string;
-            /** @example true */
-            isActive?: boolean;
-            /** @example 1 */
-            roleId: number;
-            /** @example Example@Pass1 */
-            password?: string;
-        };
-        /** @enum {string} */
-        EnumActivityLogAction: "customerSignedUp" | "customerLoginCredential" | "customerLoginGoogle" | "customerLoginApple" | "customerLoginFailed" | "customerRefreshToken" | "customerForgotPassword" | "customerResetPassword" | "customerUpdateProfile" | "customerUpdatePhotoProfile" | "customerDeleteSelf" | "customerCreatedByAdmin" | "customerUpdatedByAdmin" | "customerBlocked" | "customerUpdateStatus" | "customerUpdatePhotoProfileByAdmin" | "userSignedUp" | "userLoginCredential" | "userLoginGoogle" | "userLoginApple" | "userLoginFailed" | "userRefreshToken" | "userUpdateProfile" | "userUpdatePhotoProfile" | "userChangePassword" | "userChangeConfirmPassword" | "userCreatedByAdmin" | "userUpdatedByAdmin" | "userUpdatePhotoProfileByAdmin" | "adminUserCreate" | "adminUserUpdate" | "adminUserUpdatePhotoProfile" | "adminCustomerCreate" | "adminCustomerUpdate" | "adminCustomerUpdateStatus" | "adminCustomerUpdatePhotoProfile" | "adminRoleCreate" | "adminRoleUpdate" | "adminRoleUpdateStatus" | "adminRoleDelete" | "adminPolicyCreate" | "adminPolicyUpdate" | "adminApiKeyCreate" | "adminApiKeyUpdate" | "adminApiKeyReset" | "adminApiKeyRenew" | "adminApiKeyUpdateStatus" | "adminApiKeyDelete" | "adminAppVersionCreate" | "adminAppVersionUpdate" | "adminAppVersionUpdateStatus" | "adminAppVersionDelete" | "adminContentCreate" | "adminContentUpdate" | "adminContentUpdateStatus" | "adminContentDelete" | "adminCountryCreate" | "adminCountryUpdate" | "adminCountryDelete" | "adminDistrictCreate" | "adminDistrictUpdate" | "adminDistrictDelete" | "adminNotificationCreate" | "adminNotificationUpdate" | "adminNotificationUpdateStatus" | "adminNotificationDelete" | "adminSettingCreate" | "adminSettingUpdate";
-        ActivityLogResponseDetailDto: {
-            /** @example 1 */
-            id: number;
-            action: components["schemas"]["EnumActivityLogAction"];
-            /** @example Logged in with password */
-            description: string;
-            /**
-             * @example {
-             *       "id": 1
-             *     }
-             */
-            metadata?: Record<string, never>;
-            /** @example 127.0.0.1 */
-            ipAddress?: Record<string, never>;
-            /**
-             * @example {
-             *       "os": {
-             *         "name": "iOS"
-             *       }
-             *     }
-             */
-            userAgent?: Record<string, never>;
-            /**
-             * Format: date-time
-             * @example 2026-11-24T15:46:29.186Z
-             */
-            createdAt: string;
-            /** @example Admin */
-            createdBy?: Record<string, never>;
-        };
-        /** @enum {string} */
-        EnumAppLanguage: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+        EnumAppLanguage: "en" | "vi";
         SettingFileResponseDto: {
             sizeInBytes: number;
         };
@@ -1467,13 +1181,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-11-23T09:46:29.231Z
+             * @example 2026-11-24T07:39:02.105Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-11-24T14:46:29.231Z
+             * @example 2026-11-25T12:39:02.105Z
              */
             updatedAt: string;
         };
@@ -1507,13 +1221,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Date created at
-             * @example 2026-11-23T09:46:29.231Z
+             * @example 2026-11-24T07:39:02.105Z
              */
             createdAt: string;
             /**
              * Format: date-time
              * @description Date updated at
-             * @example 2026-11-24T14:46:29.231Z
+             * @example 2026-11-25T12:39:02.105Z
              */
             updatedAt: string;
         };
@@ -1547,34 +1261,239 @@ export interface components {
             /** @description The refer of setting */
             refer: string | null;
         };
-        DashboardSummaryResponseDto: {
+        ResponseUserPolicySubject: {
+            /** @example  */
+            path: string;
+            /** @example  */
+            title: string;
+            /** @example  */
+            context: string;
+            /** @example  */
+            subject: string;
+            /** @example true */
+            isVisible: boolean;
             /**
-             * @description All customers (not date-bound)
-             * @example 100
+             * @example [
+             *       "read"
+             *     ]
              */
-            totalCustomers: number;
-            /**
-             * @description Active customers (not date-bound)
-             * @example 80
-             */
-            totalActiveCustomers: number;
-            /**
-             * @description Customers created in the date range
-             * @example 10
-             */
-            totalNewCustomers: number;
-            /**
-             * @description Customer notifications pushed in the date range
-             * @example 25
-             */
-            totalNotificationsSent: number;
-            /**
-             * @description Push messages sent successfully in the date range
-             * @example 40
-             */
-            totalPushesSent: number;
+            actions: string[];
         };
-        DashboardDataResponseDto: Record<string, never>;
+        ResponseUserPolicy: {
+            /** @example true */
+            group: boolean;
+            /** @example  */
+            path: string;
+            /** @example  */
+            title: string;
+            /** @example  */
+            context: string;
+            subjects: components["schemas"]["ResponseUserPolicySubject"][];
+        };
+        UserProfileResponseDto: {
+            /** @example 1 */
+            id: number;
+            /** @example  */
+            email: string;
+            /** @example  */
+            phone: string;
+            /** @example  */
+            name: string;
+            /** @example  */
+            address: string;
+            /** @example  */
+            avatar: string;
+            /**
+             * Format: date-time
+             * @example 2026-11-25T13:39:02.116Z
+             */
+            loginDate: string;
+            /**
+             * Format: date-time
+             * @example 2026-11-25T13:39:02.116Z
+             */
+            createdAt: string;
+            /** @example 1 */
+            roleId: number;
+            /** @enum {string} */
+            roleType: "SUPER_ADMIN" | "ADMIN" | "USER";
+            policies: components["schemas"]["ResponseUserPolicy"][];
+        };
+        UserRequestSignUpDto: {
+            /** @example admin.3b9ced@example.com */
+            email: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** Format: binary */
+            avatar?: string;
+            /** @example 6%dy95-QZZh8fZKM */
+            password: string;
+        };
+        AuthResponseTokenDto: {
+            /** @example Bearer */
+            tokenType: string;
+            /**
+             * @description Expire in timestamp
+             * @example 1660190937231
+             */
+            expiresIn: number;
+            /**
+             * @description Expire in timestamp
+             * @example 1660190937231
+             */
+            refreshIn: number;
+            /**
+             * @description Will be valid JWT Encode string
+             * @example asjdgh124123jl213aazs
+             */
+            accessToken: string;
+            /**
+             * @description Will be valid JWT Encode string
+             * @example 1iu3ijk23jihyuiasduiasd783y43h4
+             */
+            refreshToken: string;
+        };
+        AuthResponseTwoFactorDto: {
+            /**
+             * @description Indicates whether the user is required to set up 2FA upon next login
+             * @example false
+             */
+            isRequiredSetup: boolean;
+            /**
+             * @description Challenge token to be used for completing 2FA login
+             * @example 2b5b8933f0a44a94b3e1a96f8d2e2f21
+             */
+            challengeToken: string;
+            /**
+             * @description Challenge token TTL in milliseconds
+             * @example 300
+             */
+            challengeExpiresInMs: number;
+            /**
+             * @description Remaining backup codes count for the account
+             * @example 8
+             */
+            backupCodesRemaining?: number;
+        };
+        AuthResponseLoginDto: {
+            /**
+             * @description Indicates whether an additional 2FA verification step is enable
+             * @example false
+             */
+            isTwoFactorEnable: boolean;
+            /** @description Provides access and refresh tokens upon successful login */
+            token?: components["schemas"]["AuthResponseTokenDto"];
+            /** @description Provides details for completing the 2FA verification step */
+            twoFactor?: components["schemas"]["AuthResponseTwoFactorDto"];
+        };
+        UserRequestSignInDto: {
+            /** @example admin.3b9ced@example.com */
+            email: string;
+            /** @example 6%dy95-QZZh8fZKM */
+            password: string;
+        };
+        UserEditProfileRequestDto: {
+            /** @example admin.3b9ced@example.com */
+            email: string;
+            /** @example +84868207406 */
+            phone?: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** @example true */
+            isActive: boolean;
+        };
+        UserRequestChangePasswordDto: {
+            /**
+             * @description new string password, newPassword can't same with oldPassword
+             * @example 6%dy95-QZZh8fZKM
+             */
+            newPassword: string;
+            /**
+             * @description old string password
+             * @example 6%dy95-QZZh8fZKM
+             */
+            oldPassword: string;
+        };
+        UserRequestChangeAvatarDto: {
+            /** Format: binary */
+            avatar?: string;
+        };
+        UserVerifyPasswordRequestDto: {
+            /** @example 6%dy95-QZZh8fZKM */
+            password: string;
+        };
+        UserRequestChangeConfirmPasswordDto: {
+            /**
+             * @description new confirm password
+             * @example 6%dy95-QZZh8fZKM
+             */
+            password: string;
+        };
+        ResponsePagingMetadataDto: Record<string, never>;
+        ResponsePagingDto: {
+            /**
+             * @description Return specific status code for every endpoints
+             * @example true
+             */
+            success: boolean;
+            /**
+             * @description Contain metadata about API
+             * @example {
+             *       "language": "en",
+             *       "timestamp": 1660190937231,
+             *       "timezone": "Asia/Ho_Chi_Minh",
+             *       "version": "1",
+             *       "path": "/api/v1/test/hello",
+             *       "availableSearch": [],
+             *       "availableOrderBy": [],
+             *       "pagination": {
+             *         "page": 1,
+             *         "perPage": 50,
+             *         "totalRecord": 100,
+             *         "totalPage": 2
+             *       }
+             *     }
+             */
+            metadata: components["schemas"]["ResponsePagingMetadataDto"];
+            /** @default [] */
+            data: unknown[][];
+        };
+        /** @enum {string} */
+        EnumActivityLogAction: "customerSignedUp" | "customerLoginCredential" | "customerLoginGoogle" | "customerLoginApple" | "customerLoginFailed" | "customerRefreshToken" | "customerForgotPassword" | "customerResetPassword" | "customerUpdateProfile" | "customerUpdatePhotoProfile" | "customerDeleteSelf" | "customerCreatedByAdmin" | "customerUpdatedByAdmin" | "customerBlocked" | "customerUpdateStatus" | "customerUpdatePhotoProfileByAdmin" | "userSignedUp" | "userLoginCredential" | "userLoginGoogle" | "userLoginApple" | "userLoginFailed" | "userRefreshToken" | "userUpdateProfile" | "userUpdatePhotoProfile" | "userChangePassword" | "userChangeConfirmPassword" | "userCreatedByAdmin" | "userUpdatedByAdmin" | "userUpdatePhotoProfileByAdmin" | "adminUserCreate" | "adminUserUpdate" | "adminUserUpdatePhotoProfile" | "adminCustomerCreate" | "adminCustomerUpdate" | "adminCustomerUpdateStatus" | "adminCustomerUpdatePhotoProfile" | "adminRoleCreate" | "adminRoleUpdate" | "adminRoleUpdateStatus" | "adminRoleDelete" | "adminPolicyCreate" | "adminPolicyUpdate" | "adminApiKeyCreate" | "adminApiKeyUpdate" | "adminApiKeyReset" | "adminApiKeyRenew" | "adminApiKeyUpdateStatus" | "adminApiKeyDelete" | "adminAppVersionCreate" | "adminAppVersionUpdate" | "adminAppVersionUpdateStatus" | "adminAppVersionDelete" | "adminContentCreate" | "adminContentUpdate" | "adminContentUpdateStatus" | "adminContentDelete" | "adminCountryCreate" | "adminCountryUpdate" | "adminCountryDelete" | "adminDistrictCreate" | "adminDistrictUpdate" | "adminDistrictDelete" | "adminNotificationCreate" | "adminNotificationUpdate" | "adminNotificationUpdateStatus" | "adminNotificationDelete" | "adminSettingCreate" | "adminSettingUpdate";
+        ActivityLogResponseDetailDto: {
+            /** @example 1 */
+            id: number;
+            action: components["schemas"]["EnumActivityLogAction"];
+            /** @example Logged in with password */
+            description: string;
+            /**
+             * @example {
+             *       "id": 1
+             *     }
+             */
+            metadata?: Record<string, never>;
+            /** @example 127.0.0.1 */
+            ipAddress?: string;
+            /**
+             * @example {
+             *       "os": {
+             *         "name": "iOS"
+             *       }
+             *     }
+             */
+            userAgent?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @example 2026-11-25T13:39:02.051Z
+             */
+            createdAt: string;
+            /** @example Admin */
+            createdBy?: string;
+        };
         /** @enum {string} */
         EnumApiKeyType: "SYSTEM" | "CLIENT" | "DEFAULT";
         ApiKeyResponseListDto: {
@@ -1604,23 +1523,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-24T14:46:29.194Z
+             * @example 2026-11-25T12:39:02.059Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-25T21:46:29.194Z
+             * @example 2026-11-26T19:39:02.059Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.194Z
+             * @example 2026-11-24T07:39:02.059Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.194Z
+             * @example 2026-11-25T12:39:02.059Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1655,23 +1574,23 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-24T14:46:29.194Z
+             * @example 2026-11-25T12:39:02.059Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-25T21:46:29.194Z
+             * @example 2026-11-26T19:39:02.059Z
              */
             untilDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.194Z
+             * @example 2026-11-24T07:39:02.059Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.194Z
+             * @example 2026-11-25T12:39:02.059Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1690,13 +1609,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-24T14:46:29.192Z
+             * @example 2026-11-25T12:39:02.057Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-25T21:46:29.192Z
+             * @example 2026-11-26T19:39:02.057Z
              */
             untilDate?: string;
         };
@@ -1709,13 +1628,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-24T14:46:29.192Z
+             * @example 2026-11-25T12:39:02.057Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-25T21:46:29.192Z
+             * @example 2026-11-26T19:39:02.057Z
              */
             untilDate?: string;
         };
@@ -1723,13 +1642,13 @@ export interface components {
             /**
              * Format: date-time
              * @description Api Key start date
-             * @example 2026-11-24T14:46:29.193Z
+             * @example 2026-11-25T12:39:02.058Z
              */
             startDate?: string;
             /**
              * Format: date-time
              * @description Api Key end date
-             * @example 2026-11-25T21:46:29.193Z
+             * @example 2026-11-26T19:39:02.058Z
              */
             untilDate?: string;
         };
@@ -1752,12 +1671,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.204Z
+             * @example 2026-11-24T07:39:02.066Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.204Z
+             * @example 2026-11-25T12:39:02.066Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1782,12 +1701,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.204Z
+             * @example 2026-11-24T07:39:02.066Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.204Z
+             * @example 2026-11-25T12:39:02.066Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1828,6 +1747,90 @@ export interface components {
             /** @description Api share link */
             url: string;
         };
+        UserResponseListDto: {
+            /** @example 1 */
+            id: number;
+            /** @example  */
+            email: string;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
+        };
+        /** @enum {string} */
+        EnumStatus: "true" | "false";
+        UserResponseDetailDto: {
+            /** @example 1 */
+            id: number;
+            /** @example  */
+            email: string;
+            createdBy: string;
+            updatedBy: string;
+            deletedBy: string;
+            assignedBy: string;
+        };
+        UserRequestCreateDto: {
+            /** @example admin.3b9ced@example.com */
+            email: string;
+            /** @example +84868207406 */
+            phone?: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** Format: binary */
+            avatar?: string;
+            /** @example 6%dy95-QZZh8fZKM */
+            password: string;
+            /** @example true */
+            isActive: boolean;
+            /** @example 1 */
+            roleId: number;
+        };
+        UserRequestUpdateDto: {
+            /** @example admin.3b9ced@example.com */
+            email: string;
+            /** @example +84868207406 */
+            phone?: string;
+            /** @example Payx */
+            name: string;
+            /** @example home #01 */
+            address: string;
+            /** @example true */
+            isActive?: boolean;
+            /** @example 1 */
+            roleId: number;
+            /** @example 6%dy95-QZZh8fZKM */
+            password?: string;
+        };
+        DashboardSummaryResponseDto: {
+            /**
+             * @description All customers (not date-bound)
+             * @example 100
+             */
+            totalCustomers: number;
+            /**
+             * @description Active customers (not date-bound)
+             * @example 80
+             */
+            totalActiveCustomers: number;
+            /**
+             * @description Customers created in the date range
+             * @example 10
+             */
+            totalNewCustomers: number;
+            /**
+             * @description Customer notifications pushed in the date range
+             * @example 25
+             */
+            totalNotificationsSent: number;
+            /**
+             * @description Push messages sent successfully in the date range
+             * @example 40
+             */
+            totalPushesSent: number;
+        };
+        DashboardDataResponseDto: Record<string, never>;
         RoleResponseListDto: {
             /** @example 1 */
             id: number;
@@ -1864,7 +1867,7 @@ export interface components {
              * @enum {string}
              */
             type?: "SUPER_ADMIN" | "ADMIN" | "USER";
-            description?: Record<string, never>;
+            description?: string;
             /** @example true */
             isActive: boolean;
             policies: components["schemas"]["RolePolicyRequestCreateDto"][];
@@ -1877,7 +1880,7 @@ export interface components {
              * @enum {string}
              */
             type?: "SUPER_ADMIN" | "ADMIN" | "USER";
-            description?: Record<string, never>;
+            description?: string;
             /** @example true */
             isActive: boolean;
             policies: components["schemas"]["RolePolicyRequestCreateDto"][];
@@ -1958,12 +1961,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.175Z
+             * @example 2026-11-24T07:39:02.030Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.175Z
+             * @example 2026-11-25T12:39:02.030Z
              */
             updatedAt: string;
             createdBy: string;
@@ -1993,12 +1996,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.175Z
+             * @example 2026-11-24T07:39:02.030Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.175Z
+             * @example 2026-11-25T12:39:02.030Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2009,14 +2012,17 @@ export interface components {
         CustomerRequestCreateDto: {
             /** @example Payx */
             name: string;
+            /** @example +84392485791 */
             phone: string;
+            /** @example customer.61c090@example.com */
             email?: string;
+            /** @example 095133683205 */
             citizenId?: string;
             /** @example home #01 */
             address?: string;
             /**
              * Format: date-time
-             * @example 2025-05-18T15:46:29.209Z
+             * @example 2025-05-19T13:39:02.072Z
              */
             birthDate?: string;
             /** Format: binary */
@@ -2025,25 +2031,30 @@ export interface components {
             locale?: components["schemas"]["EnumAppLanguage"];
             /** @example true */
             isActive: boolean;
+            /** @example B!q6xw5qJlj5pzyu */
             password: string;
         };
         CustomerRequestUpdateDto: {
             /** @example Payx */
             name: string;
+            /** @example +84392485791 */
             phone: string;
+            /** @example customer.61c090@example.com */
             email?: string;
+            /** @example 095133683205 */
             citizenId?: string;
             /** @example home #01 */
             address?: string;
             /**
              * Format: date-time
-             * @example 2025-05-18T15:46:29.209Z
+             * @example 2025-05-19T13:39:02.072Z
              */
             birthDate?: string;
             /** @example en */
             locale?: components["schemas"]["EnumAppLanguage"];
             /** @example true */
             isActive: boolean;
+            /** @example B!q6xw5qJlj5pzyu */
             password: string;
         };
         CustomerChangeAvatarRequestDto: {
@@ -2098,7 +2109,7 @@ export interface components {
             status: string;
             /** @example 08:30 */
             executeTime: string;
-            /** @example 2026-11-23T09:46:29.214Z */
+            /** @example 2026-11-24T07:39:02.081Z */
             executeDate: string;
             /** @example 1 */
             weekday: number;
@@ -2108,24 +2119,24 @@ export interface components {
             month: number;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.214Z
+             * @example 2026-11-24T07:39:02.081Z
              */
             startDate: string;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.214Z
+             * @example 2026-11-24T07:39:02.081Z
              */
             untilDate: string;
             /** @example true */
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.214Z
+             * @example 2026-11-24T07:39:02.081Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.214Z
+             * @example 2026-11-25T12:39:02.081Z
              */
             updatedAt: string;
         };
@@ -2147,12 +2158,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.214Z
+             * @example 2026-11-24T07:39:02.081Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.214Z
+             * @example 2026-11-25T12:39:02.081Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2179,12 +2190,12 @@ export interface components {
             isActive: boolean;
             /**
              * Format: date-time
-             * @example 2026-11-23T09:46:29.214Z
+             * @example 2026-11-24T07:39:02.081Z
              */
             createdAt: string;
             /**
              * Format: date-time
-             * @example 2026-11-24T14:46:29.214Z
+             * @example 2026-11-25T12:39:02.081Z
              */
             updatedAt: string;
             createdBy: string;
@@ -2228,9 +2239,9 @@ export interface components {
         NotificationPushDto: {
             /** @example ONCE */
             type: components["schemas"]["EnumPushType"];
-            /** @example 2026-11-24T15:46:29.212Z */
+            /** @example 2026-11-25T13:39:02.079Z */
             executeTime: string;
-            /** @example 2026-11-24T15:46:29.212Z */
+            /** @example 2026-11-25T13:39:02.079Z */
             executeDate: string;
             /** @example  */
             weekday?: number;
@@ -2240,12 +2251,12 @@ export interface components {
             month?: number;
             /**
              * Format: date-time
-             * @example 2026-11-25T21:46:29.213Z
+             * @example 2026-11-26T19:39:02.080Z
              */
             sinceDate?: string;
             /**
              * Format: date-time
-             * @example 2026-11-27T03:46:29.213Z
+             * @example 2026-11-28T01:39:02.080Z
              */
             untilDate?: string;
             /** @example true */
@@ -2328,13 +2339,181 @@ export interface operations {
             };
         };
     };
+    SettingAdminController_getUserMaxCertificate: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SettingCoreResponseDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    SettingAdminController_cleanCache: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SettingAdminController_list: {
+        parameters: {
+            query?: {
+                /** @description Group */
+                group?: components["schemas"]["EnumSettingGroup"];
+            };
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SettingResponseListDto"][];
+                    } & components["schemas"]["ResponseListDto"];
+                };
+            };
+        };
+    };
+    SettingAdminController_create: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                /** @description setting id */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettingRequestCreateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["SettingRequestCreateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SettingResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    SettingAdminController_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                /** @description setting id */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SettingResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    SettingAdminController_update: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                /** @description setting id */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettingRequestUpdateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["SettingRequestUpdateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SettingResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
     UserAuthController_signUp: {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2362,9 +2541,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2392,9 +2571,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2417,9 +2596,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2442,9 +2621,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2467,9 +2646,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2492,9 +2671,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2522,9 +2701,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2547,9 +2726,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2577,9 +2756,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2606,9 +2785,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2632,9 +2811,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2654,162 +2833,6 @@ export interface operations {
             };
         };
     };
-    UserAdminController_list: {
-        parameters: {
-            query?: {
-                roleId?: number;
-                phone?: string;
-                name?: string;
-                /** @description boolean value */
-                isActive?: components["schemas"]["EnumStatus"];
-                /** @description Data per page */
-                perPage?: number;
-                /** @description Page number */
-                page?: number;
-                /** @description Order by base on metadata.availableOrderBy */
-                orderBy?: string;
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseListDto"][];
-                    } & components["schemas"]["ResponsePagingDto"];
-                };
-            };
-        };
-    };
-    UserAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["UserRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    UserAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    UserAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["UserRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    UserAdminController_changeAvatar: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["UserRequestChangeAvatarDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["UserResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     ActivityLogAdminController_listMine: {
         parameters: {
             query?: {
@@ -2822,9 +2845,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -2855,9 +2878,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 userId: number;
@@ -2890,9 +2913,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 customerId: number;
@@ -2913,249 +2936,6 @@ export interface operations {
             };
         };
     };
-    SettingAdminController_getUserMaxCertificate: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["SettingCoreResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    SettingAdminController_cleanCache: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    SettingAdminController_list: {
-        parameters: {
-            query?: {
-                /** @description Group */
-                group?: components["schemas"]["EnumSettingGroup"];
-            };
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["SettingResponseListDto"][];
-                    } & components["schemas"]["ResponseListDto"];
-                };
-            };
-        };
-    };
-    SettingAdminController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                /** @description setting id */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SettingRequestCreateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["SettingRequestCreateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["SettingResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    SettingAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                /** @description setting id */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["SettingResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    SettingAdminController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path: {
-                /** @description setting id */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SettingRequestUpdateDto"];
-                "application/x-www-form-urlencoded": components["schemas"]["SettingRequestUpdateDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["SettingResponseDetailDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    DashboardAdminController_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["DashboardSummaryResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    DashboardAdminController_refresh: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["DashboardSummaryResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
-    DashboardAdminController_viewDataList: {
-        parameters: {
-            query?: never;
-            header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
-                /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data?: components["schemas"]["DashboardDataResponseDto"];
-                    } & components["schemas"]["ResponseDataDto"];
-                };
-            };
-        };
-    };
     ApiKeyAdminController_list: {
         parameters: {
             query?: {
@@ -3169,9 +2949,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3194,9 +2974,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3227,9 +3007,9 @@ export interface operations {
                 isActive?: boolean;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3252,9 +3032,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3279,9 +3059,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3311,9 +3091,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3334,9 +3114,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3361,9 +3141,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3393,9 +3173,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3420,9 +3200,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3454,9 +3234,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3479,9 +3259,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3509,9 +3289,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3534,9 +3314,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3561,9 +3341,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3593,9 +3373,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3616,9 +3396,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3643,9 +3423,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3666,6 +3446,237 @@ export interface operations {
             };
         };
     };
+    UserAdminController_list: {
+        parameters: {
+            query?: {
+                roleId?: number;
+                phone?: string;
+                name?: string;
+                /** @description boolean value */
+                isActive?: components["schemas"]["EnumStatus"];
+                /** @description Data per page */
+                perPage?: number;
+                /** @description Page number */
+                page?: number;
+                /** @description Order by base on metadata.availableOrderBy */
+                orderBy?: string;
+            };
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["UserResponseListDto"][];
+                    } & components["schemas"]["ResponsePagingDto"];
+                };
+            };
+        };
+    };
+    UserAdminController_create: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UserRequestCreateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["UserResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    UserAdminController_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["UserResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    UserAdminController_update: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserRequestUpdateDto"];
+                "application/x-www-form-urlencoded": components["schemas"]["UserRequestUpdateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["UserResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    UserAdminController_changeAvatar: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UserRequestChangeAvatarDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["UserResponseDetailDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    DashboardAdminController_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["DashboardSummaryResponseDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    DashboardAdminController_refresh: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["DashboardSummaryResponseDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
+    DashboardAdminController_viewDataList: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-language"?: "en" | "vi";
+                /** @description Timezone header */
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["DashboardDataResponseDto"];
+                    } & components["schemas"]["ResponseDataDto"];
+                };
+            };
+        };
+    };
     RoleAdminController_list: {
         parameters: {
             query?: {
@@ -3676,9 +3687,9 @@ export interface operations {
                 page?: number;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3701,9 +3712,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3733,9 +3744,9 @@ export interface operations {
                 isActive: components["schemas"]["RequestFilterDto"];
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3758,9 +3769,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3783,9 +3794,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3810,9 +3821,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3842,9 +3853,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3865,9 +3876,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3892,9 +3903,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -3922,9 +3933,9 @@ export interface operations {
                 isVisible?: boolean;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3947,9 +3958,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -3977,9 +3988,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4004,9 +4015,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4049,9 +4060,9 @@ export interface operations {
                 bookType?: "pdf" | "csv" | "xlsx";
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4074,9 +4085,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4103,9 +4114,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4128,9 +4139,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4155,9 +4166,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4187,9 +4198,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4214,9 +4225,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4241,9 +4252,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4278,9 +4289,9 @@ export interface operations {
                 page?: number;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4303,9 +4314,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4333,9 +4344,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4360,9 +4371,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4392,9 +4403,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4415,9 +4426,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4442,9 +4453,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4476,9 +4487,9 @@ export interface operations {
                 orderBy?: string;
             };
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4501,9 +4512,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4531,9 +4542,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path?: never;
             cookie?: never;
@@ -4556,9 +4567,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4583,9 +4594,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4615,9 +4626,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4638,9 +4649,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;
@@ -4665,9 +4676,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-language"?: "en" | "vi" | "cn" | "hk" | "tw" | "mo";
+                "x-language"?: "en" | "vi";
                 /** @description Timezone header */
-                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh" | "Asia/Tokyo" | "Asia/Hong_Kong" | "Asia/Shanghai";
+                "x-timezone"?: "UTC" | "Asia/Ho_Chi_Minh";
             };
             path: {
                 id: number;

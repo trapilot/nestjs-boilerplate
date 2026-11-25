@@ -1,7 +1,25 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from '../components/Layout'
+import { Skeleton } from '../components/ui'
 import { useUser } from '../contexts/UserContext'
-import { MODULE_ROUTES } from '../mixins/routes'
+import { RESOURCES } from '../generated/resources'
+import NotFoundPage from '../pages/NotFoundPage'
+import ProfilePage from '../pages/ProfilePage'
+import ResourceDetailPage from '../pages/ResourceDetailPage'
+import ResourceFormPage from '../pages/ResourceFormPage'
+import ResourceListPage from '../pages/ResourceListPage'
+import Dashboard from '../screens/Dashboard'
+import Login from '../screens/Login'
+
+function FullPageSkeleton() {
+  return (
+    <div style={{ padding: 32, display: 'grid', gap: 12 }}>
+      <Skeleton width={240} height={28} />
+      <Skeleton height={14} />
+      <Skeleton height={14} width="70%" />
+    </div>
+  )
+}
 
 /**
  * A component to protect routes that require authentication.
@@ -9,11 +27,7 @@ import { MODULE_ROUTES } from '../mixins/routes'
  */
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useUser()
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
+  if (loading) return <FullPageSkeleton />
   return user ? children : <Navigate to="/login" replace />
 }
 
@@ -22,31 +36,22 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
  */
 function PublicRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useUser()
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  return user ? <Navigate to={MODULE_ROUTES[0].path} replace /> : children
+  if (loading) return <FullPageSkeleton />
+  return user ? <Navigate to="/dashboard" replace /> : children
 }
 
 export function AppRoutes() {
-  const location = useLocation()
-  console.log('Current path:', location.pathname)
-
   return (
     <Routes>
-      {/* Public route */}
       <Route
-        path={MODULE_ROUTES[1].path}
+        path="/login"
         element={
           <PublicRoute>
-            {MODULE_ROUTES[1].element}
+            <Login />
           </PublicRoute>
         }
       />
 
-      {/* Private routes wrapped in the main layout */}
       <Route
         path="/"
         element={
@@ -55,12 +60,40 @@ export function AppRoutes() {
           </PrivateRoute>
         }
       >
-        <Route index element={<Navigate to={MODULE_ROUTES[0].path} replace />} />
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<ProfilePage />} />
 
-        {MODULE_ROUTES.map((r) => (
-          <Route key={r.path} path={r.path} element={r.element} />
-        ))}
+        {RESOURCES.map((r) => [
+          r.list ? (
+            <Route key={`${r.key}-list`} path={r.key} element={<ResourceListPage resource={r} />} />
+          ) : null,
+          r.create ? (
+            <Route
+              key={`${r.key}-new`}
+              path={`${r.key}/new`}
+              element={<ResourceFormPage resource={r} mode="create" />}
+            />
+          ) : null,
+          r.get ? (
+            <Route
+              key={`${r.key}-detail`}
+              path={`${r.key}/:id`}
+              element={<ResourceDetailPage resource={r} />}
+            />
+          ) : null,
+          r.update ? (
+            <Route
+              key={`${r.key}-edit`}
+              path={`${r.key}/:id/edit`}
+              element={<ResourceFormPage resource={r} mode="edit" />}
+            />
+          ) : null,
+        ])}
+
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }

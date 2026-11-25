@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { Button, FormField, Input } from '../components/ui'
 import { useUser } from '../contexts/UserContext'
 import { ApiError } from '../lib/apiError'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { t } = useTranslation('common')
   const { login, loading, error } = useUser()
-  const [email, setEmail] = useState(import.meta.env.VITE_APP_USERNAME || '')
-  const [password, setPassword] = useState(import.meta.env.VITE_APP_USERPASS || '')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const handleLoggedIn = async (e: React.FormEvent) => {
@@ -23,62 +26,49 @@ export default function Login() {
     }
   }
 
-  const formStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '300px',
-    margin: '100px auto',
-    padding: '2rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-  }
-
-  const inputStyle: React.CSSProperties = {
-    marginBottom: '1rem',
-    padding: '0.5rem',
-    fontSize: '1rem',
-  }
-
-  const buttonStyle: React.CSSProperties = {
-    padding: '0.75rem',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-  }
-
-  const errorStyle: React.CSSProperties = {
-    color: 'red',
-    marginBottom: '1rem',
-  }
-
   return (
-    <form onSubmit={handleLoggedIn} style={formStyle}>
-      <h2>Login</h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        style={inputStyle}
-        required
-      />
-      {fieldErrors.email && <p style={errorStyle}>{fieldErrors.email}</p>}
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        style={inputStyle}
-        required
-      />
-      {fieldErrors.password && <p style={errorStyle}>{fieldErrors.password}</p>}
-      {error && <p style={errorStyle}>{error}</p>}
-      <button type="submit" style={buttonStyle} disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+    <div className="auth-page">
+      <form onSubmit={handleLoggedIn} className="card auth-card stack">
+        <div className="auth-brand">
+          <span className="brand-mark">N</span>
+          <h1 className="card-title">{t('welcome', { defaultValue: 'Welcome to Nest Admin' })}</h1>
+          <p className="muted">{t('signInHint', { defaultValue: 'Sign in to continue' })}</p>
+        </div>
+        <FormField
+          label={t('email', { defaultValue: 'Email' })}
+          htmlFor="login-email"
+          error={fieldErrors.email}
+        >
+          <Input
+            id="login-email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            invalid={!!fieldErrors.email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </FormField>
+        <FormField
+          label={t('password', { defaultValue: 'Password' })}
+          htmlFor="login-password"
+          error={fieldErrors.password}
+        >
+          <Input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            invalid={!!fieldErrors.password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </FormField>
+        {error ? <p className="field-error">{error}</p> : null}
+        <Button type="submit" variant="primary" size="lg" loading={loading}>
+          {t('login', { defaultValue: 'Log in' })}
+        </Button>
+      </form>
+    </div>
   )
 }

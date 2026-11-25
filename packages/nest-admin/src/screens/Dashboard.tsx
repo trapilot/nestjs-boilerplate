@@ -1,108 +1,97 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getSummary, refreshSummary, type DashboardSummary } from '../api/dashboard'
+import { Button, Card, ErrorAlert, Skeleton } from '../components/ui'
+import { PageHeader } from '../components/PageHeader'
 import { useAuthGuard } from '../hooks/useAuthGuard'
-import { dashboardService } from '../services'
+import { humanize } from '../lib/format'
 
 export default function Dashboard() {
   useAuthGuard() // Protect this route
   const { t } = useTranslation('common')
 
-  const [loading, setLoading] = React.useState(false)
-  const [data, setData] = useState<any>({
-    totalMembers: 0,
-    totalUnpaidInvoices: 0,
-    totalPartialInvoices: 0,
-    totalCancelInvoices: 0,
-  })
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [failed, setFailed] = useState<string | null>(null)
+  const [data, setData] = useState<DashboardSummary | null>(null)
 
-  useEffect(() => {
-    let ignore = false
-    const run = async () => {
-      try {
-        setLoading(true)
-        const data = await dashboardService.get()
-        console.log({ data })
-        if (!ignore) setData(data)
-      } catch (e: any) {
-      } finally {
-        if (!ignore) setLoading(false)
-      }
+  const load = async (refresh = false) => {
+    try {
+      refresh ? setRefreshing(true) : setLoading(true)
+      setFailed(null)
+      setData(refresh ? await refreshSummary() : await getSummary())
+    } catch (e: unknown) {
+      setFailed(e instanceof Error ? e.message : 'Failed to load')
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
     }
-    run()
-    return () => {
-      ignore = true
-    }
-  }, [])
-
-  const drawBarChart = (canvas: any, data: any) => {
-    const ctx = canvas.getContext('2d')
-    const barWidth = 50
-    const spaceBetweenBars = 30
-    const height = 200
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    const values = [
-      data.totalMembers,
-      data.totalUnpaidInvoices,
-      data.totalPartialInvoices,
-      data.totalCancelInvoices,
-    ]
-    const labels = ['Total Members', 'Unpaid Invoices', 'Partial Invoices', 'Cancelled Invoices']
-
-    values.forEach((value, index) => {
-      const x = index * (barWidth + spaceBetweenBars)
-      const y = height - value
-      ctx.fillStyle = 'rgba(0, 123, 255, 0.7)'
-      ctx.fillRect(x, y, barWidth, value)
-    })
-
-    labels.forEach((label, index) => {
-      const x = index * (barWidth + spaceBetweenBars) + barWidth / 2
-      ctx.fillStyle = 'black'
-      ctx.font = '12px Arial'
-      ctx.textAlign = 'center'
-      ctx.fillText(label, x, height + 15)
-    })
   }
 
   useEffect(() => {
-    const canvas = document.getElementById('barChart')
-    drawBarChart(canvas, data)
-  }, [data])
+    load()
+  }, [])
+
+  const stats = Object.entries((data ?? {}) as Record<string, unknown>).filter(
+    (entry): entry is [string, number] => typeof entry[1] === 'number',
+  )
+  const max = Math.max(1, ...stats.map(([, v]) => v))
 
   return (
-    <div>
-      {loading && <h2>{t('dashboard')}</h2>}
-      {/* <p>This is a protected page.</p> */}
-
-      {!loading && data && (
-        <div>
-          <div className="card-dashboard">
-            <h3>Total Members & Invoices In This Month</h3>
-            <canvas id="barChart" width="400" height="200"></canvas>
+    <>
+      <PageHeader
+        title={t('dashboard', { defaultValue: 'Dashboard' })}
+        actions={
+          <Button icon="refresh" loading={refreshing} onClick={() => load(true)}>
+            {t('refresh', { defaultValue: 'Refresh' })}
+          </Button>
+        }
+      />
+      {failed ? (
+        <ErrorAlert
+          title={t('loadFailed', { defaultValue: 'Could not load data' })}
+          message={failed}
+          onRetry={() => load()}
+          retryLabel={t('retry', { defaultValue: 'Retry' })}
+        />
+      ) : (
+        <div className="stack">
+          <div className="stat-grid">
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <Card key={i} className="stat-card">
+                    <Skeleton width={110} height={12} />
+                    <Skeleton width={70} height={30} style={{ marginTop: 10 }} />
+                  </Card>
+                ))
+              : stats.map(([key, value]) => (
+                  <Card key={key} className="stat-card">
+                    <div className="stat-label">
+                      {t(`dashboardStats.${key}`, {
+                        defaultValue: humanize(key.replace(/^total/, '')),
+                      })}
+                    </div>
+                    <div className="stat-value">{value.toLocaleString()}</div>
+                  </Card>
+                ))}
           </div>
-
-          <div className="dashboard-stats">
-            <div className="card-dashboard">
-              <h4>{t('Total Members')}</h4>
-              <p>{data.totalMembers}</p>
-            </div>
-            <div className="card-dashboard">
-              <h4>{t('Total Unpaid Invoices')}</h4>
-              <p>{data.totalUnpaidInvoices}</p>
-            </div>
-            <div className="card-dashboard">
-              <h4>{t('Total Partial Invoices')}</h4>
-              <p>{data.totalPartialInvoices}</p>
-            </div>
-            <div className="card-dashboard">
-              <h4>{t('Total Cancel Invoices')}</h4>
-              <p>{data.totalCancelInvoices}</p>
-            </div>
-          </div>
+          {!loading && stats.length > 0 ? (
+            <Card title={t('overview', { defaultValue: 'Overview' })}>
+              <div className="bar-chart">
+                {stats.map(([key, value]) => (
+                  <div key={key} className="bar-row">
+                    <span className="muted">{humanize(key.replace(/^total/, ''))}</span>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width: `${(value / max) * 100}%` }} />
+                    </div>
+                    <span className="bar-value">{value.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ) : null}
         </div>
       )}
-    </div>
+    </>
   )
 }

@@ -9,7 +9,7 @@
     "start:dev": "vite --port 4000",
     "schema:download": "cp -f ../../public/docs/swagger-admin.json swagger.json",
     "schema:generate": "npx openapi-typescript swagger.json -o ./src/types/api.d.ts",
-    "schema:build": "node scripts/generateApi.mjs",
+    "schema:build": "node scripts/generate-admin.mjs",
     "schema:rebuild": "pnpm schema:download && pnpm schema:generate && pnpm schema:build && pnpm build",
     "lint": "eslint",
     "lint:staged": "lint-staged",

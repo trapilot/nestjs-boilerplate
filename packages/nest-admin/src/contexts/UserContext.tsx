@@ -5,7 +5,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from '../hooks/useAuthToken'
-import { authenticationService } from '../services'
+import * as authApi from '../api/auth'
 import type { components } from '../types/api'
 import { getErrorMsg } from '../utils/error'
 
@@ -36,7 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const profile = await authenticationService.me<UserProfile>()
+      const profile = await authApi.me<UserProfile>()
       setUser(profile)
       setError(null)
     } catch (err: unknown) {
@@ -54,7 +54,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setError(null)
 
       // Login and get tokens
-      const loginResult = await authenticationService.loginWithCredential({ email, password })
+      const loginResult = await authApi.login({ email, password })
 
       // Store tokens
       if (loginResult?.token) {

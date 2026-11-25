@@ -1,6 +1,6 @@
-import { useState } from "react"
-import { PlainTextEditor } from "./PlainTextEditor"
-import { RichTextEditor } from "./RichTextEditor"
+import { useState } from 'react'
+import { PlainTextEditor } from './PlainTextEditor'
+import { RichTextEditor } from './RichTextEditor'
 
 type MultiLangRichTextValue = {
   [language: string]: string
@@ -14,11 +14,8 @@ type MultiLangRichTextProps = {
   languages: string[]
 }
 
-let cnt = 0
-const genId = (type: string, key: string, lang: string): string => {
-  cnt = (cnt + 1) % 100
-  return `${type}_${key}_${lang}_${cnt}`
-}
+// Keys must be stable across renders: a changing key remounts the editor on every keystroke.
+const genId = (type: string, key: string, lang: string): string => `${type}_${key}_${lang}`
 
 export const MultiLangRichTextEditor = ({
   field,
@@ -35,6 +32,7 @@ export const MultiLangRichTextEditor = ({
       <div className="ml-tabs">
         {languages.map((lang) => (
           <button
+            type="button"
             key={genId('tabs', field, lang)}
             className={lang === activeLang ? 'active' : ''}
             onClick={() => setActiveLang(lang)}
@@ -81,8 +79,6 @@ export const MultiLangRichTextEditor = ({
           }
         />
       )}
-
-
     </div>
   )
 }

@@ -58,7 +58,7 @@ export class ActivityLogAdminController {
     jwtAccessToken: { scope: EnumAuthScopeType.USER, user: { synchronize: false, require: true } },
     response: { dto: ActivityLogResponseDetailDto },
   })
-  @Get('/me')
+  @Get('/_me')
   async listMine(
     @AuthJwtPayload('user.id') userId: number,
     @RequestQueryList(LIST_QUERY) { _kwargs }: RequestListDto,

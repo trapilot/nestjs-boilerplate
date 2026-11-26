@@ -236,7 +236,7 @@ export class PrismaQueueStore {
       heartbeatAt: null,
       batchMode: split.mode,
       batchTotal: split.payloads.length,
-      batchDone: 0,
+      batchCounter: 0,
       batchFailed: 0,
     }
 
@@ -277,8 +277,8 @@ export class PrismaQueueStore {
   /**
    * Remove a finalized (SUCCESS/FAILED) job still locked by workerId and, in the same
    * transaction, archive it (persistent SUCCESS) or record the failure (FAILED). A batch also
-   * counts towards its parent; the batch that settles the last one closes the parent
-   * (SUCCESS, or FAILED when any batch failed) and locks it for workerId to finalize.
+   * adds 1 to its parent's batchCounter; the batch that brings it to batchTotal closes the
+   * parent as SUCCESS and locks it for workerId to finalize.
    *
    * Returns `moved = false` when the lock was lost (nothing removed, nothing written), and the
    * parent this call closed, if any.
@@ -315,25 +315,17 @@ export class PrismaQueueStore {
       if (!job.parentId) return { moved: true, closedParent: null }
 
       // The parent row lock serializes concurrent batches: exactly one of them closes it.
-      // SET expressions read the old row, hence `+ 1` / `+ failed` in the conditions.
+      // Every finalized batch (SUCCESS or FAILED) adds 1 to batchCounter; the one that brings
+      // it to batchTotal closes the parent as SUCCESS. SET expressions read the old row,
+      // hence `+ 1` in the condition.
       const failed = succeeded ? 0 : 1
-      const closing = Prisma.sql`("batchDone" + "batchFailed" + 1 >= "batchTotal")`
-      const anyFailed = Prisma.sql`("batchFailed" + ${failed}::int > 0)`
+      const closing = Prisma.sql`("batchCounter" + 1 >= "batchTotal")`
 
       const parents = await tx.$queryRaw<{ id: number; status: EnumJobStatus }[]>(Prisma.sql`
         UPDATE queue_jobs
-        SET "batchDone" = "batchDone" + ${1 - failed}::int,
+        SET "batchCounter" = "batchCounter" + 1,
           "batchFailed" = "batchFailed" + ${failed}::int,
-          status = CASE
-            WHEN NOT ${closing} THEN status
-            WHEN ${anyFailed} THEN ${status(EnumJobStatus.FAILED)}
-            ELSE ${status(EnumJobStatus.SUCCESS)}
-          END,
-          "lastError" = CASE
-            WHEN ${closing} AND ${anyFailed}
-            THEN ("batchFailed" + ${failed}::int) || ' of ' || "batchTotal" || ' batches failed'
-            ELSE "lastError"
-          END,
+          status = CASE WHEN ${closing} THEN ${status(EnumJobStatus.SUCCESS)} ELSE status END,
           "lockedBy" = CASE WHEN ${closing} THEN ${workerId} ELSE "lockedBy" END,
           "heartbeatAt" = CASE WHEN ${closing} THEN ${DB_NOW} ELSE "heartbeatAt" END,
           "updatedAt" = ${DB_NOW}

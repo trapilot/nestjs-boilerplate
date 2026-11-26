@@ -129,7 +129,7 @@ export interface IWorkerCallbackOptions<T = Record<string, any>> {
   metadata?: Record<string, any> | null
   batch?: IWorkerJobBatchInfo | null // set when the job is a batch of a parent job
   // set on a parent job: how its batches ended (callbacks run once all of them are finalized)
-  batches?: { mode: EnumWorkerBatchMode; total: number; done: number; failed: number } | null
+  batches?: { mode: EnumWorkerBatchMode; total: number; counter: number; failed: number } | null
 }
 
 export interface IWorkerHandler<T = any> {

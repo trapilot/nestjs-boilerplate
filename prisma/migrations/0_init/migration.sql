@@ -90,7 +90,7 @@ CREATE TABLE "queue_jobs" (
     "batchNo" INTEGER,
     "batchMode" "EnumJobBatchMode",
     "batchTotal" INTEGER NOT NULL DEFAULT 0,
-    "batchDone" INTEGER NOT NULL DEFAULT 0,
+    "batchCounter" INTEGER NOT NULL DEFAULT 0,
     "batchFailed" INTEGER NOT NULL DEFAULT 0,
     "heartbeatAt" TIMESTAMP(3),
     "lockedAt" TIMESTAMP(3),
@@ -579,6 +579,7 @@ CREATE TABLE "activity_logs" (
     "ipAddress" TEXT,
     "userAgent" JSONB,
     "metadata" JSONB,
+    "correlationId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdBy" INTEGER,
 
@@ -729,6 +730,9 @@ CREATE INDEX "activity_logs_action_createdAt_idx" ON "activity_logs"("action", "
 -- CreateIndex
 CREATE INDEX "activity_logs_createdBy_createdAt_idx" ON "activity_logs"("createdBy", "createdAt" DESC);
 
+-- CreateIndex
+CREATE INDEX "activity_logs_correlationId_idx" ON "activity_logs"("correlationId");
+
 -- AddForeignKey
 ALTER TABLE "districts" ADD CONSTRAINT "districts_countryId_fkey" FOREIGN KEY ("countryId") REFERENCES "countries"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -842,6 +846,7 @@ ALTER TABLE "activity_logs" ADD CONSTRAINT "activity_logs_customerId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "activity_logs" ADD CONSTRAINT "activity_logs_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
 
 -- Hand-written (Prisma cannot express CHECK constraints): an activity log row belongs to
 -- exactly one owner, an admin staff User (userId) or a Customer (customerId)

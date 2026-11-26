@@ -23,14 +23,16 @@ export class PrismaUtil {
    * NOT escaped for execution and must never be sent to the database.
    */
   static buildQuery(rawQuery: string, options: { params: string }): string {
+    const query = PrismaUtil.unquoteIdentifiers(rawQuery)
+
     let params: unknown[] = []
     try {
       params = JSON.parse(options.params)
     } catch {
-      return rawQuery
+      return query
     }
 
-    return rawQuery.replace(/\$(\d+)(?!\d)/g, (match: string, num: string) => {
+    return query.replace(/\$(\d+)(?!\d)/g, (match: string, num: string) => {
       const index = Number(num) - 1
       if (index < 0 || index >= params.length) return match
 
@@ -40,6 +42,19 @@ export class PrismaUtil {
       if (typeof value === 'object') return `'${JSON.stringify(value).replace(/'/g, "''")}'`
       return String(value)
     })
+  }
+
+  /**
+   * Drop the quotes around plain identifiers (`"batchTotal"`, `` `users` ``) so a logged query
+   * reads without the `\"` escapes JSON logs add. Single-quoted literals are kept as they are.
+   * For debug logging only: the output may not run (PostgreSQL folds unquoted names to
+   * lowercase). Runs before params are inlined, so JSON values keep their quotes.
+   */
+  static unquoteIdentifiers(query: string): string {
+    return query.replace(
+      /('(?:[^']|'')*')|"([A-Za-z_][A-Za-z0-9_$]*)"|`([A-Za-z_][A-Za-z0-9_$]*)`/g,
+      (match: string, literal: string, dq: string, bt: string) => literal ?? dq ?? bt ?? match,
+    )
   }
 
   static buildBulkInsert(datas: any[], table: string, pk: string = 'id'): Prisma.Sql {

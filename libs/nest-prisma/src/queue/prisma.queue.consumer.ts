@@ -508,7 +508,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
           ? {
               mode: job.batchMode as unknown as EnumWorkerBatchMode,
               total: job.batchTotal,
-              done: job.batchDone,
+              counter: job.batchCounter,
               failed: job.batchFailed,
             }
           : null,
@@ -541,7 +541,7 @@ export class PrismaWorkerConsumer extends WorkerConsumer implements OnModuleInit
     }
     if (!closedParent) return
 
-    // This was the last batch: the parent is now SUCCESS/FAILED and locked for this worker.
+    // This was the last batch: the parent is now SUCCESS and locked for this worker.
     // A failure here is retried by the maintain loop once the parent's heartbeat is stale.
     await this.guard(`Parent job ${closedParent.id} finalize`, async () => {
       const parent = await this.store.findOwned(closedParent.id, this.workerId, closedParent.status)

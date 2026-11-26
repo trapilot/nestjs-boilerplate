@@ -40,34 +40,35 @@ model QueueCursor {
 }
 
 model QueueJob {
-  id          Int               @id @default(autoincrement())
-  jobName     String
-  jobHash     String?
-  version     Int               @default(1)
-  payload     Json?
-  status      EnumJobStatus     @default(PENDING)
-  startAt     DateTime
-  thresholdAt DateTime
-  retryCount  Int               @default(0)
-  maxRetries  Int               @default(3)
-  priority    Int               @default(5)
-  persistent  Boolean           @default(false)
-  lastError   String?
-  result      Json? // handler result data (also kept for an unsuccessful result)
-  metadata    Json? // metadata collected by the handler during the run
-  // Batches: a parent job split into child jobs (one row per batch) waits in WAITING until
-  // every child is finalized, then becomes SUCCESS (all done) or FAILED (any failed)
-  parentId    Int? // set on a child: the parent job id
-  batchNo     Int? // set on a child: 1..batchTotal, the run order in SEQUENTIAL mode
-  batchMode   EnumJobBatchMode? // set on a parent
-  batchTotal  Int               @default(0)
-  batchDone   Int               @default(0)
-  batchFailed Int               @default(0)
-  heartbeatAt DateTime?
-  lockedAt    DateTime?
-  lockedBy    String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id           Int               @id @default(autoincrement())
+  jobName      String
+  jobHash      String?
+  version      Int               @default(1)
+  payload      Json?
+  status       EnumJobStatus     @default(PENDING)
+  startAt      DateTime
+  thresholdAt  DateTime
+  retryCount   Int               @default(0)
+  maxRetries   Int               @default(3)
+  priority     Int               @default(5)
+  persistent   Boolean           @default(false)
+  lastError    String?
+  result       Json? // handler result data (also kept for an unsuccessful result)
+  metadata     Json? // metadata collected by the handler during the run
+  // Batches: a parent job split into child jobs (one row per batch) waits in WAITING; every
+  // finalized batch adds 1 to batchCounter, and the parent becomes SUCCESS once
+  // batchCounter = batchTotal
+  parentId     Int? // set on a child: the parent job id
+  batchNo      Int? // set on a child: 1..batchTotal, the run order in SEQUENTIAL mode
+  batchMode    EnumJobBatchMode? // set on a parent
+  batchTotal   Int               @default(0)
+  batchCounter Int               @default(0) // batches finalized so far (SUCCESS or FAILED)
+  batchFailed  Int               @default(0) // of which FAILED (informational)
+  heartbeatAt  DateTime?
+  lockedAt     DateTime?
+  lockedBy     String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
   @@unique([jobHash])
   @@index([status, id])

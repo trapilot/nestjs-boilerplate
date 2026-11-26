@@ -12,13 +12,51 @@ import {
   EnumRouteType,
   HelperService,
   IRequestApp,
+  IResponseApp,
   RedisStoreService,
   ScopeContext,
 } from 'lib/nest-core'
 
 // Bounds keep attacker-controlled header values from bloating Redis keys
 const NONCE_PATTERN = /^[A-Za-z0-9_-]{8,128}$/
+// Unix epoch in milliseconds (compared with Date.now())
+const TIMESTAMP_PATTERN = /^\d{13}$/
 
+/**
+ * What the client must send, returned on every guarded response (success or error) in the
+ * `x-security-mode` header, with the server clock in `x-server-time` (epoch ms) so a client
+ * can correct its clock offset before building `x-timestamp`
+ */
+export enum EnumRequestSecurityMode {
+  NONE = 'none', // security disabled: no extra headers
+  NONCE = 'nonce', // x-nonce + x-timestamp
+  SIGNATURE = 'signature', // x-nonce + x-timestamp + x-body-hash + x-signature
+}
+
+export const REQUEST_SECURITY_MODE_HEADER = 'x-security-mode'
+export const REQUEST_SERVER_TIME_HEADER = 'x-server-time'
+
+/**
+ * Request freshness and signature check, enabled with `request.security.enable`.
+ *
+ * Every route: `x-nonce` (8-128 chars of [A-Za-z0-9_-]) and `x-timestamp` (epoch ms, within
+ * `request.security.ttl` of the server clock). A nonce is accepted once per TTL window.
+ *
+ * APP routes, every method: also `x-body-hash` and `x-signature`, where
+ *   x-body-hash = hex(sha256(raw request body, UTF-8))   // sha256 of "" when there is no body
+ *   x-signature = hex(hmac_sha256(key, METHOD + "\n" + PATH + "\n" + NONCE + "\n"
+ *                                      + TIMESTAMP + "\n" + BODY_HASH))
+ * METHOD is upper case and PATH is the request target as sent, query string included
+ * (`/api/v1/app/orders?page=2`). Only text bodies are covered (JSON, urlencoded, text/*):
+ * multipart is not readable here (Multer parses it after the guards) and binary
+ * (application/octet-stream) does not survive as a UTF-8 string, so both hash as empty.
+ *
+ * Every guarded response carries `x-security-mode` (EnumRequestSecurityMode) and `x-server-time`,
+ * so a client learns what to send from any response, including a 412 it got by not sending it.
+ *
+ * Checks run cheapest first and the nonce is stored last, so a rejected request writes nothing
+ * to Redis.
+ */
 @Injectable()
 export class RequestSecurityGuard implements CanActivate {
   private readonly logger = new Logger(RequestSecurityGuard.name)
@@ -37,82 +75,93 @@ export class RequestSecurityGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const http = context.switchToHttp()
+    const signed = this.securityEnable && ScopeContext.isReqRoute(EnumRouteType.APP)
+
+    // Set before any check: headers already on the response survive the exception filter
+    const res = http.getResponse<IResponseApp>()
+    res.setHeader(REQUEST_SECURITY_MODE_HEADER, this.mode(signed))
+    res.setHeader(REQUEST_SERVER_TIME_HEADER, String(Date.now()))
+
     if (!this.securityEnable) {
       return true
     }
 
-    const req = context.switchToHttp().getRequest<IRequestApp>()
-
-    const method = req.method.toUpperCase()
+    const req = http.getRequest<IRequestApp>()
     const nonce = req.headers['x-nonce'] as string
     const timestamp = req.headers['x-timestamp'] as string
 
     if (!nonce || !timestamp) {
-      throw new PreconditionFailedException({
-        statusCode: HttpStatus.PRECONDITION_FAILED,
-        message: 'http.clientError.missingSecurityHeaders',
-      })
+      this.reject('http.clientError.missingSecurityHeaders')
     }
 
-    // Number('abc') is NaN, and NaN comparisons are always false, which would skip the
-    // freshness check entirely, so reject anything that is not a plain integer timestamp
-    const reqTs = /^\d{10,16}$/.test(timestamp) ? Number(timestamp) : NaN
-    if (!Number.isSafeInteger(reqTs) || !NONCE_PATTERN.test(nonce)) {
-      throw new PreconditionFailedException({
-        statusCode: HttpStatus.PRECONDITION_FAILED,
-        message: 'http.clientError.nonceTimeout',
-      })
+    // A non-numeric timestamp would make the window check below compare NaN (always false)
+    // and skip it, so only a plain epoch-ms integer is accepted
+    const reqTs = TIMESTAMP_PATTERN.test(timestamp) ? Number(timestamp) : NaN
+    if (
+      !Number.isSafeInteger(reqTs) ||
+      !NONCE_PATTERN.test(nonce) ||
+      Math.abs(Date.now() - reqTs) > this.securityTTL
+    ) {
+      this.reject('http.clientError.nonceTimeout')
     }
 
-    const isNonceValid = await this.checkAndSaveNonce(nonce, reqTs, req.ip)
-
-    if (!isNonceValid) {
-      throw new PreconditionFailedException({
-        statusCode: HttpStatus.PRECONDITION_FAILED,
-        message: 'http.clientError.nonceTimeout',
-      })
+    if (signed) {
+      this.verifySignature(req, nonce, timestamp)
     }
 
-    // --- Only validate signature/body for "safe" methods ---
-    const skipSignatureCheck = ['GET', 'DELETE', 'HEAD', 'OPTIONS'].includes(method)
-    if (!skipSignatureCheck && ScopeContext.isReqRoute(EnumRouteType.APP)) {
-      const signature = req.headers['x-signature'] as string
-      const bodyHash = req.headers['x-body-hash'] as string
-
-      if (!signature || !bodyHash) {
-        throw new PreconditionFailedException({
-          statusCode: HttpStatus.PRECONDITION_FAILED,
-          message: 'http.clientError.missingSignatureHeaders',
-        })
-      }
-
-      const bodyPayload = req.body ? JSON.stringify(req.body) : ''
-      const validated = this.checkSignature(bodyPayload, bodyHash, {
-        nonce,
-        timestamp: reqTs,
-        signature,
-      })
-
-      if (!validated) {
-        throw new PreconditionFailedException({
-          statusCode: HttpStatus.PRECONDITION_FAILED,
-          message: 'http.clientError.invalidSignature',
-        })
-      }
+    if (!(await this.claimNonce(nonce))) {
+      this.reject('http.clientError.nonceTimeout')
     }
+
     return true
   }
 
-  private async checkAndSaveNonce(nonce: string, reqTs: number, reqIp: string): Promise<boolean> {
-    // Reject timestamps outside the accepted window (too old or too far in the future)
-    if (Math.abs(Date.now() - reqTs) > this.securityTTL) {
-      return false
+  private verifySignature(req: IRequestApp, nonce: string, timestamp: string): void {
+    const signature = req.headers['x-signature'] as string
+    const bodyHash = req.headers['x-body-hash'] as string
+
+    if (!signature || !bodyHash) {
+      this.reject('http.clientError.missingSignatureHeaders')
     }
 
+    const serverBodyHash = this.helperService.hashCreate(this.rawBody(req), {
+      algorithm: 'sha256',
+    })
+    if (bodyHash.toLowerCase() !== serverBodyHash) {
+      this.reject('http.clientError.invalidBodyHash')
+    }
+
+    // Binding method and path stops a signed body from being sent to another endpoint
+    const payload = [req.method.toUpperCase(), req.originalUrl, nonce, timestamp, serverBodyHash]
+    const validated = this.helperService.hmacCompare(payload.join('\n'), signature.toLowerCase(), {
+      algorithm: 'sha256',
+      key: this.securityKey,
+    })
+
+    if (!validated) {
+      this.reject('http.clientError.invalidSignature')
+    }
+  }
+
+  /**
+   * The text body the client sent, kept as bytes by the body parser for JSON / urlencoded /
+   * text (all UTF-8, so decoding then re-encoding keeps the client's bytes and hash); empty
+   * otherwise (no body, multipart, application/octet-stream)
+   */
+  private rawBody(req: IRequestApp): string {
+    return Buffer.isBuffer(req.rawBody) ? req.rawBody.toString('utf8') : ''
+  }
+
+  /**
+   * Atomic SET NX: of two concurrent requests with the same nonce, exactly one wins. Keyed by
+   * the nonce alone (not the client IP), so a captured request cannot be replayed from another
+   * address; the TTL covers the whole timestamp window, so a nonce cannot be reused while its
+   * timestamp is still accepted.
+   */
+  private async claimNonce(nonce: string): Promise<boolean> {
     try {
-      // Atomic SET NX: of two concurrent requests with the same nonce, exactly one wins.
-      // TTL covers the whole window so a nonce can never be replayed while its timestamp is valid.
-      return await this.store.setIfAbsent(`security:nonce:${reqIp}:${nonce}`, this.securityTTL)
+      return await this.store.setIfAbsent(`security:nonce:${nonce}`, this.securityTTL)
     } catch (err: unknown) {
       // Fail closed: without the nonce store, replay protection cannot be guaranteed
       this.logger.error(`Nonce store unavailable: ${(err as Error)?.message}`)
@@ -123,35 +172,12 @@ export class RequestSecurityGuard implements CanActivate {
     }
   }
 
-  private checkSignature(
-    bodyPayload: string,
-    bodyHash: string,
-    checkOpts: {
-      nonce: string
-      timestamp: number
-      signature: string
-    },
-  ): boolean {
-    // Hash body of request on server
-    const serverBodyHash = this.helperService.hashCreate(bodyPayload, {
-      algorithm: 'sha256',
-    })
+  private mode(signed: boolean): EnumRequestSecurityMode {
+    if (!this.securityEnable) return EnumRequestSecurityMode.NONE
+    return signed ? EnumRequestSecurityMode.SIGNATURE : EnumRequestSecurityMode.NONCE
+  }
 
-    // Compare the body hash with the hash from the client
-    if (serverBodyHash !== bodyHash) {
-      throw new PreconditionFailedException({
-        statusCode: HttpStatus.PRECONDITION_FAILED,
-        message: 'http.clientError.invalidBodyHash',
-      })
-    }
-
-    // Create dataToValidate with only metadata and hash of body
-    const dataToValidate = `${checkOpts.nonce}${checkOpts.timestamp}${bodyHash}`
-    const validated = this.helperService.hmacCompare(dataToValidate, checkOpts.signature, {
-      algorithm: 'sha256',
-      key: this.securityKey,
-    })
-
-    return validated
+  private reject(message: string): never {
+    throw new PreconditionFailedException({ statusCode: HttpStatus.PRECONDITION_FAILED, message })
   }
 }

@@ -1,7 +1,16 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import bodyParser from 'body-parser'
+import { IncomingMessage } from 'http'
 import { INextFunction, IRequestApp, IResponseApp } from 'lib/nest-core'
+
+/**
+ * Keep the exact request bytes on `req.rawBody`: the request signature (RequestSecurityGuard)
+ * hashes them, since re-serializing the parsed body would not reproduce what the client sent
+ */
+const keepRawBody = (req: IncomingMessage, _res: unknown, buf: Buffer) => {
+  ;(req as IRequestApp).rawBody = buf
+}
 
 /**
  * Unified body parser middleware that handles multiple content types.
@@ -56,17 +65,20 @@ export class RequestBodyParserMiddleware implements NestMiddleware {
       bodyParser.json({
         limit: this.jsonLimitInBytes,
         type: 'application/json',
+        verify: keepRawBody,
       })(req, res, next)
     } else if (contentType.includes('application/x-www-form-urlencoded')) {
       bodyParser.urlencoded({
         extended: false,
         limit: this.urlencodedLimitInBytes,
         type: 'application/x-www-form-urlencoded',
+        verify: keepRawBody,
       })(req, res, next)
     } else if (contentType.includes('text/')) {
       bodyParser.text({
         limit: this.textLimitInBytes,
         type: 'text/*',
+        verify: keepRawBody,
       })(req, res, next)
     } else if (contentType.includes('application/octet-stream')) {
       bodyParser.raw({

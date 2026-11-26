@@ -558,13 +558,13 @@ export class HelperService {
   }
 
   hashCreate(data: string, options: IEncryptionHashOptions): string {
-    const { algorithm, ...hashOpts } = options
+    const { algorithm, encoding, ...hashOpts } = options
 
     const hash = createHash(algorithm, hashOpts)
 
     hash.update(data, 'utf8')
 
-    const hexDigest = hash.digest(options?.encoding ?? 'hex')
+    const hexDigest = hash.digest(encoding ?? 'hex')
 
     return hexDigest
   }
@@ -573,25 +573,14 @@ export class HelperService {
     return this.safeEqual(hashed, this.hashCreate(data, options))
   }
 
+  /**
+   * Full HMAC digest of `data` (hex by default). The whole digest is kept: truncating or
+   * re-encoding it through a JS number would drop most of its bits.
+   */
   hmacCreate(data: string, options: IEncryptionHmacOptions): string {
-    const { algorithm, key, length = 12, ...hmacOpts } = options
-    const matches = this.BASE_CHARS[62]
+    const { algorithm, key, encoding = 'hex', ...hmacOpts } = options
 
-    const hmac = createHmac(algorithm, key, hmacOpts)
-
-    hmac.update(data, 'utf8')
-
-    const hexDigest = hmac.digest('hex')
-
-    let hmacValue = ''
-    let hmacDigit = parseInt(hexDigest, 16)
-
-    for (let i = 0; i < length; i++) {
-      hmacValue += [hmacDigit % matches.length]
-      hmacDigit = Math.floor(hmacDigit / matches.length) // Move to the next "digit"
-    }
-
-    return hmacValue
+    return createHmac(algorithm, key, hmacOpts).update(data, 'utf8').digest(encoding)
   }
 
   hmacCompare(data: string, hmac: string, options: IEncryptionHmacOptions): boolean {

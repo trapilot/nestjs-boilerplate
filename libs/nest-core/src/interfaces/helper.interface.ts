@@ -153,7 +153,7 @@ export interface IEncryptionHashOptions extends HashOptions {
 export interface IEncryptionHmacOptions extends TransformOptions {
   algorithm: 'md5' | 'sha256'
   key: BinaryLike | KeyObject
-  length?: number
+  encoding?: BinaryToTextEncoding // digest encoding, default 'hex'
 }
 
 export interface IEncryptionSignOptions {

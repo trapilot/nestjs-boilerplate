@@ -24,7 +24,13 @@ export default registerAs(
     cors: {
       allowedOrigin: process.env.CORS_ALLOWED_ORIGIN?.split(',') ?? '*',
       allowedMethods: ['GET', 'DELETE', 'PUT', 'PATCH', 'POST', 'HEAD'],
-      exposedHeaders: ['Content-Disposition', 'Content-Language', 'Content-Type'],
+      exposedHeaders: [
+        'Content-Disposition',
+        'Content-Language',
+        'Content-Type',
+        'x-security-mode', // RequestSecurityGuard: what the client must send
+        'x-server-time', // RequestSecurityGuard: server clock (epoch ms) for x-timestamp
+      ],
       allowedHeaders: [
         'Accept',
         'Accept-Language',

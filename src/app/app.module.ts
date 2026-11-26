@@ -55,7 +55,7 @@ import { RoutesWebModule } from './routes/routes.web.module'
     }),
     NestWebModule.forRoot({
       metrics: {
-        defaultMetricsEnabled: false, // disable metrics
+        defaultMetricsEnabled: StrUtil.isTrue(process.env.APP_METRICS), // default false
         defaultLabels: {
           app: APP_NAME,
           environment: APP_ENV,

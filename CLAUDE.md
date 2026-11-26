@@ -54,7 +54,7 @@ pnpm app:reset       # clear logs/uploads/temporary, reset DB, seed role + polic
 
 - Env files load from `.env` then `.env.${APP_ENV}` (`ENV_CONFIG` in `libs/nest-core`). `make env STAGE=staging` copies `.env.staging` to `.env`.
 - `src/main.ts` validates `process.env` against `src/app/dtos/app.env.dto.ts` at startup and refuses to boot on invalid env; add new env vars there.
-- Feature flags in env: `APP_ROUTER` (HTTP routes), `APP_WORKER` (job queue worker), `APP_WEBSOCKET`, `APP_TENANT` (multi-tenant Prisma), `DATABASE_REPLICATION`, `DATABASE_DEBUG`.
+- Feature flags in env: `APP_ROUTER` (HTTP routes), `APP_WORKER` (job queue worker), `APP_METRICS` (Prometheus default metrics, off unless `true`), `APP_WEBSOCKET`, `APP_TENANT` (multi-tenant Prisma), `DATABASE_REPLICATION`, `DATABASE_DEBUG`.
 - `pnpm app:env:generate` / `pnpm app:keys:generate` run `scripts/generate-env.ts` / `scripts/generate-keys.ts`.
 
 ## Architecture

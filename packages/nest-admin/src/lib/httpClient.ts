@@ -2,9 +2,10 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
 import { ENV } from '../config/env'
 import { getAccessToken, setAccessToken, setRefreshToken } from '../hooks/useAuthToken'
 import i18n, { LANGUAGES } from '../i18n'
-import { createCorrelationId, generateNonce } from '../utils/crypto'
-import { getTimezone, nowUnixTimesstamp } from '../utils/time'
+import { createCorrelationId } from '../utils/crypto'
+import { getTimezone } from '../utils/time'
 import { ApiError } from './apiError'
+import { attachSecurityHeaders, readSecurityHeaders, shouldRetrySecurity } from './requestSecurity'
 import { setLastMetadata } from './responseMetadata'
 
 // --- API Response Type Definitions ---
@@ -53,8 +54,8 @@ type IResponseBody<T = any> = ISuccessResponse<T> | IErrorResponse
 
 // --- Axios Instance Setup ---
 
-// Common header injector
-function attachCommonHeaders(config: any) {
+// Common header injector (security headers last: a signature covers the final body)
+async function attachCommonHeaders(config: any) {
   config.headers = config.headers || {}
 
   let language: string | null = i18n.language || LANGUAGES[0]
@@ -66,9 +67,7 @@ function attachCommonHeaders(config: any) {
     }
   } catch {}
 
-  config.headers['x-nonce'] = generateNonce()
   config.headers['x-language'] = language
-  config.headers['x-timestamp'] = nowUnixTimesstamp()
   config.headers['x-timezone'] = getTimezone()
   config.headers['x-version'] = ENV.version
   if (!config.headers['x-correlation-id']) {
@@ -78,7 +77,7 @@ function attachCommonHeaders(config: any) {
     config.headers['x-tenant-id'] = ENV.tenantId
   }
 
-  return config
+  return attachSecurityHeaders(config)
 }
 
 // --- Axios Instances ---
@@ -111,10 +110,18 @@ function processQueue(error: any, token: string | null = null) {
 }
 
 publicAxios.interceptors.request.use(attachCommonHeaders)
-publicAxios.interceptors.response.use(handleResponse, (error: AxiosError) => Promise.reject(error))
+publicAxios.interceptors.response.use(handleResponse, (error: AxiosError) => {
+  readSecurityHeaders(error?.response?.headers)
+  // 412: the API wants other security headers (or a corrected clock); the headers above taught
+  // us which, so retry once with fresh ones
+  if (shouldRetrySecurity(error?.response?.status, error.config)) {
+    return publicAxios(error.config as any)
+  }
+  return Promise.reject(error)
+})
 
-privateAxios.interceptors.request.use((config) => {
-  config = attachCommonHeaders(config)
+privateAxios.interceptors.request.use(async (config) => {
+  config = await attachCommonHeaders(config)
   const token = getAccessToken()
   if (token) config.headers['Authorization'] = `Bearer ${token}`
   return config
@@ -123,6 +130,12 @@ privateAxios.interceptors.response.use(
   handleResponse, // Use the same success handler for private requests
   async (error: AxiosError) => {
     const originalRequest = error.config
+
+    readSecurityHeaders(error?.response?.headers)
+    // 412: retry once with fresh security headers (see publicAxios)
+    if (shouldRetrySecurity(error?.response?.status, originalRequest)) {
+      return privateAxios(originalRequest as any)
+    }
 
     // Handle 401 Unauthorized for token refresh
     if (error?.response?.status === 401 && originalRequest && !(originalRequest as any)._retry) {
@@ -170,6 +183,7 @@ privateAxios.interceptors.response.use(
 
 // Centralized response handler
 function handleResponse(response: AxiosResponse<IResponseBody>) {
+  readSecurityHeaders(response.headers)
   const responseBody = response.data
   if (responseBody.success) {
     // Capture metadata globally for downstream usage (e.g., pagination)

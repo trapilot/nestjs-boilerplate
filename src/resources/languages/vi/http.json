@@ -27,7 +27,7 @@
     "requestTimeout": "Yêu cầu quá thời gian",
     "missingSecurityHeaders": "Thiếu tiêu đề bảo mật",
     "missingSignatureHeaders": "Thiếu tiêu đề chữ ký",
-    "nonceTimeout": "Hết thời gian chờ",
+    "nonceTimeout": "Yêu cầu đã hết hạn hoặc đã được gửi trước đó. Vui lòng kiểm tra ngày giờ trên thiết bị rồi thử lại.",
     "invalidSignature": "Chữ ký không hợp lệ",
     "invalidBodyHash": "Băm nội dung không hợp lệ",
     "appVersionNoLongerSupported": "Phiên bản ứng dụng của bạn không còn được hỗ trợ. Vui lòng cập nhật."
